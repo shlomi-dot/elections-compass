@@ -468,10 +468,10 @@ export default function ElectionsCompass() {
             <p className="relative text-slate-600 text-lg md:text-xl font-semibold mb-6">
               איפה העמדות שלך פוגשות את המציאות?
             </p>
-            <p className="relative text-slate-500 leading-relaxed max-w-lg mx-auto mb-8">
+            <p className="relative text-[17px] md:text-base text-slate-500 leading-relaxed max-w-lg mx-auto mb-8">
               שמונה שאלות על נושאי הליבה. לכל מפלגה יש עמדה מוצהרת, ואנחנו מודדים עד כמה התשובות שלך קרובות אליה — תוך התחשבות בנושאים שבאמת חשובים לך.
             </p>
-            <div className="relative bg-indigo-50/70 border border-indigo-100 p-5 rounded-2xl text-sm text-slate-600 mb-8 flex items-start gap-3 text-right">
+            <div className="relative bg-indigo-50/70 border border-indigo-100 p-5 rounded-2xl text-[15px] md:text-sm text-slate-600 mb-8 flex items-start gap-3 text-right">
               <Info className="w-5 h-5 flex-shrink-0 text-indigo-500 mt-0.5" />
               <p className="leading-relaxed">השאלון אובייקטיבי ומחלק בדיוק את אותו משקל לכל המפלגות. האחוזים בסוף הם התאמה אמיתית — לא סקר פופולריות.</p>
             </div>
@@ -523,7 +523,7 @@ export default function ElectionsCompass() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="relative text-xl mb-2 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>{title}</h3>
-                <p className="relative text-slate-500 text-sm leading-relaxed font-medium">{desc}</p>
+                <p className="relative text-slate-500 text-[15px] md:text-sm leading-relaxed font-medium">{desc}</p>
               </button>
             ))}
           </div>
@@ -552,7 +552,7 @@ export default function ElectionsCompass() {
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <span className="text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap">
+            <span className="text-base md:text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap">
               {idx + 1} / {QUESTIONS.length}
             </span>
           </div>
@@ -567,7 +567,7 @@ export default function ElectionsCompass() {
                   <div className="p-2.5 rounded-2xl" style={{ backgroundColor: `${q.accent}15` }}>
                     <Icon className="w-5 h-5" style={{ color: q.accent }} />
                   </div>
-                  <span className="text-sm font-extrabold uppercase tracking-wider" style={{ color: q.accent }}>
+                  <span className="text-base md:text-sm font-extrabold uppercase tracking-wider" style={{ color: q.accent }}>
                     {q.category}
                   </span>
                 </div>
@@ -588,7 +588,7 @@ export default function ElectionsCompass() {
                       onClick={() => setAnswer({ weight: w })}
                       aria-pressed={current.weight === w}
                       title="עד כמה הנושא חשוב לך? (אופציונלי)"
-                      className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${FOCUS} ${
+                      className={`flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg text-sm md:text-xs font-bold transition-colors ${FOCUS} ${
                         current.weight === w
                           ? 'bg-white text-indigo-700 shadow-sm border border-indigo-200'
                           : 'text-slate-500 hover:text-slate-800'
@@ -601,7 +601,7 @@ export default function ElectionsCompass() {
                 </div>
               </div>
 
-              <h2 className="text-xl md:text-3xl mb-6 md:mb-8 leading-snug tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
+              <h2 className="text-2xl md:text-3xl mb-6 md:mb-8 leading-snug tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
                 {v.text}
               </h2>
 
@@ -627,7 +627,7 @@ export default function ElectionsCompass() {
                       }`}>
                         {selected && <Check className="w-3.5 h-3.5 text-white" />}
                       </div>
-                      <span className={`text-base leading-relaxed ${selected ? 'font-bold' : 'font-medium'}`}>
+                      <span className={`text-[17px] md:text-base leading-relaxed ${selected ? 'font-bold' : 'font-medium'}`}>
                         {v.options[optIdx]}
                       </span>
                     </button>
@@ -726,10 +726,10 @@ export default function ElectionsCompass() {
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-2 mb-1.5">
-                    <span className={`truncate ${i === 0 ? 'font-extrabold text-slate-900' : 'font-bold text-slate-600'}`}>
+                    <span className={`truncate text-[17px] md:text-base ${i === 0 ? 'font-extrabold text-slate-900' : 'font-bold text-slate-600'}`}>
                       {p.name}
                     </span>
-                    <span className={`text-sm font-extrabold tabular-nums flex-shrink-0 ${i === 0 ? 'text-slate-900' : 'text-slate-500'}`}>
+                    <span className={`text-base md:text-sm font-extrabold tabular-nums flex-shrink-0 ${i === 0 ? 'text-slate-900' : 'text-slate-500'}`}>
                       {p.match}%
                     </span>
                   </div>
@@ -749,7 +749,80 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
-        {/* Political axis — desktop בלבד (במובייל לוח ההתאמות מספר את הסיפור) */}
+        {/* ===== המפה הפוליטית — גרסת מובייל: ציר אנכי ===== */}
+        <div className={`${CARD} p-5 lg:hidden anim-enter`}>
+          <h3 className="text-2xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
+            המפה הפוליטית
+          </h3>
+          <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">
+            מיקום המפלגות על הציר, והיכן ההתאמה שלך
+          </p>
+
+          {/* תווית גוש עליונה */}
+          <div className="flex items-center justify-center gap-2 mb-3 text-sm font-extrabold text-red-600">
+            <div className="w-3 h-3 rounded-full bg-red-500" /> גוש השמאל
+          </div>
+
+          <div className="relative py-2" style={{ height: `${timelineParties.length * 58}px` }}>
+            {/* הציר האנכי: אדום למעלה (שמאל) → סגול → כחול למטה (ימין) */}
+            <div
+              className="absolute right-[18px] top-0 bottom-0 w-2.5 rounded-full"
+              style={{ background: 'linear-gradient(to bottom, #ef4444, #a855f7, #3b82f6)' }}
+            />
+
+            {timelineParties.map((p, index) => {
+              const isWinner = p.id === top.id;
+              /* פריסה שווה במרווחים כדי שמפלגות צמודות לא ידרסו זו את זו,
+                 בעוד הסדר נשמר לפי המיקום האמיתי על הציר */
+              const topPct = (index / (timelineParties.length - 1)) * 100;
+
+              return (
+                <div
+                  key={p.id}
+                  className="absolute right-0 left-0 flex items-center gap-3"
+                  style={{ top: `${topPct}%`, transform: 'translateY(-50%)' }}
+                >
+                  {/* נקודה על הציר */}
+                  <div
+                    className={`relative z-10 rounded-full border-[3px] border-white flex-shrink-0 transition-transform ${isWinner ? 'scale-125' : ''}`}
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      marginRight: '8px',
+                      backgroundColor: p.hex,
+                      opacity: p.match > 0 ? 1 : 0.4,
+                      boxShadow: isWinner ? `0 0 0 4px ${p.hex}25, 0 2px 8px ${p.hex}60` : '0 1px 3px rgba(0,0,0,.15)',
+                    }}
+                  />
+                  {/* שם + אחוז */}
+                  <div
+                    className={`flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl border ${
+                      isWinner ? 'bg-white shadow-md' : 'bg-slate-50/70 border-slate-100'
+                    }`}
+                    style={isWinner ? { borderColor: `${p.hex}50` } : undefined}
+                  >
+                    <span className={`text-[15px] truncate ${isWinner ? 'font-extrabold text-slate-900' : 'font-bold text-slate-600'}`}>
+                      {p.name}
+                    </span>
+                    <span
+                      className={`text-sm font-extrabold tabular-nums flex-shrink-0 ${isWinner ? '' : 'text-slate-500'}`}
+                      style={isWinner ? { color: p.hex } : undefined}
+                    >
+                      {p.match}%
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* תווית גוש תחתונה */}
+          <div className="flex items-center justify-center gap-2 mt-3 text-sm font-extrabold text-blue-600">
+            <div className="w-3 h-3 rounded-full bg-blue-500" /> גוש הימין
+          </div>
+        </div>
+
+        {/* ===== המפה הפוליטית — גרסת דסקטופ: ציר אופקי ===== */}
         <div className={`${CARD} p-10 pt-12 hidden lg:block overflow-hidden anim-enter`}>
           <h3 className="text-2xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המפה הפוליטית</h3>
           <p className="text-slate-500 text-center mb-2 font-medium">מיקום המפלגות על ציר שמאל–ימין, והיכן ההתאמה הגבוהה שלך</p>
@@ -860,7 +933,7 @@ export default function ElectionsCompass() {
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-600 font-medium mb-5 text-sm md:text-base leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <p className="text-slate-600 font-medium mb-5 text-[16px] md:text-base leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
                     {q.variants[difficulty].options[a.choice]}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-auto">
@@ -868,14 +941,14 @@ export default function ElectionsCompass() {
                       agree.map((p) => (
                         <span
                           key={p.id}
-                          className="text-xs md:text-sm font-bold px-3 py-1.5 rounded-lg border"
+                          className="text-sm font-bold px-3 py-1.5 rounded-lg border"
                           style={{ color: p.hex, backgroundColor: `${p.hex}0d`, borderColor: `${p.hex}35` }}
                         >
                           {p.name}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs md:text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                      <span className="text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
                         אף מפלגה לא מציגה עמדה קרובה.
                       </span>
                     )}
