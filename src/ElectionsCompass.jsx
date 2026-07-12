@@ -759,18 +759,20 @@ export default function ElectionsCompass() {
           </p>
 
           {/* תווית גוש עליונה */}
-          <div className="flex items-center justify-center gap-2 mb-3 text-sm font-extrabold text-red-600">
+          <div className="flex items-center justify-center gap-2 mb-4 text-sm font-extrabold text-red-600">
             <div className="w-3 h-3 rounded-full bg-red-500" /> גוש השמאל
           </div>
 
-          <div className="relative py-2" style={{ height: `${timelineParties.length * 58}px` }}>
+          <div className="relative" style={{ height: `${timelineParties.length * 58 + 40}px` }}>
             {/* הציר האנכי: אדום למעלה (שמאל) → סגול → כחול למטה (ימין) */}
             <div
               className="absolute right-[18px] top-0 bottom-0 w-2.5 rounded-full"
               style={{ background: 'linear-gradient(to bottom, #ef4444, #a855f7, #3b82f6)' }}
             />
 
-            {timelineParties.map((p, index) => {
+            {/* מסלול פנימי: משאיר שוליים למעלה ולמטה כדי שהשורות הקיצוניות לא יחרגו */}
+            <div className="absolute inset-x-0 top-5 bottom-5">
+              {timelineParties.map((p, index) => {
               const isWinner = p.id === top.id;
               /* פריסה שווה במרווחים כדי שמפלגות צמודות לא ידרסו זו את זו,
                  בעוד הסדר נשמר לפי המיקום האמיתי על הציר */
@@ -814,10 +816,11 @@ export default function ElectionsCompass() {
                 </div>
               );
             })}
+            </div>
           </div>
 
           {/* תווית גוש תחתונה */}
-          <div className="flex items-center justify-center gap-2 mt-3 text-sm font-extrabold text-blue-600">
+          <div className="flex items-center justify-center gap-2 mt-4 text-sm font-extrabold text-blue-600">
             <div className="w-3 h-3 rounded-full bg-blue-500" /> גוש הימין
           </div>
         </div>
