@@ -12,7 +12,7 @@ import {
 const FONT_BODY = "'Assistant', system-ui, sans-serif";
 const FONT_DISPLAY = "'Secular One', 'Assistant', sans-serif";
 
-const CARD = 'bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-3xl shadow-xl shadow-indigo-200/40';
+const CARD = 'glass-card bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-3xl shadow-xl shadow-indigo-200/40';
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white';
 const BTN_PRIMARY = `inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white
   bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-[length:200%_100%] bg-right
@@ -184,6 +184,76 @@ const decodeAnswers = (str) => {
   return { answers, difficulty: d };
 };
 
+/* ------------------------------------------------------------------
+   STORAGE — עטיפה בטוחה. localStorage יכול לזרוק שגיאה
+   (מצב פרטי ב-iOS, סביבות sandbox) ואסור שזה יפיל את האפליקציה.
+------------------------------------------------------------------- */
+const STORAGE_KEY = 'electionsCompassData_v8';
+
+const safeStorage = {
+  get(key) {
+    try { return window.localStorage.getItem(key); } catch { return null; }
+  },
+  set(key, value) {
+    try { window.localStorage.setItem(key, value); } catch { /* אין אחסון — ממשיכים בזיכרון בלבד */ }
+  },
+  remove(key) {
+    try { window.localStorage.removeItem(key); } catch { /* noop */ }
+  },
+};
+
+const makeShuffledOrders = () =>
+  QUESTIONS.map(() => {
+    const o = [0, 1, 2, 3];
+    for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
+    return o;
+  });
+
+const freshState = () => ({
+  screen: 'welcome',
+  difficulty: 'everyday',
+  idx: 0,
+  review: false,
+  answers: QUESTIONS.map(() => ({ choice: null, weight: 1 })),
+  order: makeShuffledOrders(),
+});
+
+/* טעינת מצב שמור עם ולידציה מלאה — נתונים ישנים/פגומים לא מפילים את האפליקציה */
+const loadInitialState = () => {
+  try {
+    const saved = safeStorage.get(STORAGE_KEY);
+    if (!saved) return freshState();
+    const p = JSON.parse(saved);
+
+    const validAnswers =
+      Array.isArray(p.answers) &&
+      p.answers.length === QUESTIONS.length &&
+      p.answers.every((a) =>
+        a && (a.choice === null || (Number.isInteger(a.choice) && a.choice >= 0 && a.choice <= 3)) &&
+        WEIGHT_STEPS.includes(a.weight)
+      );
+    if (!validAnswers) return freshState();
+
+    const validOrder =
+      Array.isArray(p.order) &&
+      p.order.length === QUESTIONS.length &&
+      p.order.every((o) => Array.isArray(o) && o.length === 4 && [0, 1, 2, 3].every((n) => o.includes(n)));
+
+    return {
+      screen: ['welcome', 'difficulty', 'quiz', 'results'].includes(p.screen)
+        ? p.screen
+        : (p.screen === 'loading' ? 'quiz' : 'welcome'), // ריענון באמצע מסך הטעינה לא יתקע ספינר לנצח
+      difficulty: ['everyday', 'simple', 'advanced'].includes(p.difficulty) ? p.difficulty : 'everyday',
+      idx: Number.isInteger(p.idx) && p.idx >= 0 && p.idx < QUESTIONS.length ? p.idx : 0,
+      review: false,
+      answers: p.answers,
+      order: validOrder ? p.order : makeShuffledOrders(),
+    };
+  } catch {
+    return freshState();
+  }
+};
+
 const BLOCS = [
   { id: 'left',   label: 'גוש השמאל', color: '#ef4444', parties: ['hadashTaal', 'raam', 'democrats'] },
   { id: 'center', label: 'גוש המרכז', color: '#a855f7', parties: ['yashar', 'kacholLavan', 'bYachad'] },
@@ -285,6 +355,24 @@ const GLOBAL_CSS = `
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+
+  /* --- מובייל: מגע ותחושה --- */
+  button, select, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+  /* אפקטי hover רק במכשירים שבאמת יש בהם עכבר — מונע "hover דביק" אחרי הקשה בטאץ' */
+  @media (hover: none) and (pointer: coarse) {
+    .hover\\:-translate-y-0\\.5:hover, .hover\\:-translate-y-1:hover { transform: none !important; }
+    .group:hover .group-hover\\:scale-110 { transform: none !important; }
+  }
+
+  /* --- מובייל: ביצועים --- */
+  @media (max-width: 768px) {
+    .glass-card { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .aurora-blob { filter: blur(64px) !important; animation: none; }
+  }
+
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  .toast-anim { animation: toastIn .3s cubic-bezier(.22,1,.36,1) both; }
 `;
 
 /* ------------------------------------------------------------------
@@ -322,7 +410,7 @@ function AppShell({ children, center = true, activeColor = null }) {
     <div
       dir="rtl"
       className={`relative min-h-screen text-slate-800 ${center ? 'flex items-start md:items-center justify-center' : ''} px-4 py-6 md:p-8`}
-      style={{ fontFamily: FONT_BODY }}
+      style={{ fontFamily: FONT_BODY, paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
     >
       <style>{GLOBAL_CSS}</style>
       <Background activeColor={activeColor} />
@@ -335,13 +423,7 @@ function AppShell({ children, center = true, activeColor = null }) {
    MAIN COMPONENT
 ------------------------------------------------------------------- */
 export default function ElectionsCompass() {
-  const [state, setState] = useState(() => {
-    try {
-      const saved = localStorage.getItem('electionsCompassData_v7'); 
-      if (saved) return JSON.parse(saved);
-    } catch (e) { console.error("Could not read local storage"); }
-    return { screen: 'welcome', difficulty: 'everyday', idx: 0, answers: QUESTIONS.map(() => ({ choice: null, weight: 1 })) };
-  });
+  const [state, setState] = useState(loadInitialState);
 
   const [jokeIndex, setJokeIndex] = useState(0);
   const [sharedView, setSharedView] = useState(false);
@@ -349,8 +431,18 @@ export default function ElectionsCompass() {
   const [cmpB, setCmpB] = useState(null);
   const [copied, setCopied] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [toast, setToast] = useState(null);
 
-  useEffect(() => { localStorage.setItem('electionsCompassData_v7', JSON.stringify(state)); }, [state]);
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3200);
+  };
+
+  /* שמירה — אבל לא כשצופים בתוצאה של מישהו אחר (אחרת נדרוס את ההתקדמות של המבקר) */
+  useEffect(() => {
+    if (sharedView) return;
+    safeStorage.set(STORAGE_KEY, JSON.stringify(state));
+  }, [state, sharedView]);
 
   useEffect(() => {
     if (!document.getElementById('app-font')) {
@@ -367,30 +459,34 @@ export default function ElectionsCompass() {
     const r = new URLSearchParams(window.location.search).get('r');
     const decoded = decodeAnswers(r);
     if (decoded) {
-      setState({ screen: 'results', difficulty: decoded.difficulty, idx: 0, answers: decoded.answers });
       setSharedView(true);
+      setState({ screen: 'results', difficulty: decoded.difficulty, idx: 0, review: false, answers: decoded.answers, order: makeShuffledOrders() });
     }
   }, []);
 
-  const displayOrder = useMemo(() => 
-    QUESTIONS.map(() => {
-      const o = [0, 1, 2, 3];
-      for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
-      return o;
-    }),
-  []);
-
-  const { screen, difficulty, idx, answers } = state;
+  const { screen, difficulty, idx, answers, review, order: displayOrder } = state;
   const results = useMemo(() => computeResults(answers), [answers]);
 
   const reset = () => {
-    setState({ screen: 'welcome', difficulty: 'everyday', idx: 0, answers: QUESTIONS.map(() => ({ choice: null, weight: 1 })) });
+    setSharedView(false);
     setCmpA(null);
     setCmpB(null);
-    setSharedView(false);
     if (window.location.search) {
       window.history.replaceState({}, '', window.location.pathname);
     }
+    safeStorage.remove(STORAGE_KEY);
+    setState(freshState());
+  };
+
+  /* יציאה מצפייה בתוצאה משותפת — משחזרים את ההתקדמות של המבקר עצמו, אם קיימת */
+  const exitSharedView = () => {
+    setSharedView(false);
+    setCmpA(null);
+    setCmpB(null);
+    if (window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    setState(loadInitialState());
   };
   
   const setAnswer = (patch) => {
@@ -401,32 +497,44 @@ export default function ElectionsCompass() {
     });
   };
   
+  /* סיום השאלון — ללא side effects בתוך updater (בעיה ב-StrictMode של React 18) */
+  const finishQuiz = () => {
+    if (review) {
+      // במצב עריכה חוזרים ישר לתוצאות, בלי להריץ שוב את מסך הטעינה
+      setState(prev => ({ ...prev, screen: 'results', review: false }));
+      return;
+    }
+    setJokeIndex(Math.floor(Math.random() * LOADING_JOKES.length));
+    setState(prev => ({ ...prev, screen: 'loading' }));
+    setTimeout(() => {
+      setState(s => (s.screen === 'loading' ? { ...s, screen: 'results' } : s));
+    }, 1800);
+  };
+
   const goNext = () => {
-    setState(prev => {
-      if (prev.idx >= QUESTIONS.length - 1) {
-        setJokeIndex(Math.floor(Math.random() * LOADING_JOKES.length));
-        setTimeout(() => setState(s => ({ ...s, screen: 'results' })), 1800);
-        return { ...prev, screen: 'loading' };
-      }
-      return { ...prev, idx: prev.idx + 1 };
-    });
+    if (idx >= QUESTIONS.length - 1) finishQuiz();
+    else setState(prev => ({ ...prev, idx: prev.idx + 1 }));
   };
 
   const answerAndAdvance = (choice) => {
     if (locked) return;
     setLocked(true);
+    if (navigator.vibrate) { try { navigator.vibrate(8); } catch { /* noop */ } }
     setState(prev => { const newAnswers = [...prev.answers]; newAnswers[prev.idx] = { ...newAnswers[prev.idx], choice }; return { ...prev, answers: newAnswers }; });
-    setTimeout(() => { setLocked(false); goNext(); }, 350); 
+    setTimeout(() => { setLocked(false); goNext(); }, 350);
   };
 
   const handleSkip = () => {
+    // סופרים דילוגים בלי לספור פעמיים את השאלה הנוכחית
+    const skipCount = answers.filter((a, i) => i !== idx && a.choice === null).length + 1;
     setAnswer({ choice: null });
-    const skipCount = answers.filter(a => a.choice === null).length + 1;
     if (skipCount === 4 && idx < QUESTIONS.length - 1) {
-        alert("מדלג הרבה, הא? ככה לא בונים חומה (או קואליציה...)");
+      showToast('מדלג הרבה, הא? ככה לא בונים חומה (או קואליציה...)');
     }
     goNext();
   };
+
+  const jumpToQuestion = (i) => setState(prev => ({ ...prev, idx: i }));
 
   const shareUrl = () =>
     `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
@@ -617,12 +725,43 @@ export default function ElectionsCompass() {
     return (
       <AppShell activeColor={q.accent}>
         <div className="max-w-3xl w-full">
-          {/* Progress */}
-          <div className="flex items-center gap-4 mb-4 px-1">
-            <div className="flex-1 h-2.5 rounded-full bg-white/50 border border-slate-200 overflow-hidden shadow-inner backdrop-blur-sm">
-              <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, backgroundColor: q.accent }} />
+          {/* Progress — דביק למעלה במובייל כדי לא לאבד התמצאות בגלילה */}
+          <div className="sticky top-0 z-30 -mx-4 px-4 py-2.5 mb-3 bg-gradient-to-b from-white/90 to-white/60 backdrop-blur-md md:static md:mx-0 md:px-1 md:py-0 md:mb-4 md:bg-none md:backdrop-blur-0">
+            <div className="flex items-center gap-4">
+              <div
+                role="progressbar" aria-valuemin={1} aria-valuemax={QUESTIONS.length} aria-valuenow={idx + 1}
+                aria-label={`שאלה ${idx + 1} מתוך ${QUESTIONS.length}`}
+                className="flex-1 h-2.5 rounded-full bg-white/50 border border-slate-200 overflow-hidden shadow-inner"
+              >
+                <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, backgroundColor: q.accent }} />
+              </div>
+              <span className="text-base md:text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap">{idx + 1} / {QUESTIONS.length}</span>
             </div>
-            <span className="text-base md:text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap">{idx + 1} / {QUESTIONS.length}</span>
+            {/* ניווט מהיר בין שאלות — קריטי בעריכת תשובות מהתוצאות */}
+            <nav className="flex gap-1.5 mt-2.5 overflow-x-auto custom-scrollbar pb-1" aria-label="ניווט בין שאלות">
+              {QUESTIONS.map((qq, i) => {
+                const answered = answers[i].choice !== null;
+                const isCurrent = i === idx;
+                return (
+                  <button
+                    key={qq.id}
+                    onClick={() => jumpToQuestion(i)}
+                    aria-label={`שאלה ${i + 1}: ${qq.category}${answered ? ' (נענתה)' : ''}`}
+                    aria-current={isCurrent ? 'step' : undefined}
+                    className={`flex-shrink-0 min-w-[36px] h-8 px-2 rounded-lg text-xs font-extrabold tabular-nums transition-colors border ${FOCUS} ${
+                      isCurrent
+                        ? 'text-white border-transparent shadow-sm'
+                        : answered
+                          ? 'bg-white text-slate-700 border-slate-200'
+                          : 'bg-transparent text-slate-400 border-dashed border-slate-300'
+                    }`}
+                    style={isCurrent ? { backgroundColor: q.accent } : answered ? { color: QUESTIONS[i].accent, borderColor: `${QUESTIONS[i].accent}50` } : undefined}
+                  >
+                    {i + 1}
+                  </button>
+                );
+              })}
+            </nav>
           </div>
 
           <div key={idx} className={`${CARD} overflow-hidden anim-enter`}>
@@ -632,29 +771,34 @@ export default function ElectionsCompass() {
                   <div className="p-2.5 rounded-2xl" style={{ backgroundColor: `${q.accent}15` }}><Icon className="w-5 h-5" style={{ color: q.accent }} /></div>
                   <span className="text-base md:text-sm font-extrabold uppercase tracking-wider" style={{ color: q.accent }}>{q.category}</span>
                 </div>
-                <div className="w-full sm:w-auto sm:mr-auto flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1">
+                <div className="w-full sm:w-auto sm:mr-auto">
+                  <div className="text-[11px] font-bold text-slate-400 mb-1 sm:text-left">כמה הנושא חשוב לך? (משפיע על המשקל בחישוב)</div>
+                  <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1" role="group" aria-label="חשיבות הנושא">
                   {[{ w: 0.5, label: 'שולי' }, { w: 1, label: 'רגיל' }, { w: 2, label: 'קריטי' }].map(({ w, label }) => (
                     <button
                       key={w} onClick={() => setAnswer({ weight: w })}
-                      className={`flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg text-sm md:text-xs font-bold transition-colors ${current.weight === w ? 'bg-white text-slate-800 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
+                      aria-pressed={current.weight === w}
+                      className={`flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg text-sm md:text-xs font-bold transition-colors ${FOCUS} ${current.weight === w ? 'bg-white text-slate-800 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
                     >
                       {w === 2 && <Star className={`w-3 h-3 inline ml-1 -mt-0.5 ${current.weight === w ? 'fill-amber-500 text-amber-500' : ''}`} />}
                       {label}
                     </button>
                   ))}
+                  </div>
                 </div>
               </div>
 
               <h2 className="text-2xl md:text-3xl mb-8 leading-snug tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>{v.text}</h2>
 
-              <div className="space-y-3">
+              <div className="space-y-3" role="radiogroup" aria-label={v.text}>
                 {displayOrder[idx].map((optIdx) => {
                   const selected = current.choice === optIdx;
                   return (
                     <button
                       key={optIdx} onClick={() => answerAndAdvance(optIdx)} disabled={locked && !selected}
-                      className={`relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-all duration-200 flex items-start gap-3 md:gap-4 ${FOCUS} ${
-                        selected ? 'bg-slate-50 shadow-md scale-[1.01]' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
+                      role="radio" aria-checked={selected}
+                      className={`relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-[border-color,background-color,box-shadow,transform] duration-200 flex items-start gap-3 md:gap-4 active:scale-[0.99] ${FOCUS} ${
+                        selected ? 'bg-slate-50 shadow-md' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                       }`}
                       style={selected ? { borderColor: q.accent } : {}}
                     >
@@ -668,16 +812,30 @@ export default function ElectionsCompass() {
                 })}
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
-                <button onClick={() => (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1})))} className={BTN_GHOST}>
+              <div className="mt-8 flex items-center justify-between gap-2 border-t border-slate-100 pt-5">
+                <button onClick={() => (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1})))} className={`${BTN_GHOST} min-h-[44px]`}>
                   <ChevronRight className="w-5 h-5" /> קודמת
                 </button>
-                <button onClick={handleSkip} className={BTN_GHOST}>
+                {review && results.answeredCount > 0 && (
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, screen: 'results', review: false }))}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 transition-colors ${FOCUS}`}
+                  >
+                    <Check className="w-4 h-4" /> לתוצאות
+                  </button>
+                )}
+                <button onClick={handleSkip} className={`${BTN_GHOST} min-h-[44px]`}>
                   לדלג <ChevronLeft className="w-4 h-4" />
                 </button>
               </div>
             </div>
           </div>
+
+          {toast && (
+            <div role="status" aria-live="polite" className="toast-anim fixed bottom-6 left-1/2 z-50 max-w-[90vw] bg-slate-900 text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-xl" style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+              {toast}
+            </div>
+          )}
         </div>
       </AppShell>
     );
@@ -714,14 +872,16 @@ export default function ElectionsCompass() {
   }
 
   const top = scored[0];
-  const runnerUp = scored[1];
   const timelineParties = [...scored].sort((a, b) => a.position - b.position);
   
   const isPerfectMatch = top.match === 100;
   const isLoneWolf = top.match < 45;
 
   const DNASlider = ({ label, leftLabel, rightLabel, userScore, partyScore }) => {
-    if (userScore === null || partyScore === null) return null; 
+    if (userScore === null || partyScore === null) return null;
+    const clamp = (v) => Math.max(5, Math.min(95, v)); // שהסמנים לא ייחתכו בקצוות הפס
+    userScore = clamp(userScore);
+    partyScore = clamp(partyScore);
     return (
       <div className="mb-6">
         <div className="flex justify-between items-end mb-2">
@@ -744,12 +904,16 @@ export default function ElectionsCompass() {
     );
   };
 
-  /* תובנות: ההפתעה שלך + התאמה לפי גושים */
+  /* תובנות: ההפתעה שלך + התאמה לפי גושים.
+     הפתעה אמיתית = מפלגה מהחצי התחתון שקרובה אליך בנושא מסוים
+     אפילו יותר מהמפלגה המובילה שלך — לא סתם קונצנזוס שכולם מסכימים עליו. */
   const half = Math.floor(scored.length / 2);
   let surprise = null;
   scored.slice(half).forEach((p, j) => {
     p.perQuestion.forEach((rec) => {
-      if (rec.sim >= AGREE_THRESHOLD && (!surprise || rec.sim > surprise.sim)) {
+      const topRec = top.perQuestion.find((r) => r.questionId === rec.questionId);
+      const beatsTop = !topRec || rec.sim > topRec.sim;
+      if (rec.sim >= AGREE_THRESHOLD && beatsTop && (!surprise || rec.sim > surprise.sim)) {
         surprise = { party: p, rank: half + j + 1, category: rec.category, sim: rec.sim };
       }
     });
@@ -779,7 +943,7 @@ export default function ElectionsCompass() {
               <p className="font-extrabold text-lg">מישהו שיתף איתך את התוצאה שלו 👀</p>
               <p className="text-indigo-100 text-sm font-medium">כך נראית ההתאמה הפוליטית שלו. סקרנים מה יוצא לכם?</p>
             </div>
-            <button onClick={reset} className={`flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-extrabold bg-white text-indigo-700 hover:bg-indigo-50 transition-colors shadow-md ${FOCUS}`}>
+            <button onClick={exitSharedView} className={`flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-extrabold bg-white text-indigo-700 hover:bg-indigo-50 transition-colors shadow-md ${FOCUS}`}>
               גלו את ההתאמה שלכם <ChevronLeft className="w-5 h-5" />
             </button>
           </div>
@@ -792,7 +956,7 @@ export default function ElectionsCompass() {
             <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-full mb-6 shadow-sm">
               <Sparkles className="w-4 h-4 text-amber-500" /> המפלגה הקרובה אליך ביותר
             </div>
-            <h1 className="text-5xl md:text-8xl mb-6 tracking-tight break-words" style={{ fontFamily: FONT_DISPLAY, color: top.hex }}>{top.name}</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-8xl mb-6 tracking-tight break-words" style={{ fontFamily: FONT_DISPLAY, color: top.hex }}>{top.name}</h1>
             
             <div className="inline-flex flex-col items-center mb-6">
                <div className="inline-flex items-baseline gap-2 bg-white/60 px-6 py-2 rounded-3xl border border-slate-200/50 shadow-sm backdrop-blur-md mb-2">
@@ -980,12 +1144,14 @@ export default function ElectionsCompass() {
                 <div key={q.id} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
                   <p className="font-bold text-slate-700 text-[15px] mb-3">{q.category}</p>
                   {[ { sim: simA, party: cmpPartyA }, { sim: simB, party: cmpPartyB } ].map(({ sim: sv, party }, k) => (
-                    <div key={k} className="flex items-center gap-3 mb-1.5 last:mb-0">
-                      <span className="w-24 md:w-32 text-xs md:text-sm font-bold truncate flex-shrink-0" style={{ color: party.hex }}>{party.name}</span>
+                    <div key={k} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-2.5 sm:mb-1.5 last:mb-0">
+                      <span className="sm:w-32 text-xs md:text-sm font-bold sm:truncate flex-shrink-0" style={{ color: party.hex }}>{party.name}</span>
+                      <div className="flex items-center gap-3 flex-1 w-full">
                       <div className="flex-1 h-2.5 rounded-full bg-slate-200/80 overflow-hidden">
                         <div className="h-full rounded-full" style={{ width: `${Math.round(sv * 100)}%`, backgroundColor: party.hex }} />
                       </div>
                       <span className="w-9 text-left text-xs font-extrabold text-slate-500 tabular-nums flex-shrink-0">{Math.round(sv * 100)}%</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1051,16 +1217,26 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
-        {/* 5. Actions */}
+        {/* 5. Actions — בצפייה בתוצאה של מישהו אחר לא מציגים עריכה/שיתוף (זו לא התוצאה שלך) */}
         <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 pt-6">
-          <button onClick={shareLink} className={`${BTN_PRIMARY} text-lg`}>
-            {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף קישור'}
-          </button>
-          <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
-            <Download className="w-5 h-5" /> תמונה לשיתוף
-          </button>
-          <button onClick={() => setState(prev => ({...prev, screen: 'quiz', idx: 0}))} className={`${BTN_SECONDARY} text-lg`}><RotateCcw className="w-5 h-5" /> עריכת תשובות</button>
-          <button onClick={reset} className={`${BTN_GHOST} justify-center`}>מחיקת נתונים והתחלה</button>
+          {sharedView ? (
+            <button onClick={exitSharedView} className={`${BTN_PRIMARY} text-lg`}>
+              גלו את ההתאמה שלכם <ChevronLeft className="w-5 h-5" />
+            </button>
+          ) : (
+            <>
+              <button onClick={shareLink} className={`${BTN_PRIMARY} text-lg`}>
+                {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף קישור'}
+              </button>
+              <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
+                <Download className="w-5 h-5" /> תמונה לשיתוף
+              </button>
+              <button onClick={() => setState(prev => ({ ...prev, screen: 'quiz', idx: 0, review: true }))} className={`${BTN_SECONDARY} text-lg`}>
+                <RotateCcw className="w-5 h-5" /> עריכת תשובות
+              </button>
+              <button onClick={reset} className={`${BTN_GHOST} justify-center`}>מחיקת נתונים והתחלה</button>
+            </>
+          )}
         </div>
 
       </div>
