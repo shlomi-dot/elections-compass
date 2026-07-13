@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   ChevronLeft, ChevronRight, RotateCcw, Vote, Shield, Scale, Coins,
   BookOpen, Users, Map, BrainCircuit, MessageCircleHeart, Heart,
-  Star, Info, Check, Share2, Sparkles
+  Star, Info, Check, Share2, Sparkles, GraduationCap, Landmark, Globe,
+  Download, Lightbulb, ArrowRightLeft
 } from 'lucide-react';
 
 /* ==================================================================
@@ -268,15 +269,152 @@ const QUESTIONS = [
     },
     stances: { farRight: 0, likud: 0, shas: 0.4, utj: 0.4, bYachad: 1, kacholLavan: 1.5, yashar: 2, yisraelBeiteinu: 2, raam: 2.6, democrats: 3, hadashTaal: 3 },
   },
+  {
+    id: 'education',
+    category: 'חינוך ולימודי ליבה',
+    icon: GraduationCap,
+    accent: '#f59e0b',
+    variants: {
+      simple: {
+        text: 'האם לחייב את כל בתי הספר ללמד לימודי ליבה (מתמטיקה ואנגלית)?',
+        options: [
+          'לא לכפות. לכל קהילה זכות לחנך את ילדיה על פי דרכה, והמדינה תמשיך לתקצב גם מוסדות שלא מלמדים ליבה.',
+          'לעודד בלי לכפות: תמריצים ותוכניות רשות למוסדות שיוסיפו ליבה, בלי לפגוע בתקציב של מי שלא.',
+          'תקצוב מלא רק למי שמלמד ליבה: מוסד בלי מתמטיקה ואנגלית יקבל מימון חלקי בלבד, בתהליך הדרגתי.',
+          'חובה על כולם: אין תעודה ואין שקל ציבורי בלי ליבה מלאה, בפיקוח צמוד של משרד החינוך.',
+        ],
+      },
+      advanced: {
+        text: 'כיצד יש להסדיר את לימודי הליבה בחינוך המוכר שאינו רשמי ובמוסדות הפטור?',
+        options: [
+          'עיגון האוטונומיה החינוכית בחקיקה: תקצוב שוויוני לכל הזרמים ללא התניה קוריקולרית, מתוך כיבוד חופש הדת.',
+          'מדיניות תמרוץ וולונטרית: תוספות תקציב למוסדות שיאמצו ליבה, ללא סנקציות על הנמנעים וללא שינוי הסטטוס קוו.',
+          'התניה תקציבית הדרגתית: הצמדת שיעור התקצוב להיקף הוראת הליבה, תחת פיקוח פדגוגי של משרד החינוך.',
+          'החלה אוניברסלית של תוכנית הליבה כתנאי סף לרישוי ולתקצוב, לרבות מוסדות הפטור, באכיפה מלאה.',
+        ],
+      },
+    },
+    stances: { utj: 0, shas: 0.2, farRight: 1, likud: 1, raam: 1.5, kacholLavan: 2, yashar: 2.2, bYachad: 2.2, hadashTaal: 2.4, democrats: 2.6, yisraelBeiteinu: 3 },
+  },
+  {
+    id: 'termLimits',
+    category: 'שיטת הממשל',
+    icon: Landmark,
+    accent: '#3b82f6',
+    variants: {
+      simple: {
+        text: 'האם להגביל בחוק את מספר שנות הכהונה של ראש הממשלה?',
+        options: [
+          'לא. בדמוקרטיה העם מחליט בקלפי מי ימשיך לכהן, ואסור לחוקק חוקים שמכוונים נגד אדם מסוים.',
+          'אפשר לשקול, אבל רק בהסכמה רחבה ורק אם החוק יחול על ראשי ממשלה עתידיים בלבד.',
+          'כן: חוק יסוד שמגביל כהונה לשמונה שנים, כמו בארה"ב. ריכוז כוח ממושך מסוכן לדמוקרטיה.',
+          'הגבלת כהונה היא רק ההתחלה: צריך רפורמה מלאה — חוקה, שינוי שיטת הבחירות וחיזוק הכנסת מול הממשלה.',
+        ],
+      },
+      advanced: {
+        text: 'מהי עמדתך ביחס להגבלת כהונות ראש הממשלה ותיקון שיטת הממשל?',
+        options: [
+          'התנגדות עקרונית: הגבלת כהונה פוגעת בריבונות הבוחר, וחקיקה פרסונלית מערערת את יציבות המשטר.',
+          'פתיחות מותנית: תחולה פרוספקטיבית בלבד, ברוב מיוחס, ובמסגרת עסקה חוקתית רחבה ומאוזנת.',
+          'עיגון בחוק יסוד של מגבלת שמונה שנים או שתי קדנציות, כבלם מבני מפני ריכוז כוח שלטוני.',
+          'רפורמה משטרית כוללת: חוקה נוקשה, מרכיב אזורי בשיטת הבחירות, הגבלת כהונות וחיזוק הפיקוח הפרלמנטרי.',
+        ],
+      },
+    },
+    stances: { likud: 0, shas: 0.3, utj: 0.3, farRight: 0.4, raam: 1.6, bYachad: 2, kacholLavan: 2, yashar: 2, yisraelBeiteinu: 2, hadashTaal: 2.6, democrats: 3 },
+  },
+  {
+    id: 'conversion',
+    category: 'גיור, עלייה וחוק השבות',
+    icon: Globe,
+    accent: '#0ea5e9',
+    variants: {
+      simple: {
+        text: 'מי צריך לקבוע מיהו יהודי — בגיור ובחוק השבות?',
+        options: [
+          'רק גיור אורתודוקסי דרך הרבנות הראשית, ולתקן את חוק השבות: לבטל את "סעיף הנכד" שמעלה לא-יהודים.',
+          'להשאיר את המצב הקיים: הרבנות ממשיכה להיות הגורם המוסמך, וחוק השבות נשאר כמו שהוא.',
+          'גיור ממלכתי נגיש ומקל: להסמיך רבני ערים לגייר ולפתוח את הדלת למאות אלפי עולים. חוק השבות לא ייפגע.',
+          'המדינה תכיר בכל גיור — אורתודוקסי, רפורמי וקונסרבטיבי — ויונהג רישום אזרחי שאינו תלוי ברבנות.',
+        ],
+      },
+      advanced: {
+        text: 'כיצד יש להסדיר את סמכויות הגיור ואת היקפו של חוק השבות?',
+        options: [
+          'ריכוז הגיור במערך הממלכתי-אורתודוקסי בלבד, וצמצום חוק השבות באמצעות ביטול סעיף הנכד.',
+          'שימור הסטטוס קוו: מונופול הרבנות הראשית על הגיור לצד הותרת חוק השבות על כנו, ללא חקיקה חדשה.',
+          'רפורמת הגיור הממלכתי: ביזור הסמכות לרבני ערים ומסלולים מקילים, תוך הגנה על סעיף הנכד בחוק השבות.',
+          'פלורליזם מלא: הכרה סטטוטורית בגיור רפורמי וקונסרבטיבי לעניין השבות והמרשם, וניתוק המרשם מהממסד הרבני.',
+        ],
+      },
+    },
+    stances: { shas: 0, utj: 0, farRight: 0.2, raam: 0.8, likud: 1, kacholLavan: 1.8, yashar: 2, bYachad: 2, yisraelBeiteinu: 2.4, hadashTaal: 2.8, democrats: 3 },
+  },
 ];
 
 const MAX_IDX = 3;
 
 /* ------------------------------------------------------------------
-   SCORING LOGIC (ללא שינוי)
+   SCORING LOGIC
+
+   הדמיון יורד ריבועית עם המרחק, ולא לינארית:
+       דמיון = (1 - מרחק/3)^SHARPNESS
+
+   למה? בסולם לינארי, בחירה בתשובה *סמוכה* לעמדת המפלגה נחשבה
+   ל-67% הסכמה — נדיבות מוגזמת שגרמה למפלגות רחוקות לקבל מעל 50%.
+   בחזקה 2 המספרים משקפים את המציאות:
+
+       מרחק 0 → 100%   (הסכמה מלאה)
+       מרחק 1 →  44%   (במקום 67%)
+       מרחק 2 →  11%   (במקום 33%)
+       מרחק 3 →   0%   (ניגוד מוחלט)
+
+   העלאת SHARPNESS מחדדת עוד את ההבחנה; הורדתה ל-1 מחזירה
+   את החישוב הלינארי הישן.
 ------------------------------------------------------------------- */
+const SHARPNESS = 2;
+
 const similarity = (choice, stance) =>
-  Math.max(0, 1 - Math.abs(choice - stance) / MAX_IDX);
+  Math.pow(Math.max(0, 1 - Math.abs(choice - stance) / MAX_IDX), SHARPNESS);
+
+/* סף ה"הסכמה" בכרטיסי הפירוט מוגדר במונחי *מרחק* (עד 0.6 מדרגות),
+   כדי שיישאר זהה גם אם משנים את SHARPNESS. */
+const AGREE_THRESHOLD = Math.pow(1 - 0.6 / MAX_IDX, SHARPNESS);
+
+/* ------------------------------------------------------------------
+   SHARED-RESULT LINKS
+   התשובות מקודדות בכתובת (?r=...) כך שאפשר לשתף תוצאה בלי שרת.
+   פורמט: [גרסה][s/a][זוג תווים לכל שאלה: בחירה (0-3 או x) + משקל (0-2)]
+   בדיקת האורך מוודאת שקישור ישן (עם מספר שאלות שונה) פשוט יידחה.
+------------------------------------------------------------------- */
+const WEIGHT_STEPS = [0.5, 1, 2];
+
+const encodeAnswers = (answers, difficulty) =>
+  '2' + (difficulty === 'advanced' ? 'a' : 's') +
+  answers.map((a) => `${a.choice === null ? 'x' : a.choice}${WEIGHT_STEPS.indexOf(a.weight)}`).join('');
+
+const decodeAnswers = (str) => {
+  if (!str || str[0] !== '2' || !'sa'.includes(str[1])) return null;
+  const body = str.slice(2);
+  if (body.length !== QUESTIONS.length * 2) return null;
+  const answers = [];
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const c = body[2 * i];
+    const w = WEIGHT_STEPS[parseInt(body[2 * i + 1], 10)];
+    const choice = c === 'x' ? null : parseInt(c, 10);
+    if (w === undefined || (choice !== null && !(choice >= 0 && choice <= 3))) return null;
+    answers.push({ choice, weight: w });
+  }
+  if (answers.every((a) => a.choice === null)) return null;
+  return { answers, difficulty: str[1] === 'a' ? 'advanced' : 'simple' };
+};
+
+/* גושים לפי מיקום על הציר — לתצוגת "לאן הולכת ההתאמה שלך" */
+const BLOCS = [
+  { id: 'left',   label: 'גוש השמאל', color: '#ef4444', parties: ['hadashTaal', 'raam', 'democrats'] },
+  { id: 'center', label: 'גוש המרכז', color: '#a855f7', parties: ['yashar', 'kacholLavan', 'bYachad'] },
+  { id: 'right',  label: 'גוש הימין', color: '#3b82f6', parties: ['yisraelBeiteinu', 'likud', 'shas', 'utj', 'farRight'] },
+];
 
 function computeResults(answers) {
   const answered = QUESTIONS.map((q, i) => ({ q, a: answers[i] }))
@@ -386,6 +524,9 @@ export default function ElectionsCompass() {
   );
   const [copied, setCopied] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [sharedView, setSharedView] = useState(false);
+  const [cmpA, setCmpA] = useState(null);
+  const [cmpB, setCmpB] = useState(null);
 
   useEffect(() => {
     if (!document.getElementById('app-font')) {
@@ -394,6 +535,18 @@ export default function ElectionsCompass() {
       link.href = 'https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Secular+One&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
+    }
+  }, []);
+
+  /* טעינת תוצאה משותפת מהכתובת (?r=...) */
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get('r');
+    const decoded = decodeAnswers(r);
+    if (decoded) {
+      setAnswers(decoded.answers);
+      setDifficulty(decoded.difficulty);
+      setSharedView(true);
+      setScreen('results');
     }
   }, []);
 
@@ -415,6 +568,12 @@ export default function ElectionsCompass() {
   const reset = () => {
     setAnswers(QUESTIONS.map(() => ({ choice: null, weight: 1 })));
     setIdx(0);
+    setCmpA(null);
+    setCmpB(null);
+    setSharedView(false);
+    if (window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
     setScreen('welcome');
   };
 
@@ -440,15 +599,118 @@ export default function ElectionsCompass() {
     }, 320);
   };
 
+  const shareUrl = () =>
+    `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
+
   const share = async () => {
     const top = results.scored[0];
-    const text = `מצפן הבחירות 2026 — ההתאמה הגבוהה שלי: ${top.name} (${top.match}%)`;
+    const url = shareUrl();
+    const text = `מצפן הבחירות 2026 — ההתאמה הגבוהה שלי: ${top.name} (${top.match}%). ומה יוצא לכם?`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'מצפן הבחירות 2026', text, url });
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return; // המשתמש ביטל — לא ליפול להעתקה
+      }
+    }
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(`${text}\n${url}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+    }
+  };
+
+  /* יצירת תמונת שיתוף (קנבס) — לוואטסאפ/אינסטגרם */
+  const shareImage = async () => {
+    const top = results.scored[0];
+    try {
+      await document.fonts.ready;
+      await Promise.all([
+        document.fonts.load("110px 'Secular One'"),
+        document.fonts.load("600 34px 'Assistant'"),
+      ]).catch(() => {});
+
+      const W = 1080, H = 1080;
+      const cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      const ctx = cv.getContext('2d');
+
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#eef2ff'); g.addColorStop(0.5, '#ffffff'); g.addColorStop(1, '#e0f2fe');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+      const blob = (x, y, r, c) => {
+        const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+        rg.addColorStop(0, c); rg.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+      };
+      blob(W - 120, 100, 420, 'rgba(147,197,253,0.55)');
+      blob(120, H - 120, 460, 'rgba(196,181,253,0.5)');
+
+      ctx.fillStyle = 'rgba(255,255,255,0.93)';
+      ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(90, 140, W - 180, H - 280, 48);
+      else ctx.rect(90, 140, W - 180, H - 280);
+      ctx.fill(); ctx.stroke();
+
+      ctx.direction = 'rtl';
+      ctx.textAlign = 'center';
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = "52px 'Secular One', 'Assistant', sans-serif";
+      ctx.fillText('מצפן הבחירות 2026', W / 2, 265);
+
+      ctx.font = "600 34px 'Assistant', sans-serif";
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('המפלגה הקרובה אליי ביותר', W / 2, 355);
+
+      ctx.fillStyle = top.hex;
+      let size = 118;
+      ctx.font = `${size}px 'Secular One', 'Assistant', sans-serif`;
+      while (ctx.measureText(top.name).width > W - 300 && size > 44) {
+        size -= 6;
+        ctx.font = `${size}px 'Secular One', 'Assistant', sans-serif`;
+      }
+      ctx.fillText(top.name, W / 2, 520);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = "170px 'Secular One', 'Assistant', sans-serif";
+      ctx.fillText(`${top.match}%`, W / 2, 720);
+
+      ctx.font = "600 32px 'Assistant', sans-serif";
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('התאמה לעמדותיי', W / 2, 780);
+
+      ctx.font = "700 36px 'Assistant', sans-serif";
+      ctx.fillStyle = '#4f46e5';
+      ctx.fillText('ומה יוצא לכם?', W / 2, 870);
+
+      ctx.direction = 'ltr';
+      ctx.font = "500 28px 'Assistant', sans-serif";
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(window.location.host, W / 2, H - 60);
+
+      const png = await new Promise((res) => cv.toBlob(res, 'image/png'));
+      const file = new File([png], 'elections-compass.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'מצפן הבחירות 2026' });
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(png);
+      a.download = 'elections-compass.png';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      console.error('share image failed', e);
     }
   };
 
@@ -469,11 +731,11 @@ export default function ElectionsCompass() {
               איפה העמדות שלך פוגשות את המציאות?
             </p>
             <p className="relative text-[17px] md:text-base text-slate-500 leading-relaxed max-w-lg mx-auto mb-8">
-              שמונה שאלות על נושאי הליבה. לכל מפלגה יש עמדה מוצהרת, ואנחנו מודדים עד כמה התשובות שלך קרובות אליה — תוך התחשבות בנושאים שבאמת חשובים לך.
+              אחת־עשרה שאלות על נושאי הליבה. לכל מפלגה יש עמדה מוצהרת, ואנחנו מודדים עד כמה התשובות שלך קרובות אליה — תוך התחשבות בנושאים שבאמת חשובים לך.
             </p>
             <div className="relative bg-indigo-50/70 border border-indigo-100 p-5 rounded-2xl text-[15px] md:text-sm text-slate-600 mb-8 flex items-start gap-3 text-right">
               <Info className="w-5 h-5 flex-shrink-0 text-indigo-500 mt-0.5" />
-              <p className="leading-relaxed">השאלון אובייקטיבי ומחלק בדיוק את אותו משקל לכל המפלגות. האחוזים בסוף הם התאמה אמיתית — לא סקר פופולריות.</p>
+              <p className="leading-relaxed">השאלון אובייקטיבי ומחלק בדיוק את אותו משקל לכל המפלגות. האחוז מודד עד כמה עמדתך <b>קרובה</b> לעמדת המפלגה בכל שאלה — הסכמה מלאה שווה 100%, וכל התרחקות מורידה את הציון בחדות. אלה אחוזי התאמה אמיתיים, לא סקר פופולריות.</p>
             </div>
             <button onClick={() => setScreen('difficulty')} className={`${BTN_PRIMARY} w-full sm:w-auto text-lg`}>
               בואו נתחיל <ChevronLeft className="w-5 h-5" />
@@ -676,9 +938,53 @@ export default function ElectionsCompass() {
 
   const timelineParties = [...scored].sort((a, b) => a.position - b.position);
 
+  /* --- תובנות חכמות --- */
+
+  /* "ההפתעה שלך": הסכמה נקודתית עם מפלגה מהחצי התחתון של הדירוג */
+  const half = Math.floor(scored.length / 2);
+  let surprise = null;
+  scored.slice(half).forEach((p, j) => {
+    p.perQuestion.forEach((rec) => {
+      if (rec.sim >= AGREE_THRESHOLD && (!surprise || rec.sim > surprise.sim)) {
+        surprise = { party: p, rank: half + j + 1, category: rec.category, sim: rec.sim };
+      }
+    });
+  });
+
+  /* התאמה ממוצעת לכל גוש */
+  const blocScores = BLOCS.map((b) => {
+    const members = scored.filter((p) => b.parties.includes(p.id));
+    const avg = Math.round(members.reduce((sum, p) => sum + p.match, 0) / members.length);
+    return { ...b, avg };
+  });
+
+  /* השוואת שתי מפלגות */
+  const cmpAId = cmpA ?? scored[0].id;
+  const cmpBId = cmpB ?? scored[1].id;
+  const cmpPartyA = scored.find((p) => p.id === cmpAId);
+  const cmpPartyB = scored.find((p) => p.id === cmpBId);
+  const answeredQuestions = QUESTIONS.map((q, i) => ({ q, a: answers[i] }))
+    .filter(({ a }) => a.choice !== null);
+
   return (
     <AppShell center={false}>
       <div className="max-w-5xl w-full mx-auto space-y-5 md:space-y-6 pb-16">
+
+        {/* באנר תוצאה משותפת */}
+        {sharedView && (
+          <div className="rounded-3xl border border-indigo-200 bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 p-5 md:p-6 text-white shadow-lg shadow-indigo-300/50 anim-pop flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-right">
+              <p className="font-extrabold text-lg">מישהו שיתף איתך את התוצאה שלו 👀</p>
+              <p className="text-indigo-100 text-sm font-medium">כך נראית ההתאמה הפוליטית שלו. סקרנים מה יוצא לכם?</p>
+            </div>
+            <button
+              onClick={reset}
+              className={`flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-extrabold bg-white text-indigo-700 hover:bg-indigo-50 transition-colors shadow-md ${FOCUS}`}
+            >
+              גלו את ההתאמה שלכם <ChevronLeft className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* Winner Hero */}
         <div className={`${CARD} p-6 md:p-12 text-center relative overflow-hidden anim-pop`}>
@@ -746,6 +1052,50 @@ export default function ElectionsCompass() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* תובנות: ההפתעה שלך + התאמה לפי גושים */}
+        <div className="grid md:grid-cols-2 gap-5 md:gap-6">
+          {surprise && (
+            <div className={`${CARD} p-5 md:p-8 anim-enter`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2.5 rounded-2xl bg-amber-100">
+                  <Lightbulb className="w-5 h-5 text-amber-600" />
+                </div>
+                <h3 className="text-xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ההפתעה שלך</h3>
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[16px] md:text-base">
+                למרות ש<b style={{ color: surprise.party.hex }}>{surprise.party.name}</b> נמצאת
+                רק במקום ה־{surprise.rank} בדירוג שלך, דווקא בנושא{' '}
+                <b>{surprise.category}</b> העמדה שלך קרובה מאוד לעמדתה. גם בין יריבים פוליטיים
+                יש לפעמים נקודות הסכמה לא צפויות.
+              </p>
+            </div>
+          )}
+
+          <div className={`${CARD} p-5 md:p-8 anim-enter ${surprise ? '' : 'md:col-span-2'}`}>
+            <h3 className="text-xl mb-1 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ההתאמה שלך לפי גושים</h3>
+            <p className="text-slate-500 text-sm font-medium mb-5">ממוצע ההתאמה לכל המפלגות בכל גוש</p>
+            <div className="space-y-4">
+              {blocScores.map((b) => (
+                <div key={b.id}>
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="font-bold text-slate-700 text-[15px] flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: b.color }} />
+                      {b.label}
+                    </span>
+                    <span className="font-extrabold text-slate-700 tabular-nums text-sm">{b.avg}%</span>
+                  </div>
+                  <div className="h-3 rounded-full bg-slate-200/70 overflow-hidden">
+                    <div
+                      className="anim-bar h-full rounded-full"
+                      style={{ width: `${b.avg}%`, backgroundColor: b.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -896,6 +1246,67 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
+        {/* השוואה בין שתי מפלגות */}
+        <div className={`${CARD} p-5 md:p-10 anim-enter`}>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <ArrowRightLeft className="w-6 h-6 text-indigo-500" />
+            <h3 className="text-2xl text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
+              ראש בראש
+            </h3>
+          </div>
+          <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">
+            בחרו שתי מפלגות וראו עד כמה כל אחת קרובה לעמדתך, נושא מול נושא
+          </p>
+
+          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto mb-8">
+            {[
+              { val: cmpAId, set: setCmpA, party: cmpPartyA },
+              { val: cmpBId, set: setCmpB, party: cmpPartyB },
+            ].map(({ val, set, party }, side) => (
+              <div key={side}>
+                <select
+                  value={val}
+                  onChange={(e) => set(e.target.value)}
+                  className={`w-full p-3 rounded-xl border-2 bg-white font-bold text-slate-800 text-sm md:text-base cursor-pointer ${FOCUS}`}
+                  style={{ borderColor: `${party.hex}60` }}
+                >
+                  {scored.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name} — {p.match}%</option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4 max-w-2xl mx-auto">
+            {answeredQuestions.map(({ q, a }) => {
+              const simA = similarity(a.choice, q.stances[cmpAId]);
+              const simB = similarity(a.choice, q.stances[cmpBId]);
+              return (
+                <div key={q.id} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
+                  <p className="font-bold text-slate-700 text-[15px] mb-3">{q.category}</p>
+                  {[
+                    { sim: simA, party: cmpPartyA },
+                    { sim: simB, party: cmpPartyB },
+                  ].map(({ sim: sv, party }, k) => (
+                    <div key={k} className="flex items-center gap-3 mb-1.5 last:mb-0">
+                      <span className="w-24 md:w-32 text-xs md:text-sm font-bold truncate flex-shrink-0" style={{ color: party.hex }}>
+                        {party.name}
+                      </span>
+                      <div className="flex-1 h-2.5 rounded-full bg-slate-200/80 overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${Math.round(sv * 100)}%`, backgroundColor: party.hex }} />
+                      </div>
+                      <span className="w-9 text-left text-xs font-extrabold text-slate-500 tabular-nums flex-shrink-0">
+                        {Math.round(sv * 100)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Detailed Breakdown */}
         <div className={`${CARD} p-5 md:p-10 anim-enter`}>
           <h3 className="text-2xl md:text-3xl mb-6 md:mb-8 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
@@ -920,7 +1331,7 @@ export default function ElectionsCompass() {
 
               const agree = PARTY_IDS
                 .map((pid) => ({ ...PARTIES[pid], sim: similarity(a.choice, q.stances[pid]) }))
-                .filter((p) => p.sim >= 0.8)
+                .filter((p) => p.sim >= AGREE_THRESHOLD)
                 .sort((x, y) => y.sim - x.sim);
 
               return (
@@ -966,7 +1377,10 @@ export default function ElectionsCompass() {
         <div className="flex flex-col sm:flex-row flex-wrap justify-center items-stretch sm:items-center gap-3 pt-2">
           <button onClick={share} className={`${BTN_PRIMARY} text-lg`}>
             {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
-            {copied ? 'התוצאה הועתקה!' : 'שיתוף תוצאה'}
+            {copied ? 'הקישור הועתק!' : 'שיתוף התוצאה'}
+          </button>
+          <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
+            <Download className="w-5 h-5" /> תמונה לשיתוף
           </button>
           <button onClick={() => { setIdx(0); setScreen('quiz'); }} className={`${BTN_SECONDARY} text-lg`}>
             <RotateCcw className="w-5 h-5" /> לערוך תשובות
