@@ -3,7 +3,7 @@ import {
   ChevronLeft, ChevronRight, RotateCcw, Vote, Shield, Scale, Coins,
   BookOpen, Users, Map, BrainCircuit, MessageCircleHeart, Heart,
   Star, Info, Check, Share2, Sparkles, Coffee, Loader2, PartyPopper, GraduationCap, Landmark, Globe,
-  Download, Lightbulb, Fingerprint, Swords
+  Download, Lightbulb, Fingerprint, Swords, UserPlus
 } from 'lucide-react';
 
 /* ==================================================================
@@ -1080,6 +1080,7 @@ export default function ElectionsCompass() {
 
   const [jokeIndex, setJokeIndex] = useState(0);
   const [sharedView, setSharedView] = useState(false);
+  const [guestMode, setGuestMode] = useState(false); // מכשיר משותף: משחק חדש שלא דורס את הנתונים של הבעלים
   const [copied, setCopied] = useState(false);
   const [locked, setLocked] = useState(false);
   const [toast, setToast] = useState(null);
@@ -1096,11 +1097,12 @@ export default function ElectionsCompass() {
     return () => clearInterval(t);
   }, [state.screen]);
 
-  /* שמירה — אבל לא כשצופים בתוצאה של מישהו אחר (אחרת נדרוס את ההתקדמות של המבקר) */
+  /* שמירה — לא בצפייה בתוצאה של מישהו אחר, ולא במצב אורח.
+     בשני המקרים אלו לא הנתונים של בעל המכשיר, ואסור לדרוס אותם. */
   useEffect(() => {
-    if (sharedView) return;
+    if (sharedView || guestMode) return;
     safeStorage.set(STORAGE_KEY, JSON.stringify(state));
-  }, [state, sharedView]);
+  }, [state, sharedView, guestMode]);
 
   useEffect(() => {
     if (!document.getElementById('app-font')) {
@@ -1141,6 +1143,24 @@ export default function ElectionsCompass() {
       window.history.replaceState({}, '', window.location.pathname);
     }
     setState(loadInitialState());
+  };
+
+  /* מצב אורח — למסירת הטלפון לחבר. שאלון נקי לגמרי, בלי לגעת בנתונים השמורים. */
+  const startGuestSession = () => {
+    setSharedView(false);
+    setGuestMode(true);
+    if (window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    setState({ ...freshState(), screen: 'difficulty' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /* חזרה לבעל המכשיר — הנתונים שלו מעולם לא נגעו בהם */
+  const exitGuestSession = () => {
+    setGuestMode(false);
+    setState(loadInitialState());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   const setAnswer = (patch) => {
@@ -1195,6 +1215,30 @@ export default function ElectionsCompass() {
 
   const shareUrl = () =>
     `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
+
+  /* קישור הזמנה — הכתובת הנקייה, בלי התשובות שלי מקודדות בתוכה.
+     מי שיפתח אותו יקבל שאלון ריק משלו. זה הקישור שרוצים לשלוח לחברים. */
+  const inviteUrl = () => `${window.location.origin}${window.location.pathname}`;
+
+  const [invited, setInvited] = useState(false);
+  const shareGame = async () => {
+    const url = inviteUrl();
+    const text = 'מצפן הבחירות 2026 — 11 שאלות, ומגלים לאיזו מפלגה אתם באמת הכי קרובים. נסו בעצמכם:';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'מצפן הבחירות 2026', text, url });
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      haptic.success();
+      setInvited(true);
+      setTimeout(() => setInvited(false), 2000);
+    } catch { showToast('לא הצלחנו להעתיק את הקישור'); }
+  };
 
   const shareLink = async () => {
     if (!results.scored || results.scored.length === 0) return;
@@ -1623,6 +1667,18 @@ export default function ElectionsCompass() {
     <AppShell center={false}>
       <div className="max-w-5xl w-full mx-auto space-y-6 pb-16">
 
+        {guestMode && (
+          <div className="anim-enter bg-amber-50 border border-amber-200 rounded-3xl p-4 md:p-5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-right">
+            <div className="p-2.5 bg-amber-100 rounded-2xl flex-shrink-0"><Info className="w-5 h-5 text-amber-600" /></div>
+            <p className="flex-1 text-sm font-bold text-amber-900">
+              מצב אורח — התוצאות האלה לא נשמרות במכשיר, והן לא דורסות את התוצאות של בעל הטלפון.
+            </p>
+            <button onClick={exitGuestSession} className={`flex-shrink-0 px-5 py-2.5 rounded-xl font-bold bg-white text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors ${FOCUS}`}>
+              חזרה לתוצאות שלי
+            </button>
+          </div>
+        )}
+
         {sharedView && (
           <div className="rounded-3xl border border-indigo-200 bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 p-5 md:p-6 text-white shadow-lg shadow-indigo-300/50 anim-pop flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-right">
@@ -1796,27 +1852,39 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
-        {/* 5. Actions — בצפייה בתוצאה של מישהו אחר לא מציגים עריכה/שיתוף (זו לא התוצאה שלך) */}
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 pt-6">
-          {sharedView ? (
-            <button onClick={exitSharedView} className={`${BTN_PRIMARY} text-lg`}>
-              גלו את ההתאמה שלכם <ChevronLeft className="w-5 h-5" />
+        {/* 5. Actions */}
+        {sharedView ? (
+          /* צופה בתוצאה של מישהו אחר — כל המטרה כאן היא להתחיל שאלון משלו */
+          <div className={`${CARD} p-6 md:p-8 text-center anim-enter`}>
+            <h3 className="text-2xl md:text-3xl mb-2 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ומה יוצא לכם?</h3>
+            <p className="text-slate-500 font-medium mb-5">אלה התוצאות של מי ששלח לכם את הקישור. השאלון שלכם עדיין ריק — 11 שאלות ומגלים.</p>
+            <button onClick={exitSharedView} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden text-lg px-10`}>
+              להתחיל את השאלון שלי <ChevronLeft className="w-5 h-5" />
             </button>
-          ) : (
-            <>
-              <button onClick={shareLink} className={`${BTN_PRIMARY} text-lg`}>
-                {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף קישור'}
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 pt-6">
+            <button onClick={shareLink} className={`${BTN_PRIMARY} text-lg`}>
+              {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף התוצאה שלי'}
+            </button>
+            {/* קישור נקי — החבר מקבל שאלון ריק משלו, לא את התוצאות שלי */}
+            <button onClick={shareGame} className={`${BTN_SECONDARY} text-lg`}>
+              {invited ? <Check className="w-5 h-5" /> : <Users className="w-5 h-5" />} {invited ? 'הועתק!' : 'הזמנת חבר לשחק'}
+            </button>
+            <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
+              <Download className="w-5 h-5" /> תמונה לשיתוף
+            </button>
+            <button onClick={() => setState(prev => ({ ...prev, screen: 'quiz', idx: 0, review: true }))} className={`${BTN_SECONDARY} text-lg`}>
+              <RotateCcw className="w-5 h-5" /> עריכת תשובות
+            </button>
+            {!guestMode && (
+              <button onClick={startGuestSession} className={`${BTN_SECONDARY} text-lg`}>
+                <UserPlus className="w-5 h-5" /> מישהו אחר רוצה לנסות?
               </button>
-              <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
-                <Download className="w-5 h-5" /> תמונה לשיתוף
-              </button>
-              <button onClick={() => setState(prev => ({ ...prev, screen: 'quiz', idx: 0, review: true }))} className={`${BTN_SECONDARY} text-lg`}>
-                <RotateCcw className="w-5 h-5" /> עריכת תשובות
-              </button>
-              <button onClick={reset} className={`${BTN_GHOST} justify-center`}>מחיקת נתונים והתחלה</button>
-            </>
-          )}
-        </div>
+            )}
+            <button onClick={reset} className={`${BTN_GHOST} justify-center`}>מחיקת נתונים והתחלה</button>
+          </div>
+        )}
 
       </div>
     </AppShell>
