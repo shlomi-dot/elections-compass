@@ -7,26 +7,27 @@ import {
 } from 'lucide-react';
 
 /* ==================================================================
-   DESIGN SYSTEM
+   DESIGN SYSTEM - GEMINI UI UPGRADE (Rich Colors Edition)
 ================================================================== */
 const FONT_BODY = "'Assistant', system-ui, sans-serif";
 const FONT_DISPLAY = "'Secular One', 'Assistant', sans-serif";
-/* מסך הפתיחה משתמש בפונט הממשק במשקל הכבד ביותר, לא ב-Secular One.
-   Secular One קיים במשקל אחד בלבד, ולכן חייבים לציין fontWeight מפורשות כאן. */
 const FONT_HERO = "'Assistant', system-ui, sans-serif";
 const HERO_HEAVY = { fontFamily: FONT_HERO, fontWeight: 800 };
 
-const CARD = 'glass-card bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-3xl shadow-xl shadow-indigo-200/40';
-const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white';
-const BTN_PRIMARY = `btn-3d inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white
-  bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-[length:200%_100%] bg-right
-  hover:bg-left shadow-lg shadow-indigo-300/60 hover:shadow-indigo-400/60 ${FOCUS}`;
-const BTN_SECONDARY = `btn-3d inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-slate-700
-  bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm ${FOCUS}`;
-const BTN_GHOST = `inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-900 transition-colors ${FOCUS}`;
+// Upgraded Glassmorphism: softer, Apple-like frosted glass, delicate shadows
+const CARD = 'glass-card bg-white/70 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl shadow-indigo-900/5';
+const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white/50';
+
+// Modernized buttons with smoother gradients and refined 3D effects
+const BTN_PRIMARY = `btn-3d relative overflow-hidden inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white
+  bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-600 bg-[length:200%_200%] 
+  hover:bg-right-bottom shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 transition-all duration-300 ${FOCUS}`;
+const BTN_SECONDARY = `btn-3d inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-indigo-900
+  bg-white/80 backdrop-blur-sm border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/80 shadow-sm transition-all duration-300 ${FOCUS}`;
+const BTN_GHOST = `inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-indigo-700 transition-colors ${FOCUS}`;
 
 /* ------------------------------------------------------------------
-   PARTIES
+   PARTIES (Untouched Logic)
 ------------------------------------------------------------------- */
 const PARTIES = {
   hadashTaal:      { id: 'hadashTaal',      name: 'חד"ש-תע"ל',            hex: '#dc2626', position: 5,  description: 'רשימה משותפת (עודה וטיבי). שוויון זכויות מלא, סיום השליטה בשטחים, ומדינה פלסטינית לצד ישראל.' },
@@ -45,7 +46,7 @@ const PARTIES = {
 const PARTY_IDS = Object.keys(PARTIES);
 
 /* ------------------------------------------------------------------
-   QUESTIONS - 11 Questions total (Unified)
+   QUESTIONS (Untouched Logic)
 ------------------------------------------------------------------- */
 const QUESTIONS = [
   {
@@ -88,7 +89,7 @@ const QUESTIONS = [
     id: 'religion', axis: 'civil', category: 'דת ומדינה', icon: BookOpen, accent: '#ca8a04',
     variants: {
       everyday: { text: 'מה לגבי אוטובוסים בשבת וחתונות?', options: [ 'אנחנו מדינה יהודית: אסור לפתוח עסקים או תחבורה ציבורית בשבת, ומתחתנים רק דרך הרבנות.', 'להשאיר את המצב כמו עכשיו. לא צריך לשנות חוקים או לפתוח מלחמות דת מיותרות.', 'שכל עיר תחליט לעצמה אם לפתוח אוטובוסים בשבת. ומי שלא יכול להתחתן ברבנות - שיתחתן בעירייה.', 'חופש מלא: אוטובוסים בשבת בכל הארץ, ואפשרות להתחתן בעירייה (ללא רבנות) למי שרק רוצה.' ] },
-      simple: { text: 'איך צריכים להיראות החיים הציבוריים מבחינת דת (שבת, נישואים)?', options: [ 'ישראל היא קודם כל מדינה יהודית: לאסור מרכולים בשבת, לאסור חמץ בבתי חולים, ונישואים רק דרך הרבנות.', 'לשמור על הסטטוס קוו: בלי פשרות דתיות אבל גם בלי לחוקק עכשיו תחבורה ציבורית בשבת, כדי למנוע קרע.', 'פתרון מקומי: ראשי ערים יחליטו על תחבורה ומסחר בשבת בעירם, ומסלול נישואים אזרחי למנועי חיתון.', 'הפרדה מוחלטת: תחבורה ציבורית בשבת בכל הארץ, נישואים אזרחיים לכולם וביטול תקציבים למוסדות ללא ליבה.' ] },
+      simple: { text: 'איך צריכים להיראות החיים הציבוריים מבחינת דת (שבת, נישואים)?', options: [ 'ישראל היא קודם כל מדינה יהודית: לאסור מרכולים בשבת, לאסור חמץ בבתי חולים, ונישואים רק דרך הרבנות.', 'לשמור על הסטטוס קוו: בלי פשרות דתיות אבל גם בלי לחוקק עכשיו תחבורה ציבורית בשבת, כדי למנוע קרע.', 'פתרון מקומי: ראשי ערים יחליטו על תחבורה ומסחר בשבת בעירם, וממסד אזרחי חלופי לנישואים למנועי חיתון.', 'הפרדה מוחלטת: תחבורה ציבורית בשבת בכל הארץ, נישואים אזרחיים לכולם וביטול תקציבים למוסדות ללא ליבה.' ] },
       advanced: { text: 'כיצד יש להכריע במאבק על עיצוב המרחב הציבורי ביחסי דת ומדינה?', options: [ 'הגברת הכפיפות להלכה במרחב הציבורי: שימור מונופול הרבנות בדיני אישות ואכיפת חוקי המרכולים ואיסור חמץ.', 'דבקות בסטטוס קוו ההיסטורי: הימנעות משינויים משפטיים רדיקליים או חקיקה חילונית, מתוך תפיסת ממלכתיות.', 'ביזור סמכויות: העברת סמכויות תחבורה ומסחר בשבת לשלטון המקומי, וממסד אזרחי חלופי לנישואין למנועי חיתון.', 'הפרדת דת ומדינה: נישואין וגירושין אזרחיים מלאים, שלילת סמכויות בתי הדין הרבניים ותחבורה ציבורית ארצית בשבת.' ] },
     },
     stances: { shas: 0, utj: 0, farRight: 0, raam: 0.3, likud: 1, kacholLavan: 1.6, yashar: 2, bYachad: 2, yisraelBeiteinu: 3, democrats: 3, hadashTaal: 3 },
@@ -152,16 +153,14 @@ const QUESTIONS = [
 const MAX_IDX = 3;
 
 /* ------------------------------------------------------------------
-   SCORING LOGIC - מתוקן לחישוב ריבועי חד יותר כמו בהצעה של קלוד
+   SCORING LOGIC
 ------------------------------------------------------------------- */
-const SHARPNESS = 2; // החישוב הריבועי שמבטיח שאחוזי ההתאמה יהיו יותר מדויקים ופחות "נדיבים" על פשרות קטנות
+const SHARPNESS = 2;
 
 const similarity = (choice, stance) =>
   Math.pow(Math.max(0, 1 - Math.abs(choice - stance) / MAX_IDX), SHARPNESS);
 
 const AGREE_THRESHOLD = Math.pow(1 - 0.6 / MAX_IDX, SHARPNESS);
-
-/* משקלי שאלות מ-0.5 עד 2 */
 const WEIGHT_STEPS = [0.5, 1, 2];
 
 const encodeAnswers = (answers, difficulty) =>
@@ -188,40 +187,25 @@ const decodeAnswers = (str) => {
 };
 
 /* ------------------------------------------------------------------
-   STORAGE — עטיפה בטוחה. localStorage יכול לזרוק שגיאה
-   (מצב פרטי ב-iOS, סביבות sandbox) ואסור שזה יפיל את האפליקציה.
-------------------------------------------------------------------- */
-/* ------------------------------------------------------------------
-   HAPTICS — משוב מישושי עדין ונעים למובייל.
-   פעימות קצרות ורכות במקום זמזום גס. עטוף כולו ב-try כי לא כל דפדפן
-   תומך (iOS Safari לא תומך ב-navigator.vibrate — שם פשוט לא ירגישו כלום,
-   בלי שגיאות). כל אינטראקציה מקבלת "חתימה" משלה כדי שהמשוב ירגיש מכוון.
+   STORAGE & HAPTICS
 ------------------------------------------------------------------- */
 const haptic = (() => {
   const can = typeof navigator !== 'undefined' && 'vibrate' in navigator;
   const fire = (pattern) => { if (!can) return; try { navigator.vibrate(pattern); } catch { /* noop */ } };
-  /* פעימות בודדות וקצרות. ריבוי פעימות מרגיש כמו זמזום, לא כמו הקשה —
-     נגיעה אחת חדה היא מה שנתפס כ"נעים". שום דבר מעל 12ms באינטראקציה רגילה. */
   return {
-    light:   () => fire(4),            // ניווט, צ'יפים, החלפת משקל — נגיעה קלילה
-    select:  () => fire(8),            // בחירת תשובה / מפלגה — טיק אחד חד ומספק
-    warning: () => fire([10, 60, 10]), // אזהרה — נדיר, ולכן מותר לו להיות מורגש
-    success: () => fire([8, 45, 14]),  // סיום/העתקה — שתי פעימות קלות, לא תרועה
+    light:   () => fire(4),
+    select:  () => fire(8),
+    warning: () => fire([10, 60, 10]),
+    success: () => fire([8, 45, 14]),
   };
 })();
 
 const STORAGE_KEY = 'electionsCompassData_v8';
 
 const safeStorage = {
-  get(key) {
-    try { return window.localStorage.getItem(key); } catch { return null; }
-  },
-  set(key, value) {
-    try { window.localStorage.setItem(key, value); } catch { /* אין אחסון — ממשיכים בזיכרון בלבד */ }
-  },
-  remove(key) {
-    try { window.localStorage.removeItem(key); } catch { /* noop */ }
-  },
+  get(key) { try { return window.localStorage.getItem(key); } catch { return null; } },
+  set(key, value) { try { window.localStorage.setItem(key, value); } catch { } },
+  remove(key) { try { window.localStorage.removeItem(key); } catch { } },
 };
 
 const makeShuffledOrders = () =>
@@ -240,7 +224,6 @@ const freshState = () => ({
   order: makeShuffledOrders(),
 });
 
-/* טעינת מצב שמור עם ולידציה מלאה — נתונים ישנים/פגומים לא מפילים את האפליקציה */
 const loadInitialState = () => {
   try {
     const saved = safeStorage.get(STORAGE_KEY);
@@ -264,7 +247,7 @@ const loadInitialState = () => {
     return {
       screen: ['welcome', 'difficulty', 'quiz', 'results'].includes(p.screen)
         ? p.screen
-        : (p.screen === 'loading' ? 'quiz' : 'welcome'), // ריענון באמצע מסך הטעינה לא יתקע ספינר לנצח
+        : (p.screen === 'loading' ? 'quiz' : 'welcome'),
       difficulty: ['everyday', 'simple', 'advanced'].includes(p.difficulty) ? p.difficulty : 'everyday',
       idx: Number.isInteger(p.idx) && p.idx >= 0 && p.idx < QUESTIONS.length ? p.idx : 0,
       review: false,
@@ -300,7 +283,6 @@ function computeResults(answers) {
 
   scored.sort((a, b) => b.match - a.match || a.position - b.position);
   
-  // Safe calculation for DNA axes
   const calcAxisScore = (axis, getValFn) => {
     const axisQuestions = answered.filter(({ q }) => q.axis === axis);
     if (axisQuestions.length === 0) return null;
@@ -317,24 +299,14 @@ function computeResults(answers) {
 
   const topParty = scored[0];
   const dna = {
-    security: { 
-      user: calcAxisScore('security', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), 
-      party: calcAxisScore('security', (q) => q.stances[topParty.id]) 
-    },
-    economy:  { 
-      user: calcAxisScore('economy', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), 
-      party: calcAxisScore('economy', (q) => q.stances[topParty.id]) 
-    },
-    civil:    { 
-      user: calcAxisScore('civil', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), 
-      party: calcAxisScore('civil', (q) => q.stances[topParty.id]) 
-    }
+    security: { user: calcAxisScore('security', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), party: calcAxisScore('security', (q) => q.stances[topParty.id]) },
+    economy:  { user: calcAxisScore('economy', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), party: calcAxisScore('economy', (q) => q.stances[topParty.id]) },
+    civil:    { user: calcAxisScore('civil', (q) => answers[QUESTIONS.findIndex(x=>x.id === q.id)]?.choice), party: calcAxisScore('civil', (q) => q.stances[topParty.id]) }
   };
 
   return { scored, answeredCount: answered.length, totalWeight, dna };
 }
 
-// Jokes for the loading screen (Easter egg)
 const LOADING_JOKES = [
   "מנסים להרכיב קואליציה...",
   "מוודאים שאף אחד לא מקליט את השיחה...",
@@ -345,7 +317,7 @@ const LOADING_JOKES = [
 ];
 
 /* ------------------------------------------------------------------
-   GLOBAL STYLES — אנימציות
+   GLOBAL STYLES — UI Upgrades Applied Here
 ------------------------------------------------------------------- */
 const GLOBAL_CSS = `
   @keyframes auroraFloat {
@@ -353,78 +325,65 @@ const GLOBAL_CSS = `
     33%      { transform: translate(4vw, -3vh) scale(1.12); }
     66%      { transform: translate(-3vw, 4vh) scale(0.93); }
   }
-  /* חשוב: הכניסות חייבות להסתיים ב-transform: none ולא ב-rotateX(0).
-     עם fill-mode: both הטרנספורם האחרון נשאר דבוק לאלמנט לנצח, הדפדפן
-     משאיר אותו בשכבת 3D מרוסטרת — והטקסט (במיוחד SVG) נשאר מטושטש. */
   @keyframes fadeSlideIn {
-    from { opacity: 0; transform: perspective(900px) rotateX(7deg) translateY(20px); }
-    99%  { opacity: 1; transform: perspective(900px) rotateX(0deg) translateY(0); }
+    from { opacity: 0; transform: perspective(900px) translateY(15px); }
+    99%  { opacity: 1; transform: perspective(900px) translateY(0); }
     to   { opacity: 1; transform: none; }
   }
+  @keyframes fadeSlideOut {
+    from { opacity: 1; transform: perspective(900px) translateY(0); }
+    to   { opacity: 0; transform: perspective(900px) translateY(-15px); }
+  }
   @keyframes popIn {
-    0%   { opacity: 0; transform: perspective(700px) scale(0.88) rotateX(8deg); }
-    70%  { transform: perspective(700px) scale(1.03) rotateX(-2deg); }
+    0%   { opacity: 0; transform: perspective(700px) scale(0.92) rotateX(4deg); }
+    70%  { transform: perspective(700px) scale(1.02) rotateX(-1deg); }
     99%  { opacity: 1; transform: perspective(700px) scale(1) rotateX(0deg); }
     100% { opacity: 1; transform: none; }
   }
-  @keyframes floatY {
-    0%, 100% { transform: translateY(0) rotateZ(0deg); }
-    50%      { transform: translateY(-7px) rotateZ(-2deg); }
-  }
-  .anim-float { animation: floatY 3.6s ease-in-out infinite; }
-  @keyframes barGrow { from { width: 0; } }
-  @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   
-  .anim-enter  { animation: fadeSlideIn .45s cubic-bezier(.22,1,.36,1) both; }
+  /* Smooth transition for switching questions */
+  .question-transition-enter { animation: fadeSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  .anim-enter  { animation: fadeSlideIn .5s cubic-bezier(.22,1,.36,1) both; }
   .anim-pop    { animation: popIn .5s cubic-bezier(.22,1,.36,1) both; }
-  .anim-bar    { animation: barGrow 1s cubic-bezier(.22,1,.36,1) both; }
-  .joke-anim   { animation: slideUpFade 0.5s ease-out both; }
-  .aurora-blob { animation: auroraFloat 24s ease-in-out infinite; will-change: transform; }
-  .aurora-blob.delay { animation-delay: -12s; }
-  @keyframes fadeOnly { from { opacity: 0; } to { opacity: 1; } }
+  .anim-bar    { transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+  .joke-anim   { animation: fadeSlideIn 0.5s ease-out both; }
+  .aurora-blob { animation: auroraFloat 28s ease-in-out infinite; will-change: transform; }
+  .aurora-blob.delay { animation-delay: -14s; }
 
-  /* "הפחתת תנועה" (iOS/אנדרואיד) מדליקה את הכלל הזה. פעם הוא כיבה הכול
-     והאפליקציה נראתה קפואה. עכשיו: תנועה מתמשכת ומטרידה — כבויה;
-     כניסות רכות של תוכן — נשארות, כהעלמה בלבד בלי תזוזה. */
   @media (prefers-reduced-motion: reduce) {
     .aurora-blob, .anim-float, .dial-pulse, .hero-needle, .cta-shine::after,
-    .dial-draw, .anim-bar { animation: none !important; }
-    .anim-enter, .anim-pop, .opt-enter, .joke-anim, .swatch {
-      animation: fadeOnly .35s ease-out both !important;
+    .dial-draw, .anim-bar { animation: none !important; transition: none !important; }
+    .anim-enter, .anim-pop, .opt-enter, .joke-anim, .swatch, .question-transition-enter {
+      animation: fadeOnly .3s ease-out both !important;
     }
     .btn-3d, .btn-3d:hover, .btn-3d:active { transform: none !important; }
   }
+  
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
 
-  /* --- מובייל: מגע ותחושה --- */
   button, select, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
-  /* אפקטי hover רק במכשירים שבאמת יש בהם עכבר — מונע "hover דביק" אחרי הקשה בטאץ' */
   @media (hover: none) and (pointer: coarse) {
     .hover\\:-translate-y-0\\.5:hover, .hover\\:-translate-y-1:hover { transform: none !important; }
     .group:hover .group-hover\\:scale-110 { transform: none !important; }
   }
 
-  /* --- מובייל: ביצועים --- */
   @media (max-width: 768px) {
-    .glass-card { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-    .aurora-blob { filter: blur(64px) !important; animation: none; }
+    .glass-card { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .aurora-blob { filter: blur(70px) !important; animation: none; }
   }
 
   @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
   .toast-anim { animation: toastIn .3s cubic-bezier(.22,1,.36,1) both; }
 
-  /* --- הדגשה גלובלית ---
-     כל הטקסט באפליקציה עולה דרגת משקל אחת: הבסיס הופך ל-600,
-     medium→700, bold/semibold→800. extrabold/black כבר בקצה ונשארים. */
   .app-bold { font-weight: 600; }
   .app-bold .font-medium { font-weight: 700 !important; }
   .app-bold .font-semibold { font-weight: 800 !important; }
   .app-bold .font-bold { font-weight: 800 !important; }
 
-  /* --- מסך הפתיחה --- */
   @keyframes needleSeek {
     0%   { transform: rotate(-58deg); }
     18%  { transform: rotate(46deg); }
@@ -439,15 +398,18 @@ const GLOBAL_CSS = `
   }
   .hero-needle { animation: needleSeek 8s cubic-bezier(.4,0,.2,1) infinite; }
 
+  /* Upgraded Shine effect */
   @keyframes shine {
-    0%   { transform: translateX(-140%) skewX(-18deg); }
-    100% { transform: translateX(260%) skewX(-18deg); }
+    0%   { transform: translateX(-150%) skewX(-25deg); }
+    20%  { transform: translateX(250%) skewX(-25deg); }
+    100% { transform: translateX(250%) skewX(-25deg); }
   }
   .cta-shine::after {
-    content: ''; position: absolute; top: 0; bottom: 0; width: 45%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.42), transparent);
-    animation: shine 3.4s ease-in-out infinite; animation-delay: 1s;
+    content: ''; position: absolute; top: 0; bottom: 0; width: 60%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    animation: shine 4s ease-in-out infinite;
   }
+  
   @keyframes swatchPop {
     0%   { opacity: 0; transform: translateY(8px) scale(.4); }
     70%  { transform: translateY(0) scale(1.18); }
@@ -455,22 +417,25 @@ const GLOBAL_CSS = `
   }
   .swatch { animation: swatchPop .5s cubic-bezier(.22,1,.36,1) both; }
 
-  /* --- המצפן ---
-     אין כאן טרנספורם תלת-ממדי על ה-SVG: דפדפנים מרסטרים טקסט פעם אחת בתוך
-     שכבת 3D ואז מותחים אותה כל פריים — מה שגורם לשמות המפלגות להיטשטש
-     ולרעוד. החוגה נשארת שטוחה וחדה; התנועה מגיעה מהמחט עצמה. */
-  .dial-needle { filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.35)); }
-  .dial-label { transition: fill .25s, font-weight .25s, opacity .25s; cursor: pointer; }
+  .dial-needle { filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.4)); }
+  .dial-label { transition: fill .2s, font-weight .2s, opacity .2s; cursor: pointer; }
 
-  /* --- כפתורים תלת-ממדיים --- */
-  .btn-3d { transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s; }
+  /* Refined 3D Buttons */
+  .btn-3d { transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s; }
   @media (hover: hover) {
-    .btn-3d:hover { transform: perspective(600px) translateY(-2px) rotateX(-5deg); }
+    .btn-3d:hover { transform: translateY(-2px); }
   }
-  .btn-3d:active { transform: perspective(600px) translateY(1px) rotateX(3deg) scale(.98); }
+  .btn-3d:active { transform: translateY(1px) scale(.98); }
 
-  /* --- כניסה מדורגת לאפשרויות בשאלון --- */
-  .opt-enter { animation: fadeSlideIn .45s cubic-bezier(.22,1,.36,1) both; }
+  .opt-enter { animation: fadeSlideIn .4s cubic-bezier(.22,1,.36,1) both; }
+  
+  /* Selection feedback animation */
+  @keyframes selectPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+  .opt-selected { animation: selectPulse 0.3s ease-out; }
 
   .dial-dot { transform-box: fill-box; transform-origin: center; }
   .dial-hit { outline: none; }
@@ -486,25 +451,25 @@ const GLOBAL_CSS = `
 ------------------------------------------------------------------- */
 function Background({ activeColor }) {
   return (
-    <div aria-hidden="true" className="fixed inset-0 overflow-hidden pointer-events-none transition-colors duration-1000 bg-gradient-to-b from-indigo-50 via-white to-sky-50">
+    <div aria-hidden="true" className="fixed inset-0 overflow-hidden pointer-events-none transition-colors duration-700 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100">
       <div 
-        className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-30"
+        className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-20"
         style={{
           background: activeColor 
-            ? `radial-gradient(circle at 50% 0%, ${activeColor} 0%, transparent 60%)` 
+            ? `radial-gradient(circle at 50% 0%, ${activeColor} 0%, transparent 70%)` 
             : 'transparent'
         }}
       />
-      <div className="aurora-blob absolute -top-40 -right-32 w-[34rem] h-[34rem] rounded-full bg-blue-300/40 blur-[110px]" />
-      <div className="aurora-blob delay absolute -bottom-44 -left-32 w-[36rem] h-[36rem] rounded-full bg-violet-300/35 blur-[120px]" />
-      <div className="aurora-blob absolute top-1/3 left-1/2 w-[22rem] h-[22rem] rounded-full bg-cyan-300/30 blur-[100px]" />
+      <div className="aurora-blob absolute -top-40 -right-32 w-[34rem] h-[34rem] rounded-full bg-blue-300/30 blur-[120px]" />
+      <div className="aurora-blob delay absolute -bottom-44 -left-32 w-[36rem] h-[36rem] rounded-full bg-violet-300/20 blur-[130px]" />
+      <div className="aurora-blob absolute top-1/3 left-1/2 w-[22rem] h-[22rem] rounded-full bg-cyan-300/20 blur-[100px]" />
       <div
-        className="absolute inset-0 opacity-[0.35]"
+        className="absolute inset-0 opacity-[0.2]"
         style={{
-          backgroundImage: 'radial-gradient(rgba(99,102,241,0.16) 1.5px, transparent 1.5px)',
-          backgroundSize: '28px 28px',
-          maskImage: 'radial-gradient(ellipse at center, black 25%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 25%, transparent 75%)',
+          backgroundImage: 'radial-gradient(rgba(99,102,241,0.15) 1.5px, transparent 1.5px)',
+          backgroundSize: '24px 24px',
+          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
         }}
       />
     </div>
@@ -515,7 +480,7 @@ function AppShell({ children, center = true, activeColor = null }) {
   return (
     <div
       dir="rtl"
-      className={`app-bold relative min-h-screen text-slate-800 ${center ? 'flex items-start md:items-center justify-center' : ''} px-4 py-6 md:p-8`}
+      className={`app-bold relative min-h-screen text-slate-800 ${center ? 'flex items-start md:items-center justify-center' : ''} px-4 py-6 md:p-8 overflow-x-hidden`}
       style={{ fontFamily: FONT_BODY, paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
     >
       <style>{GLOBAL_CSS}</style>
@@ -525,11 +490,8 @@ function AppShell({ children, center = true, activeColor = null }) {
   );
 }
 
-
 /* ------------------------------------------------------------------
-   מסך הפתיחה — שושנת רוחות אמיתית. עיגול מלא, כוכב שמונה קרניים,
-   טבעת מדורגת עם צבעי כל המפלגות בחצי העליון, ומחט שמחפשת כיוון
-   ואז ננעלת. אותה שפה חזותית של המצפן בתוצאות, רק כאובייקט.
+   COMPASS ROSE
 ------------------------------------------------------------------- */
 function CompassRose() {
   const C = 150, R_OUT = 100, R_RING = 88, R_DOTS = 77, R_FACE = 68;
@@ -542,7 +504,6 @@ function CompassRose() {
     return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${r} ${r} 0 0 ${to < from ? 1 : 0} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
   };
 
-  /* כוכב שמונה קרניים: ארבע ארוכות (ראשיות) וארבע קצרות (משניות) */
   const star = (long, short) =>
     [0, 45, 90, 135, 180, 225, 270, 315]
       .map((deg, i) => {
@@ -578,32 +539,27 @@ function CompassRose() {
           <stop offset="100%" stopColor="#0f172a" />
         </linearGradient>
         <filter id="roseShadow" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#4338ca" floodOpacity="0.20" />
+          <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#312e81" floodOpacity="0.15" />
         </filter>
       </defs>
 
       <g filter="url(#roseShadow)">
-        {/* גוף המצפן */}
         <circle cx={C} cy={C} r={R_OUT} fill="#fff" stroke="#e2e8f0" strokeWidth="1.5" />
         <circle cx={C} cy={C} r={R_FACE + 14} fill="url(#roseFace)" stroke="#e2e8f0" strokeWidth="1" />
       </g>
 
-      {/* טבעת: חצי עליון בצבעי הגושים, חצי תחתון ניטרלי */}
       <path d={arc(180, 0, R_RING)} fill="none" stroke="url(#roseArc)" strokeWidth="5" strokeLinecap="round" opacity="0.9" />
       <path d={arc(0, -180, R_RING)} fill="none" stroke="#e2e8f0" strokeWidth="5" strokeLinecap="round" />
 
-      {/* שנתות סביב כל ההיקף */}
       {Array.from({ length: 72 }, (_, i) => i * 5).map((deg) => {
         const major = deg % 45 === 0;
         const a = pt(deg, R_RING - 6), b = pt(deg, R_RING - (major ? 13 : 9));
         return <line key={deg} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={major ? '#94a3b8' : '#cbd5e1'} strokeWidth={major ? 1.8 : 1} strokeLinecap="round" />;
       })}
 
-      {/* כוכב שושנת הרוחות */}
       <path d={star(R_FACE - 4, 26)} fill="url(#roseStar)" opacity="0.5" />
       <path d={star(R_FACE - 4, 26)} fill="none" stroke="#a5b4fc" strokeWidth="0.8" opacity="0.9" />
 
-      {/* המפלגות על הקשת העליונה, לפי מיקומן האמיתי */}
       {PARTY_IDS.map((id, i) => {
         const deg = 180 - (PARTIES[id].position / 100) * 180;
         const c = pt(deg, R_DOTS);
@@ -615,20 +571,18 @@ function CompassRose() {
         );
       })}
 
-      {/* מחט — סורקת, מהססת, וננעלת */}
       <g className="hero-needle" style={{ transformOrigin: `${C}px ${C}px` }}>
-        <polygon points={`${C},${C - (R_FACE - 2)} ${C - 6},${C} ${C},${C + (R_FACE - 2)} ${C + 6},${C}`} fill="url(#roseNeedle)" style={{ filter: 'drop-shadow(0 2px 3px rgba(15,23,42,.28))' }} />
+        <polygon points={`${C},${C - (R_FACE - 2)} ${C - 6},${C} ${C},${C + (R_FACE - 2)} ${C + 6},${C}`} fill="url(#roseNeedle)" style={{ filter: 'drop-shadow(0 4px 6px rgba(15,23,42,.3))' }} />
       </g>
       <circle cx={C} cy={C} r="9" fill="#1e293b" stroke="#fff" strokeWidth="3" />
       <circle cx={C} cy={C} r="3" fill="#818cf8" />
 
-      {/* כיווני העולם הפוליטי — מחוץ לגוף המצפן, לא על השנתות */}
       {[
         { t: 'מרכז', deg: 90, w: 36, hex: '#a855f7' },
         { t: 'שמאל', deg: 180, w: 36, hex: '#ef4444' },
         { t: 'ימין', deg: 0, w: 30, hex: '#3b82f6' },
       ].map(({ t, deg, w, hex }) => {
-        const p = pt(deg, R_OUT + 6 + w / 2); // הדחיפה תלוית-רוחב: הקצה הפנימי תמיד מחוץ לגוף
+        const p = pt(deg, R_OUT + 6 + w / 2); 
         return (
           <text key={t} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle" fontSize="12.5" fontWeight="800" fill={hex}>
             {t}
@@ -639,9 +593,6 @@ function CompassRose() {
   );
 }
 
-/* ------------------------------------------------------------------
-   מספר שסופר את עצמו — לאחוז ההתאמה בהירו ובמצפן
-------------------------------------------------------------------- */
 function AnimatedPercent({ value, duration = 1200, className = '', style }) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -661,21 +612,12 @@ function AnimatedPercent({ value, duration = 1200, className = '', style }) {
 }
 
 /* ------------------------------------------------------------------
-   המצפן הפוליטי — חוגה חצי-מעגלית עם מחט קפיצית חיה.
-   המפלגות יושבות על הקשת לפי מיקומן במפה (שמאל→ימין), גודל וזוהר
-   לפי אחוז ההתאמה. המחט נכנסת בתנופה מצד שמאל, עוברת overshoot קטן
-   ונרגעת על ההתאמה הגבוהה ביותר (פיזיקת קפיץ אמיתית, לא easing).
-   הקשה על מפלגה מזיזה אליה את המחט. SVG טהור — אפס עלות ביצועים.
+   COMPASS DIAL
 ------------------------------------------------------------------- */
-/* שתי גיאומטריות לחוגה.
-   דסקטופ: קנבס רחב ושטוח — יש מקום לשמות המפלגות סביב הקשת.
-   מובייל: קנבס כמעט ריבועי שמנצל את הגובה של הטלפון, בלי טבעת שמות
-   (בטלפון הן היו נדחסות ל-6px). הרדיוס גדול ביחס לרוחב, כך שהמצפן
-   עצמו נראה גדול — והשמות עוברים לרשימה נגיעה מתחתיו. */
 const DIAL_DESKTOP = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300', labels: true, dotScale: 1, endLabelsInside: false };
 const DIAL_MOBILE  = { CX: 170, CY: 176, R: 152, VIEW: '0 0 340 198', labels: false, dotScale: 0.95, endLabelsInside: true };
 
-const dialAngle = (position) => 180 - (position / 100) * 180; // 0=ימין, 180=שמאל
+const dialAngle = (position) => 180 - (position / 100) * 180; 
 const dialPointOn = (D, angleDeg, radius) => {
   const rad = (angleDeg * Math.PI) / 180;
   return { x: D.CX + radius * Math.cos(rad), y: D.CY - radius * Math.sin(rad) };
@@ -687,7 +629,6 @@ const arcPathOn = (D, fromDeg, toDeg, radius) => {
   return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${radius} ${radius} 0 0 ${sweep} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
 };
 
-/* מזהה מובייל וחי לשינויי גודל/סיבוב מסך */
 const useIsMobile = () => {
   const [m, setM] = useState(() => (typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false));
   useEffect(() => {
@@ -706,18 +647,17 @@ function CompassDial({ scored, top }) {
   const arcPath = (f, t, r) => arcPathOn(DIAL, f, t, r);
 
   const [selectedId, setSelectedId] = useState(top.id);
-  const [live, setLive] = useState(false); // המחט יוצאת לדרך רק כשהמצפן נכנס למסך
+  const [live, setLive] = useState(false); 
   useEffect(() => { setSelectedId(top.id); }, [top.id]);
   const selected = scored.find((p) => p.id === selectedId) || top;
 
   const wrapRef = useRef(null);
   const needleRef = useRef(null);
-  const fillRef = useRef(null);   // קשת הצבע שממלאת את המסלול עד המחט
-  const trailRef = useRef(null);  // שובל motion-blur מאחורי המחט
+  const fillRef = useRef(null);   
+  const trailRef = useRef(null);  
   const spring = useRef({ x: -95, v: 0, raf: 0 });
-  const targetDeg = 90 - dialAngle(selected.position); // 0 = מחט למעלה
+  const targetDeg = 90 - dialAngle(selected.position); 
 
-  /* טריגר כניסה: ברגע שהמצפן נראה — המחט מתעוררת */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return undefined;
@@ -728,7 +668,6 @@ function CompassDial({ scored, top }) {
     return () => io.disconnect();
   }, []);
 
-  /* פיזיקת קפיץ + עדכון מילוי ושובל בכל פריים */
   useEffect(() => {
     const a = spring.current;
     const needle = needleRef.current;
@@ -736,7 +675,7 @@ function CompassDial({ scored, top }) {
 
     const paint = (deg, vel) => {
       needle.setAttribute('transform', `rotate(${deg.toFixed(2)} ${DIAL.CX} ${DIAL.CY})`);
-      const g = Math.max(0, Math.min(180, 90 - deg)); // זווית המחט בקואורדינטות החוגה
+      const g = Math.max(0, Math.min(180, 90 - deg)); 
       if (fillRef.current) fillRef.current.setAttribute('d', arcPath(180, g, DIAL.R));
       if (trailRef.current) {
         const len = Math.min(30, Math.abs(vel) * 0.11);
@@ -762,7 +701,7 @@ function CompassDial({ scored, top }) {
 
     cancelAnimationFrame(a.raf);
     let last = performance.now();
-    const K = 90, D = 10; // קשיחות וריסון — overshoot נעים
+    const K = 90, D = 10; 
     const step = (now) => {
       const dt = Math.min(0.032, (now - last) / 1000);
       last = now;
@@ -774,20 +713,16 @@ function CompassDial({ scored, top }) {
         a.raf = requestAnimationFrame(step);
       } else {
         a.x = targetDeg; a.v = 0; paint(targetDeg, 0);
-        haptic.light(); // "טיק" קטן כשהמחט ננעלת
+        haptic.light(); 
       }
     };
     a.raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(a.raf);
-  }, [targetDeg, live, isMobile]);
+  }, [targetDeg, live, isMobile, DIAL]);
 
   const pick = (p) => { if (p.id !== selectedId) { haptic.select(); setSelectedId(p.id); } };
-
   const tip = dialPoint(90, DIAL.R - 34);
 
-  /* ------------------------------------------------------------------
-     פריסת שמות המפלגות (דסקטופ בלבד) — פותר התנגשויות במקום לקוות שלא יהיו.
-  ------------------------------------------------------------------- */
   const LABEL_H = 13;
   const CLEARANCE = 12;
   const labelFont = (name) => (name.length > 12 ? 9.5 : 11);
@@ -846,27 +781,20 @@ function CompassDial({ scored, top }) {
             </filter>
           </defs>
 
-          {/* רקע רך בפנים החוגה */}
           <path d={`${arcPath(180, 0, DIAL.R)} L ${DIAL.CX} ${DIAL.CY} Z`} fill="url(#dialBg)" />
 
-          {/* שנתות מינימליסטיות */}
           {Array.from({ length: 13 }, (_, i) => i * 15).map((a) => {
             const p1 = dialPoint(a, DIAL.R - 14);
             const p2 = dialPoint(a, DIAL.R - (a % 45 === 0 ? 25 : 20));
             return <line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#cbd5e1" strokeWidth={a % 45 === 0 ? 2.2 : 1.3} strokeLinecap="round" />;
           })}
 
-          {/* מסלול אפור + מילוי צבעוני שרודף אחרי המחט */}
           <path d={arcPath(180, 0, DIAL.R)} fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" pathLength="1" className="dial-draw" />
           <path ref={fillRef} d="" fill="none" stroke="url(#dialArc)" strokeWidth="8" strokeLinecap="round" opacity="0.95" />
-
-          {/* שובל motion-blur — נראה רק כשהמחט בתנועה, עוצמתו לפי המהירות */}
           <path ref={trailRef} d="" fill={selected.hex} opacity="0" style={{ pointerEvents: 'none' }} />
 
-          {/* "מרכז" בתוך החוגה, מתחת לקודקוד */}
           <text x={DIAL.CX} y={DIAL.CY - DIAL.R + 46} textAnchor="middle" fontSize="13" fontWeight="800" fill="#a855f7" opacity="0.85">מרכז</text>
 
-          {/* מפלגות */}
           {scored.map((p, i) => {
             const isWinner = p.id === top.id;
             const isSelected = p.id === selectedId;
@@ -914,10 +842,6 @@ function CompassDial({ scored, top }) {
             );
           })}
 
-          {/* תוויות גושים בקצוות.
-              במובייל הן נכנסות פנימה: כשהן מתחת לקצוות הן גוזלות שוליים
-              משני הצדדים, והחוגה נאלצת להתכווץ. בפנים — הקשת מנצלת כמעט
-              את כל רוחב המסך. */}
           {DIAL.endLabelsInside ? (
             <>
               <text x={dialPoint(170, DIAL.R - 30).x} y={dialPoint(170, DIAL.R - 30).y} textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
@@ -930,26 +854,22 @@ function CompassDial({ scored, top }) {
             </>
           )}
 
-          {/* המחט — להב דק */}
           <g ref={needleRef} transform={`rotate(-95 ${DIAL.CX} ${DIAL.CY})`} style={{ pointerEvents: 'none' }} className="dial-needle">
-            <polygon points={`${tip.x},${tip.y} ${DIAL.CX - 6},${DIAL.CY + 9} ${DIAL.CX + 6},${DIAL.CY + 9}`} fill="#1e293b" />
+            <polygon points={`${tip.x},${tip.y} ${DIAL.CX - 6},${DIAL.CY + 9} ${DIAL.CX + 6},${DIAL.CY + 9}`} fill="#312e81" />
           </g>
-          <circle cx={DIAL.CX} cy={DIAL.CY} r="12" fill="#1e293b" stroke="#fff" strokeWidth="3.5" />
+          <circle cx={DIAL.CX} cy={DIAL.CY} r="12" fill="#312e81" stroke="#fff" strokeWidth="3.5" />
           <circle cx={DIAL.CX} cy={DIAL.CY} r="4" fill={selected.hex} />
         </svg>
       </div>
 
-      {/* קריאת המצפן */}
       <div className="text-center mt-1" aria-live="polite">
         <div className="text-2xl md:text-3xl" style={{ fontFamily: FONT_DISPLAY, color: selected.hex }}>{selected.name}</div>
         <div className="text-slate-600 font-bold text-sm mt-0.5">
-          <AnimatedPercent value={selected.match} duration={700} className="text-lg text-slate-900 font-black" /> התאמה
+          <AnimatedPercent value={selected.match} duration={700} className="text-lg text-indigo-950 font-black" /> התאמה
           {selected.id === top.id && <span className="mr-2 text-xs font-extrabold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">ההתאמה הגבוהה שלך</span>}
         </div>
       </div>
 
-      {/* מובייל: השמות לא נכנסים סביב הקשת, אז הם עוברים לרשימה נגיעה.
-          מסודרת משמאל לימין בדיוק כמו הנקודות על החוגה. */}
       {isMobile && (
         <div className="mt-5 pt-4 border-t border-slate-100">
           <p className="text-[11px] font-bold text-slate-400 text-center mb-2.5">הקישו על מפלגה כדי להזיז אליה את המחט</p>
@@ -961,8 +881,8 @@ function CompassDial({ scored, top }) {
                   key={p.id}
                   onClick={() => pick(p)}
                   aria-pressed={isSelected}
-                  className={`flex items-center gap-2 min-h-[44px] px-2.5 py-2 rounded-xl border text-right transition-colors ${FOCUS} ${
-                    isSelected ? 'bg-white shadow-sm' : 'bg-slate-50/60 border-slate-100'
+                  className={`flex items-center gap-2 min-h-[44px] px-2.5 py-2 rounded-xl border text-right transition-all duration-200 ${FOCUS} ${
+                    isSelected ? 'bg-white shadow-md scale-[1.02]' : 'bg-slate-50/60 border-slate-100 hover:bg-slate-100'
                   }`}
                   style={isSelected ? { borderColor: p.hex } : undefined}
                 >
@@ -985,7 +905,7 @@ function CompassDial({ scored, top }) {
 }
 
 /* ------------------------------------------------------------------
-   תעודת זהות פוליטית — ארכיטיפ אישי משלושת צירי ה-DNA
+   POLITICAL ID & FRICTION POINTS
 ------------------------------------------------------------------- */
 const AXIS_META = [
   { key: 'security', label: 'מדיני-ביטחוני', low: 'ניצי',        high: 'יוני' },
@@ -999,13 +919,11 @@ const ARCHETYPES = {
   RLR: { title: 'הימין המסורתי',    desc: 'ביטחון תקיף כלפי חוץ, מדינת רווחה תומכת כלפי פנים, וחיבור עמוק למסורת.' },
   RLL: { title: 'ביטחוניסט חברתי',  desc: 'ניצי כלפי חוץ, סולידרי וליברלי כלפי פנים. שילוב לא שגרתי — ומעניין במיוחד.' },
   LRR: { title: 'שמרן פרגמטי',      desc: 'פתיחות מדינית לצד כלכלה חופשית וערכים מסורתיים. פרופיל נדיר במפה הישראלית.' },
-  LRL: { title: 'הליברל הקלאסי',    desc: 'הסדרים מדיניים, שוק חופשי וחירויות פרט — ליברליזם במובנו המלא.' },
+  LRL: { title: 'הליברל הקלאסי',    desc: 'הסדרים מדיניים, שוק חופשי וחירויות פרט — ליברליזם במובנו מלא.' },
   LLR: { title: 'סוציאל-מסורתי',    desc: 'חתירה להסדר מדיני ומדינת רווחה, מתוך חיבור לקהילה ולמסורת.' },
   LLL: { title: 'השמאל הליברלי',    desc: 'הסדר מדיני, סוציאל-דמוקרטיה והפרדת דת ומדינה — שמאל עקבי לכל אורך הדרך.' },
 };
 
-/* הארכיטיפ זמין גם לשיתוף — הוא הנכס הכי שיתופי במוצר:
-   תווית זהות כיפית ובטוחה לפרסום, בניגוד להשתייכות מפלגתית. */
 const getArchetype = (dna) => {
   const scores = AXIS_META.map((m) => dna[m.key].user);
   if (scores.some((v) => v === null)) return null;
@@ -1026,13 +944,13 @@ function PoliticalID({ dna, top }) {
   return (
     <div className={`${CARD} p-6 md:p-10 anim-enter`}>
       <div className="flex items-center gap-3 mb-5">
-        <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl"><Fingerprint className="w-6 h-6" /></div>
-        <h3 className="text-2xl tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>תעודת הזהות הפוליטית שלך</h3>
+        <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl shadow-inner"><Fingerprint className="w-6 h-6" /></div>
+        <h3 className="text-2xl tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>תעודת הזהות הפוליטית שלך</h3>
       </div>
 
       {archetype ? (
         <div className="mb-7">
-          <div className="text-2xl md:text-3xl mb-1.5 bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent w-fit" style={{ fontFamily: FONT_DISPLAY }}>
+          <div className="text-2xl md:text-3xl mb-1.5 bg-gradient-to-l from-blue-500 via-indigo-600 to-purple-600 bg-clip-text text-transparent w-fit" style={{ fontFamily: FONT_DISPLAY }}>
             {archetype.title}
           </div>
           <p className="text-slate-600 leading-relaxed text-[15px] md:text-base">{archetype.desc}</p>
@@ -1041,10 +959,9 @@ function PoliticalID({ dna, top }) {
         <p className="text-slate-500 text-sm mb-7 font-medium">דילגת על נושאים שלמים, אז אין לנו פרופיל מלא — אבל הנה מה שכן ידוע.</p>
       )}
 
-      {/* מקרא: את/ה מול המפלגה המובילה */}
       <div className="flex items-center gap-4 text-xs font-bold text-slate-500 mb-5 pb-4 border-b border-slate-100">
         <span className="flex items-center gap-1.5">
-          <span className="w-3.5 h-3.5 rounded-full bg-slate-800 border-2 border-white shadow-sm" /> את/ה
+          <span className="w-3.5 h-3.5 rounded-full bg-indigo-950 border-2 border-white shadow-sm" /> את/ה
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: top.hex }} /> {top.name}
@@ -1068,23 +985,23 @@ function PoliticalID({ dna, top }) {
             <div key={meta.key}>
               <div className="flex items-baseline justify-between mb-3">
                 <span className="font-bold text-slate-700 text-sm">{meta.label}</span>
-                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border ${lean.strong ? 'text-indigo-700 bg-indigo-50 border-indigo-100' : 'text-slate-600 bg-slate-50 border-slate-200'}`}>
+                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border shadow-sm ${lean.strong ? 'text-indigo-700 bg-indigo-50/80 border-indigo-200' : 'text-slate-600 bg-slate-50 border-slate-200'}`}>
                   {lean.text}
                 </span>
               </div>
-              <div className="relative h-3 rounded-full bg-slate-200 my-4">
+              <div className="relative h-3 rounded-full bg-slate-200 shadow-inner my-4">
                 <div className="absolute inset-0 rounded-full opacity-30" style={{ background: 'linear-gradient(to left, #3b82f6, #ef4444)' }} />
                 {party !== null && (
-                  <div className="absolute top-1/2 w-4 h-4 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white shadow-sm z-10" style={{ left: `${clamp(party)}%`, backgroundColor: top.hex }} />
+                  <div className="absolute top-1/2 w-4 h-4 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white shadow-md z-10 transition-all duration-700" style={{ left: `${clamp(party)}%`, backgroundColor: top.hex }} />
                 )}
-                <div className="absolute top-1/2 w-8 h-8 -translate-y-1/2 -translate-x-1/2 rounded-full border-[3px] border-white shadow-md flex items-center justify-center bg-slate-800 text-white text-[10px] font-black z-20" style={{ left: `${clamp(user)}%` }}>
+                <div className="absolute top-1/2 w-8 h-8 -translate-y-1/2 -translate-x-1/2 rounded-full border-[3px] border-white shadow-lg flex items-center justify-center bg-indigo-950 text-white text-[10px] font-black z-20 transition-all duration-700" style={{ left: `${clamp(user)}%` }}>
                   את/ה
                 </div>
               </div>
               <div className="flex justify-between items-center text-[11px] font-bold text-slate-400">
                 <span>{meta.high}</span>
                 {gap !== null && (
-                  <span className={gap <= 10 ? 'text-green-600' : gap >= 35 ? 'text-rose-500' : 'text-slate-400'}>
+                  <span className={gap <= 10 ? 'text-emerald-500' : gap >= 35 ? 'text-rose-500' : 'text-slate-400'}>
                     {gap <= 10 ? 'כמעט זהים כאן' : gap >= 35 ? 'פער ניכר בציר הזה' : `פער של ${gap} נק׳`}
                   </span>
                 )}
@@ -1098,9 +1015,6 @@ function PoliticalID({ dna, top }) {
   );
 }
 
-/* ------------------------------------------------------------------
-   נקודות חיכוך — איפה גם המפלגה הכי קרובה אליך לא איתך, ומי כן
-------------------------------------------------------------------- */
 function FrictionPoints({ top, answers }) {
   const frictions = top.perQuestion
     .filter((r) => r.sim < AGREE_THRESHOLD)
@@ -1119,19 +1033,19 @@ function FrictionPoints({ top, answers }) {
   return (
     <div className={`${CARD} p-5 md:p-8 anim-enter`}>
       <div className="flex items-center gap-3 mb-1">
-        <div className="p-2.5 rounded-2xl bg-rose-100">
+        <div className="p-2.5 rounded-2xl bg-rose-100 shadow-inner">
           <Swords className="w-5 h-5 text-rose-600" />
         </div>
-        <h3 className="text-xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>נקודות החיכוך שלך</h3>
+        <h3 className="text-xl text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>נקודות החיכוך שלך</h3>
       </div>
       <p className="text-slate-500 text-sm font-medium mb-5 mr-[52px]">
         איפה אפילו <b style={{ color: top.hex }}>{top.name}</b> לא לגמרי איתך — ומי כן.
       </p>
 
       {frictions.length === 0 ? (
-        <div className="bg-green-50 border border-green-100 rounded-2xl p-5 text-center">
-          <p className="font-bold text-green-700 mb-1">כמעט תאומים פוליטיים 🤝</p>
-          <p className="text-sm text-green-600">אין אף נושא שבו אתם באמת רחוקים זה מזה. זה נדיר.</p>
+        <div className="bg-emerald-50/80 border border-emerald-200/50 rounded-2xl p-6 text-center shadow-sm">
+          <p className="font-bold text-emerald-700 mb-1 text-lg">כמעט תאומים פוליטיים 🤝</p>
+          <p className="text-sm text-emerald-600">אין אף נושא שבו אתם באמת רחוקים זה מזה. זה נדיר.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -1139,21 +1053,21 @@ function FrictionPoints({ top, answers }) {
             const Icon = q.icon;
             const showAlly = best.party.id !== top.id && best.sim >= AGREE_THRESHOLD;
             return (
-              <div key={q.id} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
+              <div key={q.id} className="bg-white/50 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-2.5 mb-2.5">
                   <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${q.accent}15` }}>
                     <Icon className="w-4 h-4" style={{ color: q.accent }} />
                   </div>
-                  <span className="font-bold text-slate-800 text-[15px]">{q.category}</span>
+                  <span className="font-bold text-indigo-950 text-[15px]">{q.category}</span>
                   <span className="mr-auto text-xs font-extrabold text-slate-500 tabular-nums">{Math.round(sim * 100)}% בלבד</span>
                 </div>
-                <div className="h-2 rounded-full bg-slate-200/80 overflow-hidden mb-3">
+                <div className="h-2 rounded-full bg-slate-200/80 overflow-hidden mb-3 shadow-inner">
                   <div className="h-full rounded-full anim-bar" style={{ width: `${Math.round(sim * 100)}%`, backgroundColor: top.hex }} />
                 </div>
                 {showAlly ? (
                   <div className="text-sm text-slate-600 font-medium">
                     מי דווקא כן איתך כאן:{' '}
-                    <span className="font-extrabold px-2 py-0.5 rounded-lg" style={{ color: best.party.hex, backgroundColor: `${best.party.hex}0d` }}>
+                    <span className="font-extrabold px-2 py-0.5 rounded-lg shadow-sm border" style={{ color: best.party.hex, backgroundColor: `${best.party.hex}0d`, borderColor: `${best.party.hex}30` }}>
                       {best.party.name}
                     </span>
                   </div>
@@ -1177,7 +1091,7 @@ function ElectionsCompassApp() {
 
   const [jokeIndex, setJokeIndex] = useState(0);
   const [sharedView, setSharedView] = useState(false);
-  const [guestMode, setGuestMode] = useState(false); // מכשיר משותף: משחק חדש שלא דורס את הנתונים של הבעלים
+  const [guestMode, setGuestMode] = useState(false); 
   const [copied, setCopied] = useState(false);
   const [locked, setLocked] = useState(false);
   const [toast, setToast] = useState(null);
@@ -1187,15 +1101,12 @@ function ElectionsCompassApp() {
     setTimeout(() => setToast(null), 3200);
   };
 
-  /* מסך הטעינה: הבדיחות מתחלפות כל 850ms במקום בדיחה אחת קפואה */
   useEffect(() => {
     if (state.screen !== 'loading') return undefined;
     const t = setInterval(() => setJokeIndex((i) => (i + 1) % LOADING_JOKES.length), 850);
     return () => clearInterval(t);
   }, [state.screen]);
 
-  /* שמירה — לא בצפייה בתוצאה של מישהו אחר, ולא במצב אורח.
-     בשני המקרים אלו לא הנתונים של בעל המכשיר, ואסור לדרוס אותם. */
   useEffect(() => {
     if (sharedView || guestMode) return;
     safeStorage.set(STORAGE_KEY, JSON.stringify(state));
@@ -1211,7 +1122,6 @@ function ElectionsCompassApp() {
     }
   }, []);
 
-  /* טעינת תוצאה משותפת מהכתובת (?r=...) */
   useEffect(() => {
     const r = new URLSearchParams(window.location.search).get('r');
     const decoded = decodeAnswers(r);
@@ -1226,34 +1136,25 @@ function ElectionsCompassApp() {
 
   const reset = () => {
     setSharedView(false);
-    if (window.location.search) {
-      window.history.replaceState({}, '', window.location.pathname);
-    }
+    if (window.location.search) window.history.replaceState({}, '', window.location.pathname);
     safeStorage.remove(STORAGE_KEY);
     setState(freshState());
   };
 
-  /* יציאה מצפייה בתוצאה משותפת — משחזרים את ההתקדמות של המבקר עצמו, אם קיימת */
   const exitSharedView = () => {
     setSharedView(false);
-    if (window.location.search) {
-      window.history.replaceState({}, '', window.location.pathname);
-    }
+    if (window.location.search) window.history.replaceState({}, '', window.location.pathname);
     setState(loadInitialState());
   };
 
-  /* מצב אורח — למסירת הטלפון לחבר. שאלון נקי לגמרי, בלי לגעת בנתונים השמורים. */
   const startGuestSession = () => {
     setSharedView(false);
     setGuestMode(true);
-    if (window.location.search) {
-      window.history.replaceState({}, '', window.location.pathname);
-    }
+    if (window.location.search) window.history.replaceState({}, '', window.location.pathname);
     setState({ ...freshState(), screen: 'difficulty' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /* חזרה לבעל המכשיר — הנתונים שלו מעולם לא נגעו בהם */
   const exitGuestSession = () => {
     setGuestMode(false);
     setState(loadInitialState());
@@ -1268,10 +1169,8 @@ function ElectionsCompassApp() {
     });
   };
   
-  /* סיום השאלון — ללא side effects בתוך updater (בעיה ב-StrictMode של React 18) */
   const finishQuiz = () => {
     if (review) {
-      // במצב עריכה חוזרים ישר לתוצאות, בלי להריץ שוב את מסך הטעינה
       setState(prev => ({ ...prev, screen: 'results', review: false }));
       return;
     }
@@ -1298,7 +1197,6 @@ function ElectionsCompassApp() {
 
   const handleSkip = () => {
     haptic.light();
-    // סופרים דילוגים בלי לספור פעמיים את השאלה הנוכחית
     const skipCount = answers.filter((a, i) => i !== idx && a.choice === null).length + 1;
     setAnswer({ choice: null });
     if (skipCount === 4 && idx < QUESTIONS.length - 1) {
@@ -1310,11 +1208,7 @@ function ElectionsCompassApp() {
 
   const jumpToQuestion = (i) => { haptic.light(); setState(prev => ({ ...prev, idx: i })); };
 
-  const shareUrl = () =>
-    `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
-
-  /* קישור הזמנה — הכתובת הנקייה, בלי התשובות שלי מקודדות בתוכה.
-     מי שיפתח אותו יקבל שאלון ריק משלו. זה הקישור שרוצים לשלוח לחברים. */
+  const shareUrl = () => `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
   const inviteUrl = () => `${window.location.origin}${window.location.pathname}`;
 
   const [invited, setInvited] = useState(false);
@@ -1322,18 +1216,11 @@ function ElectionsCompassApp() {
     const url = inviteUrl();
     const text = 'מצפן הבחירות 2026 — 11 שאלות, ומגלים לאיזו מפלגה אתם באמת הכי קרובים. נסו בעצמכם:';
     if (navigator.share) {
-      try {
-        await navigator.share({ title: 'מצפן הבחירות 2026', text, url });
-        return;
-      } catch (e) {
-        if (e && e.name === 'AbortError') return;
-      }
+      try { await navigator.share({ title: 'מצפן הבחירות 2026', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
     }
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      haptic.success();
-      setInvited(true);
-      setTimeout(() => setInvited(false), 2000);
+      haptic.success(); setInvited(true); setTimeout(() => setInvited(false), 2000);
     } catch { showToast('לא הצלחנו להעתיק את הקישור'); }
   };
 
@@ -1342,44 +1229,27 @@ function ElectionsCompassApp() {
     const top = results.scored[0];
     const url = shareUrl();
     const arch = getArchetype(results.dna);
-    /* הארכיטיפ בחוץ, המפלגה בפנים: אנשים ישמחו לפרסם "ביטחוניסט חברתי",
-       הרבה פחות ישמחו לפרסם השתייכות מפלגתית. הסקרנות עושה את השאר. */
     const text = arch
       ? `מצפן הבחירות 2026 — יצא לי "${arch.title}" 🧭 ומה אתם? 11 שאלות ומגלים:`
       : `מצפן הבחירות 2026 — ההתאמה הגבוהה שלי: ${top.name} (${top.match}%). ומה יוצא לכם?`;
     
     if (navigator.share) {
-      try {
-        await navigator.share({ title: 'מצפן הבחירות 2026', text, url });
-        return;
-      } catch (e) {
-        if (e && e.name === 'AbortError') return; 
-      }
+      try { await navigator.share({ title: 'מצפן הבחירות 2026', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
     }
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      haptic.success();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
+      haptic.success(); setCopied(true); setTimeout(() => setCopied(false), 2000);
+    } catch { setCopied(false); }
   };
 
-  /* יצירת תמונת שיתוף (קנבס) — לוואטסאפ/אינסטגרם */
   const shareImage = async () => {
     const top = results.scored[0];
     try {
       await document.fonts.ready;
-      await Promise.all([
-        document.fonts.load("110px 'Secular One'"),
-        document.fonts.load("600 34px 'Assistant'"),
-      ]).catch(() => {});
+      await Promise.all([ document.fonts.load("110px 'Secular One'"), document.fonts.load("600 34px 'Assistant'") ]).catch(() => {});
 
       const W = 1080, H = 1080;
-      const cv = document.createElement('canvas');
-      cv.width = W; cv.height = H;
-      const ctx = cv.getContext('2d');
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
 
       const g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, '#eef2ff'); g.addColorStop(0.5, '#ffffff'); g.addColorStop(1, '#e0f2fe');
@@ -1390,105 +1260,57 @@ function ElectionsCompassApp() {
         rg.addColorStop(0, c); rg.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       };
-      blob(W - 120, 100, 420, 'rgba(147,197,253,0.55)');
-      blob(120, H - 120, 460, 'rgba(196,181,253,0.5)');
+      blob(W - 120, 100, 420, 'rgba(147,197,253,0.55)'); blob(120, H - 120, 460, 'rgba(196,181,253,0.5)');
 
-      ctx.fillStyle = 'rgba(255,255,255,0.93)';
-      ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
+      ctx.fillStyle = 'rgba(255,255,255,0.93)'; ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
       ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(90, 140, W - 180, H - 280, 48);
-      else ctx.rect(90, 140, W - 180, H - 280);
+      if (ctx.roundRect) ctx.roundRect(90, 140, W - 180, H - 280, 48); else ctx.rect(90, 140, W - 180, H - 280);
       ctx.fill(); ctx.stroke();
 
-      ctx.direction = 'rtl';
-      ctx.textAlign = 'center';
-
-      ctx.fillStyle = '#0f172a';
-      ctx.font = "52px 'Secular One', 'Assistant', sans-serif";
+      ctx.direction = 'rtl'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#1e1b4b'; ctx.font = "52px 'Secular One', 'Assistant', sans-serif";
       ctx.fillText('מצפן הבחירות 2026', W / 2, 265);
 
       const arch = getArchetype(results.dna);
       const fitText = (txt, maxSize, minSize, maxWidth, family) => {
-        let size = maxSize;
-        ctx.font = `${size}px ${family}`;
-        while (ctx.measureText(txt).width > maxWidth && size > minSize) {
-          size -= 6;
-          ctx.font = `${size}px ${family}`;
-        }
+        let size = maxSize; ctx.font = `${size}px ${family}`;
+        while (ctx.measureText(txt).width > maxWidth && size > minSize) { size -= 6; ctx.font = `${size}px ${family}`; }
         return size;
       };
 
       if (arch) {
-        /* הארכיטיפ הוא הכוכב; המפלגה היא שורת הגילוי */
-        ctx.font = "600 34px 'Assistant', sans-serif";
-        ctx.fillStyle = '#64748b';
-        ctx.fillText('תעודת הזהות הפוליטית שלי', W / 2, 355);
-
+        ctx.font = "600 34px 'Assistant', sans-serif"; ctx.fillStyle = '#64748b'; ctx.fillText('תעודת הזהות הפוליטית שלי', W / 2, 355);
         const grad = ctx.createLinearGradient(200, 0, W - 200, 0);
         grad.addColorStop(0, '#7c3aed'); grad.addColorStop(1, '#2563eb');
-        ctx.fillStyle = grad;
-        fitText(arch.title, 128, 56, W - 260, "'Secular One', 'Assistant', sans-serif");
+        ctx.fillStyle = grad; fitText(arch.title, 128, 56, W - 260, "'Secular One', 'Assistant', sans-serif");
         ctx.fillText(arch.title, W / 2, 505);
 
         ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(240, 585); ctx.lineTo(W - 240, 585); ctx.stroke();
 
-        ctx.font = "600 32px 'Assistant', sans-serif";
-        ctx.fillStyle = '#64748b';
-        ctx.fillText('ההתאמה הגבוהה ביותר שלי', W / 2, 655);
-
-        ctx.fillStyle = top.hex;
-        fitText(top.name, 76, 40, W - 320, "'Secular One', 'Assistant', sans-serif");
+        ctx.font = "600 32px 'Assistant', sans-serif"; ctx.fillStyle = '#64748b'; ctx.fillText('ההתאמה הגבוהה ביותר שלי', W / 2, 655);
+        ctx.fillStyle = top.hex; fitText(top.name, 76, 40, W - 320, "'Secular One', 'Assistant', sans-serif");
         ctx.fillText(top.name, W / 2, 745);
 
-        ctx.fillStyle = '#0f172a';
-        ctx.font = "64px 'Secular One', 'Assistant', sans-serif";
-        ctx.fillText(`${top.match}%`, W / 2, 830);
+        ctx.fillStyle = '#1e1b4b'; ctx.font = "64px 'Secular One', 'Assistant', sans-serif"; ctx.fillText(`${top.match}%`, W / 2, 830);
       } else {
-        ctx.font = "600 34px 'Assistant', sans-serif";
-        ctx.fillStyle = '#64748b';
-        ctx.fillText('המפלגה הקרובה אליי ביותר', W / 2, 355);
-
-        ctx.fillStyle = top.hex;
-        fitText(top.name, 118, 44, W - 300, "'Secular One', 'Assistant', sans-serif");
+        ctx.font = "600 34px 'Assistant', sans-serif"; ctx.fillStyle = '#64748b'; ctx.fillText('המפלגה הקרובה אליי ביותר', W / 2, 355);
+        ctx.fillStyle = top.hex; fitText(top.name, 118, 44, W - 300, "'Secular One', 'Assistant', sans-serif");
         ctx.fillText(top.name, W / 2, 520);
-
-        ctx.fillStyle = '#0f172a';
-        ctx.font = "170px 'Secular One', 'Assistant', sans-serif";
-        ctx.fillText(`${top.match}%`, W / 2, 720);
-
-        ctx.font = "600 32px 'Assistant', sans-serif";
-        ctx.fillStyle = '#64748b';
-        ctx.fillText('התאמה לעמדותיי', W / 2, 780);
+        ctx.fillStyle = '#1e1b4b'; ctx.font = "170px 'Secular One', 'Assistant', sans-serif"; ctx.fillText(`${top.match}%`, W / 2, 720);
+        ctx.font = "600 32px 'Assistant', sans-serif"; ctx.fillStyle = '#64748b'; ctx.fillText('התאמה לעמדותיי', W / 2, 780);
       }
 
-      ctx.font = "700 36px 'Assistant', sans-serif";
-      ctx.fillStyle = '#4f46e5';
-      ctx.fillText('ומה יוצא לכם?', W / 2, 870);
-
-      ctx.direction = 'ltr';
-      ctx.font = "500 28px 'Assistant', sans-serif";
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillText(window.location.host, W / 2, H - 60);
+      ctx.font = "700 36px 'Assistant', sans-serif"; ctx.fillStyle = '#4f46e5'; ctx.fillText('ומה יוצא לכם?', W / 2, 870);
+      ctx.direction = 'ltr'; ctx.font = "500 28px 'Assistant', sans-serif"; ctx.fillStyle = '#94a3b8'; ctx.fillText(window.location.host, W / 2, H - 60);
 
       const png = await new Promise((res) => cv.toBlob(res, 'image/png'));
       const file = new File([png], 'elections-compass.png', { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], title: 'מצפן הבחירות 2026' });
-          return;
-        } catch (e) {
-          if (e && e.name === 'AbortError') return;
-        }
+        try { await navigator.share({ files: [file], title: 'מצפן הבחירות 2026' }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
       }
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(png);
-      a.download = 'elections-compass.png';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    } catch (e) {
-      console.error('share image failed', e);
-    }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(png); a.download = 'elections-compass.png'; a.click(); URL.revokeObjectURL(a.href);
+    } catch (e) { console.error('share image failed', e); }
   };
 
   /* ---------------- WELCOME ---------------- */
@@ -1499,80 +1321,72 @@ function ElectionsCompassApp() {
       <AppShell>
         <div className="max-w-3xl w-full">
           <div className={`${CARD} overflow-hidden anim-pop`}>
-            {/* שושנת הרוחות — האובייקט שנותן לאפליקציה את שמה */}
-            <div className="relative px-6 pt-6 md:pt-8 bg-gradient-to-b from-indigo-50/80 to-transparent">
+            <div className="relative px-6 pt-8 md:pt-10 bg-gradient-to-b from-indigo-50/50 to-transparent">
               <CompassRose />
             </div>
 
-            <div className="relative px-6 pb-8 md:px-14 md:pb-12 text-center mt-2">
-              <h1 className="text-4xl md:text-6xl mb-3 tracking-tight bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent" style={HERO_HEAVY}>
+            <div className="relative px-6 pb-10 md:px-14 md:pb-12 text-center mt-2">
+              <h1 className="text-4xl md:text-6xl mb-4 tracking-tight bg-gradient-to-l from-blue-500 via-indigo-600 to-violet-600 bg-clip-text text-transparent drop-shadow-sm" style={HERO_HEAVY}>
                 מצפן הבחירות 2026
               </h1>
 
-              {/* מה בעצם מקבלים כאן */}
-              <p className="text-slate-700 text-lg md:text-2xl font-bold mb-3">
-                לאיזו מפלגה אתם באמת הכי קרובים?
-              </p>
-              <p className="text-slate-500 text-[15px] md:text-lg font-medium mb-7 max-w-lg mx-auto leading-relaxed">
+              <p className="text-indigo-950 text-xl md:text-2xl font-bold mb-4">לאיזו מפלגה אתם באמת הכי קרובים?</p>
+              <p className="text-slate-600 text-[15px] md:text-lg font-medium mb-8 max-w-lg mx-auto leading-relaxed">
                 ענו על {QUESTIONS.length} שאלות קצרות וקבלו דירוג התאמה למפלגות, מיקום על המפה הפוליטית ופירוט של הנושאים שבהם אתם מסכימים – וגם אלה שבהם פחות.
               </p>
 
-              {/* שלוש עובדות במקום שלוש פסקאות */}
-              <div className="grid grid-cols-3 gap-2 md:gap-3 mb-7 max-w-md mx-auto">
+              <div className="grid grid-cols-3 gap-3 mb-8 max-w-md mx-auto">
                 {[
                   { n: QUESTIONS.length, label: 'שאלות', icon: MessageCircleHeart },
                   { n: PARTY_IDS.length, label: 'מפלגות', icon: Landmark },
                   { n: '2', label: 'דקות', icon: Coffee },
                 ].map(({ n, label, icon: Icon }, i) => (
-                  <div key={label} className="anim-pop bg-white/70 border border-slate-200 rounded-2xl py-3 px-2" style={{ animationDelay: `${300 + i * 90}ms` }}>
-                    <Icon className="w-4 h-4 mx-auto mb-1 text-indigo-500" />
-                    <div className="text-2xl leading-none text-slate-900" style={HERO_HEAVY}>{n}</div>
-                    <div className="text-[11px] font-bold text-slate-500 mt-1">{label}</div>
+                  <div key={label} className="anim-pop bg-white/60 backdrop-blur-sm border border-slate-200/60 rounded-2xl py-4 px-2 shadow-sm" style={{ animationDelay: `${300 + i * 90}ms` }}>
+                    <Icon className="w-5 h-5 mx-auto mb-2 text-indigo-500" />
+                    <div className="text-3xl leading-none text-indigo-950" style={HERO_HEAVY}>{n}</div>
+                    <div className="text-[11px] font-bold text-slate-500 mt-1.5 uppercase tracking-wide">{label}</div>
                   </div>
                 ))}
               </div>
 
-              {/* פס המפלגות — כל השחקנים על השולחן, מיד */}
-              <div className="flex items-center justify-center gap-1.5 mb-2">
+              <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-3">
                 {[...PARTY_IDS].sort((a, b) => PARTIES[a].position - PARTIES[b].position).map((id, i) => (
                   <span
                     key={id}
                     title={PARTIES[id].name}
-                    className="swatch w-2.5 h-2.5 md:w-3 md:h-3 rounded-full ring-2 ring-white shadow-sm"
+                    className="swatch w-3 h-3 md:w-3.5 md:h-3.5 rounded-full ring-2 ring-white shadow-sm"
                     style={{ backgroundColor: PARTIES[id].hex, animationDelay: `${420 + i * 45}ms` }}
                   />
                 ))}
               </div>
-              <p className="text-xs font-bold text-slate-400 mb-8">כל המפלגות, מהשמאל לימין — בלי העדפה לאף אחת</p>
+              <p className="text-xs font-bold text-slate-400 mb-10">כל המפלגות, מהשמאל לימין — בלי העדפה לאף אחת</p>
 
-              {/* CTA */}
               {hasProgress ? (
-                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <button onClick={() => setState(prev => ({ ...prev, screen: 'quiz' }))} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden w-full sm:w-auto text-lg`}>
                     להמשיך מאיפה שעצרתי <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button onClick={reset} className={`${BTN_SECONDARY} w-full sm:w-auto text-lg`}>להתחיל מחדש</button>
                 </div>
               ) : (
-                <button onClick={() => setState(prev => ({ ...prev, screen: 'difficulty' }))} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden w-full sm:w-auto text-lg px-10`}>
+                <button onClick={() => setState(prev => ({ ...prev, screen: 'difficulty' }))} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden w-full sm:w-auto text-lg px-12`}>
                   בואו נתחיל <ChevronLeft className="w-5 h-5" />
                 </button>
               )}
 
               {hasProgress && (
-                <div className="mt-4 max-w-xs mx-auto">
-                  <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                <div className="mt-5 max-w-xs mx-auto">
+                  <div className="h-2 rounded-full bg-slate-200/80 overflow-hidden shadow-inner">
                     <div className="anim-bar h-full rounded-full bg-indigo-500" style={{ width: `${(answered / QUESTIONS.length) * 100}%` }} />
                   </div>
-                  <p className="text-xs font-bold text-slate-500 mt-1.5">ענית על {answered} מתוך {QUESTIONS.length} שאלות</p>
+                  <p className="text-xs font-bold text-slate-500 mt-2">ענית על {answered} מתוך {QUESTIONS.length} שאלות</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* המתודולוגיה — נגישה, אבל לא חוסמת את הדרך לכפתור */}
-          <details className={`${CARD} mt-4 group anim-enter`} style={{ animationDelay: '.2s' }}>
-            <summary className={`flex items-center gap-3 p-5 cursor-pointer list-none font-bold text-slate-700 ${FOCUS} rounded-3xl`}>
+          <details className={`${CARD} mt-5 group anim-enter`} style={{ animationDelay: '.2s' }}>
+            <summary className={`flex items-center gap-3 p-5 cursor-pointer list-none font-bold text-indigo-900 ${FOCUS} rounded-3xl`}>
               <Info className="w-5 h-5 text-indigo-500 flex-shrink-0" />
               איך מחושבת ההתאמה? (ולמה זה לא סקר פופולריות)
               <ChevronLeft className="w-4 h-4 mr-auto text-slate-400 transition-transform group-open:-rotate-90" />
@@ -1590,23 +1404,23 @@ function ElectionsCompassApp() {
   if (screen === 'difficulty') {
     return (
       <AppShell>
-        <div className={`max-w-5xl w-full ${CARD} p-6 md:p-12 text-center anim-enter`}>
-          <h2 className="text-3xl md:text-4xl mb-3 tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>באיזו שפה נדבר?</h2>
-          <p className="text-slate-500 mb-8 md:mb-10 text-lg">אנשים שונים חיים את הפוליטיקה אחרת. בחר את הרמה שנוחה לך.</p>
-          <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+        <div className={`max-w-5xl w-full ${CARD} p-8 md:p-14 text-center anim-enter`}>
+          <h2 className="text-3xl md:text-5xl mb-4 tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>באיזו שפה נדבר?</h2>
+          <p className="text-slate-600 mb-10 text-lg md:text-xl">אנשים שונים חיים את הפוליטיקה אחרת. בחר את הרמה שנוחה לך.</p>
+          <div className="grid md:grid-cols-3 gap-5 md:gap-6">
             {[
-              { key: 'everyday', icon: Coffee, title: "תכל'ס", desc: 'שפת רחוב ברורה. לא צריך להכיר שום מושג פוליטי. רק את היומיום.', grad: 'from-amber-400 to-orange-500', hover: 'hover:border-orange-300 hover:shadow-orange-200/60' },
-              { key: 'simple', icon: MessageCircleHeart, title: 'בגובה העיניים', desc: 'שפה יומיומית עם קצת מושגים. למי שעוקב מדי פעם אחרי חדשות.', grad: 'from-cyan-500 to-blue-600', hover: 'hover:border-blue-300 hover:shadow-blue-200/60' },
-              { key: 'advanced', icon: BrainCircuit, title: 'מעמיק ומקצועי', desc: 'מונחים משפטיים, מדיניים וכלכליים. למי שחי ונושם פוליטיקה.', grad: 'from-violet-500 to-indigo-600', hover: 'hover:border-violet-300 hover:shadow-violet-200/60' },
+              { key: 'everyday', icon: Coffee, title: "תכל'ס", desc: 'שפת רחוב ברורה. לא צריך להכיר שום מושג פוליטי. רק את היומיום.', grad: 'from-amber-400 to-orange-500', hover: 'hover:border-orange-300 hover:shadow-orange-500/20' },
+              { key: 'simple', icon: MessageCircleHeart, title: 'בגובה העיניים', desc: 'שפה יומיומית עם קצת מושגים. למי שעוקב מדי פעם אחרי חדשות.', grad: 'from-cyan-400 to-blue-500', hover: 'hover:border-blue-300 hover:shadow-blue-500/20' },
+              { key: 'advanced', icon: BrainCircuit, title: 'מעמיק ומקצועי', desc: 'מונחים משפטיים, מדיניים וכלכליים. למיחי ונושם פוליטיקה.', grad: 'from-violet-400 to-indigo-500', hover: 'hover:border-violet-300 hover:shadow-violet-500/20' },
             ].map(({ key, icon: Icon, title, desc, grad, hover }) => (
               <button
                 key={key}
                 onClick={() => setState(prev => ({ ...prev, difficulty: key, screen: 'quiz' }))}
-                className={`group relative p-6 md:p-8 rounded-3xl border-2 border-slate-200 bg-white text-right transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col h-full ${hover} ${FOCUS}`}
+                className={`group relative p-8 rounded-3xl border-2 border-white/60 bg-white/50 backdrop-blur-sm text-right transition-all duration-300 hover:-translate-y-1 hover:bg-white flex flex-col h-full ${hover} shadow-lg shadow-slate-200/50 ${FOCUS}`}
               >
-                <div className={`relative p-3.5 w-fit rounded-2xl bg-gradient-to-br ${grad} shadow-md mb-5 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}><Icon className="w-6 h-6 text-white" /></div>
-                <h3 className="text-xl mb-2 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>{title}</h3>
-                <p className="text-slate-500 text-[15px] md:text-sm leading-relaxed font-medium flex-grow">{desc}</p>
+                <div className={`relative p-4 w-fit rounded-2xl bg-gradient-to-br ${grad} shadow-md mb-6 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}><Icon className="w-7 h-7 text-white" /></div>
+                <h3 className="text-2xl mb-3 text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>{title}</h3>
+                <p className="text-slate-600 text-sm md:text-base leading-relaxed font-medium flex-grow group-hover:text-indigo-900 transition-colors">{desc}</p>
               </button>
             ))}
           </div>
@@ -1626,39 +1440,31 @@ function ElectionsCompassApp() {
     return (
       <AppShell activeColor={q.accent}>
         <div className="max-w-3xl w-full">
-          {/* Progress + ניווט — אריח קומפקטי, לא דביק.
-              כל 11 המספרים נראים בבת אחת: הצ'יפים מתכווצים לרוחב הזמין
-              (flex-1) במקום לגלול הצידה. */}
-          <div className={`${CARD} px-3 py-2.5 mb-3 md:mb-4 md:px-4`}>
-            <div className="flex items-center gap-3">
+          <div className={`${CARD} px-4 py-3 md:py-4 mb-4 md:mb-6 sticky top-4 z-40 backdrop-blur-3xl`}>
+            <div className="flex items-center gap-4">
               <div
                 role="progressbar" aria-valuemin={1} aria-valuemax={QUESTIONS.length} aria-valuenow={idx + 1}
-                aria-label={`שאלה ${idx + 1} מתוך ${QUESTIONS.length}`}
-                className="flex-1 h-2 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shadow-inner"
+                className="flex-1 h-2.5 md:h-3 rounded-full bg-slate-200/60 overflow-hidden shadow-inner"
               >
                 <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, backgroundColor: q.accent }} />
               </div>
-              <span className="text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap">{idx + 1} / {QUESTIONS.length}</span>
+              <span className="text-sm font-extrabold text-slate-600 tabular-nums whitespace-nowrap bg-white/80 px-2 py-1 rounded-lg border border-slate-200/50 shadow-sm">{idx + 1} / {QUESTIONS.length}</span>
             </div>
-            {/* ניווט מהיר בין שאלות — קריטי בעריכת תשובות מהתוצאות */}
-            <nav className="flex gap-1 md:gap-1.5 mt-2" aria-label="ניווט בין שאלות">
+            <nav className="flex gap-1.5 md:gap-2 mt-3" aria-label="ניווט בין שאלות">
               {QUESTIONS.map((qq, i) => {
                 const answered = answers[i].choice !== null;
                 const isCurrent = i === idx;
                 return (
                   <button
-                    key={qq.id}
-                    onClick={() => jumpToQuestion(i)}
-                    aria-label={`שאלה ${i + 1}: ${qq.category}${answered ? ' (נענתה)' : ''}`}
-                    aria-current={isCurrent ? 'step' : undefined}
-                    className={`flex-1 min-w-0 h-7 md:h-8 rounded-lg text-[11px] md:text-xs font-extrabold tabular-nums transition-colors border ${FOCUS} ${
+                    key={qq.id} onClick={() => jumpToQuestion(i)} aria-current={isCurrent ? 'step' : undefined}
+                    className={`flex-1 min-w-0 h-8 rounded-lg text-xs font-extrabold tabular-nums transition-all duration-200 border ${FOCUS} ${
                       isCurrent
-                        ? 'text-white border-transparent shadow-sm'
+                        ? 'text-white border-transparent shadow-md scale-105'
                         : answered
-                          ? 'bg-white text-slate-700 border-slate-200'
-                          : 'bg-slate-50 text-slate-400 border-dashed border-slate-300'
+                          ? 'bg-white text-indigo-900 border-slate-200 hover:bg-slate-50'
+                          : 'bg-white/40 text-slate-400 border-dashed border-slate-300 hover:bg-white/60'
                     }`}
-                    style={isCurrent ? { backgroundColor: q.accent } : answered ? { color: QUESTIONS[i].accent, borderColor: `${QUESTIONS[i].accent}50` } : undefined}
+                    style={isCurrent ? { backgroundColor: q.accent } : answered ? { color: QUESTIONS[i].accent, borderColor: `${QUESTIONS[i].accent}40` } : undefined}
                   >
                     {i + 1}
                   </button>
@@ -1667,23 +1473,22 @@ function ElectionsCompassApp() {
             </nav>
           </div>
 
-          <div key={idx} className={`${CARD} overflow-hidden anim-enter`}>
+          <div key={idx} className={`${CARD} overflow-hidden question-transition-enter relative`}>
             <div className="p-5 md:p-10">
-              <div className="flex flex-wrap items-center gap-3 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-2xl" style={{ backgroundColor: `${q.accent}15` }}><Icon className="w-5 h-5" style={{ color: q.accent }} /></div>
-                  <span className="text-base md:text-sm font-extrabold uppercase tracking-wider" style={{ color: q.accent }}>{q.category}</span>
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3 bg-white/60 px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
+                  <div className="p-2 rounded-xl shadow-sm" style={{ backgroundColor: `${q.accent}15` }}><Icon className="w-5 h-5" style={{ color: q.accent }} /></div>
+                  <span className="text-sm font-extrabold uppercase tracking-wider" style={{ color: q.accent }}>{q.category}</span>
                 </div>
-                <div className="w-full sm:w-auto sm:mr-auto">
-                  <div className="text-[11px] font-bold text-slate-400 mb-1 sm:text-left">כמה הנושא חשוב לך? (משפיע על המשקל בחישוב)</div>
-                  <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1" role="group" aria-label="חשיבות הנושא">
+                <div className="w-full sm:w-auto">
+                  <div className="text-[11px] font-bold text-slate-500 mb-1.5 sm:text-left">משקל השאלה עבורך:</div>
+                  <div className="flex items-center gap-1 bg-slate-100/50 border border-slate-200/60 rounded-xl p-1 shadow-inner" role="group">
                   {[{ w: 0.5, label: 'שולי' }, { w: 1, label: 'רגיל' }, { w: 2, label: 'קריטי' }].map(({ w, label }) => (
                     <button
-                      key={w} onClick={() => { haptic.light(); setAnswer({ weight: w }); }}
-                      aria-pressed={current.weight === w}
-                      className={`flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg text-sm md:text-xs font-bold transition-colors ${FOCUS} ${current.weight === w ? 'bg-white text-slate-800 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
+                      key={w} onClick={() => { haptic.light(); setAnswer({ weight: w }); }} aria-pressed={current.weight === w}
+                      className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all ${FOCUS} ${current.weight === w ? 'bg-white text-indigo-950 shadow-md border-transparent scale-105' : 'text-slate-500 hover:text-indigo-900 border-transparent hover:bg-white/50'}`}
                     >
-                      {w === 2 && <Star className={`w-3 h-3 inline ml-1 -mt-0.5 ${current.weight === w ? 'fill-amber-500 text-amber-500' : ''}`} />}
+                      {w === 2 && <Star className={`w-3.5 h-3.5 inline ml-1 -mt-0.5 ${current.weight === w ? 'fill-amber-500 text-amber-500' : ''}`} />}
                       {label}
                     </button>
                   ))}
@@ -1691,22 +1496,19 @@ function ElectionsCompassApp() {
                 </div>
               </div>
 
-              {/* השאלה עצמה — אריח מורם עם מסגרת מובחנת בצבע הנושא,
-                  וטקסט בגרדיאנט שנשען על אותו צבע. כל שאלה מקבלת גוון משלה. */}
               <div
-                className="relative rounded-2xl border-2 px-5 py-5 md:px-7 md:py-6 mb-8 shadow-sm"
+                className="relative rounded-3xl border px-6 py-6 md:px-8 md:py-8 mb-8 shadow-sm backdrop-blur-sm"
                 style={{
-                  borderColor: `${q.accent}35`,
-                  background: `linear-gradient(135deg, ${q.accent}0d, #ffffff 55%)`,
-                  boxShadow: `0 4px 16px -6px ${q.accent}25`,
+                  borderColor: `${q.accent}30`,
+                  backgroundColor: `${q.accent}08`,
                 }}
               >
-                <div className="absolute top-3 bottom-3 right-0 w-1.5 rounded-full" style={{ backgroundColor: q.accent }} />
+                <div className="absolute top-4 bottom-4 right-0 w-1.5 rounded-full" style={{ backgroundColor: q.accent }} />
                 <h2
                   className="text-2xl md:text-3xl leading-snug tracking-tight bg-clip-text text-transparent"
                   style={{
                     fontFamily: FONT_DISPLAY,
-                    backgroundImage: `linear-gradient(120deg, #0f172a 35%, ${q.accent} 130%)`,
+                    backgroundImage: `linear-gradient(120deg, #1e1b4b 20%, ${q.accent} 140%)`,
                     WebkitBackgroundClip: 'text',
                   }}
                 >
@@ -1714,41 +1516,38 @@ function ElectionsCompassApp() {
                 </h2>
               </div>
 
-              <div className="space-y-3" role="radiogroup" aria-label={v.text}>
+              <div className="space-y-3.5" role="radiogroup">
                 {displayOrder[idx].map((optIdx) => {
                   const selected = current.choice === optIdx;
                   return (
                     <button
                       key={optIdx} onClick={() => answerAndAdvance(optIdx)} disabled={locked && !selected}
                       role="radio" aria-checked={selected}
-                      className={`opt-enter relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-[border-color,background-color,box-shadow,transform] duration-200 flex items-start gap-3 md:gap-4 active:scale-[0.99] ${FOCUS} ${
-                        selected ? 'bg-slate-50 shadow-md' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
+                      className={`opt-enter relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-all duration-300 flex items-start gap-4 active:scale-[0.99] ${FOCUS} ${
+                        selected ? 'bg-white shadow-lg opt-selected z-10 scale-[1.01]' : 'border-slate-200 bg-white/70 hover:border-indigo-300 hover:bg-white hover:shadow-md'
                       }`}
-                      style={{ animationDelay: `${0.08 + displayOrder[idx].indexOf(optIdx) * 0.06}s`, ...(selected ? { borderColor: q.accent } : {}) }}
+                      style={{ animationDelay: `${0.05 + displayOrder[idx].indexOf(optIdx) * 0.05}s`, ...(selected ? { borderColor: q.accent, boxShadow: `0 10px 25px -5px ${q.accent}30` } : {}) }}
                     >
-                      {selected && <div className="absolute inset-0 rounded-2xl opacity-10 pointer-events-none" style={{ backgroundColor: q.accent }} />}
-                      <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors z-10 ${selected ? 'border-transparent' : 'border-slate-300'}`} style={selected ? { backgroundColor: q.accent } : {}}>
+                      {selected && <div className="absolute inset-0 rounded-2xl opacity-5 pointer-events-none" style={{ backgroundColor: q.accent }} />}
+                      <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors z-10 ${selected ? 'border-transparent' : 'border-slate-300 group-hover:border-indigo-300'}`} style={selected ? { backgroundColor: q.accent } : {}}>
                         {selected && <Check className="w-3.5 h-3.5 text-white" />}
                       </div>
-                      <span className={`text-[17px] md:text-base leading-relaxed z-10 ${selected ? 'font-bold text-slate-900' : 'font-medium text-slate-600'}`}>{v.options[optIdx]}</span>
+                      <span className={`text-[17px] md:text-base leading-relaxed z-10 transition-colors ${selected ? 'font-bold text-indigo-950' : 'font-medium text-slate-500 group-hover:text-indigo-900'}`}>{v.options[optIdx]}</span>
                     </button>
                   );
                 })}
               </div>
 
-              <div className="mt-8 flex items-center justify-between gap-2 border-t border-slate-100 pt-5">
-                <button onClick={() => { haptic.light(); (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1}))); }} className={`${BTN_GHOST} min-h-[44px]`}>
+              <div className="mt-8 flex items-center justify-between gap-2 border-t border-slate-200/60 pt-5">
+                <button onClick={() => { haptic.light(); (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1}))); }} className={`${BTN_GHOST} bg-white/50 border border-slate-200 hover:bg-white`}>
                   <ChevronRight className="w-5 h-5" /> קודמת
                 </button>
                 {review && results.answeredCount > 0 && (
-                  <button
-                    onClick={() => setState(prev => ({ ...prev, screen: 'results', review: false }))}
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 transition-colors ${FOCUS}`}
-                  >
+                  <button onClick={() => setState(prev => ({ ...prev, screen: 'results', review: false }))} className={`inline-flex items-center gap-1.5 px-6 py-2 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-colors ${FOCUS}`}>
                     <Check className="w-4 h-4" /> לתוצאות
                   </button>
                 )}
-                <button onClick={handleSkip} className={`${BTN_GHOST} min-h-[44px]`}>
+                <button onClick={handleSkip} className={`${BTN_GHOST} bg-white/50 border border-slate-200 hover:bg-white`}>
                   לדלג <ChevronLeft className="w-4 h-4" />
                 </button>
               </div>
@@ -1756,7 +1555,7 @@ function ElectionsCompassApp() {
           </div>
 
           {toast && (
-            <div role="status" aria-live="polite" className="toast-anim fixed bottom-6 left-1/2 z-50 max-w-[90vw] bg-slate-900 text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-xl" style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+            <div role="status" aria-live="polite" className="toast-anim fixed bottom-6 left-1/2 z-50 max-w-[90vw] bg-indigo-950/90 backdrop-blur-md border border-white/10 text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-2xl" style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
               {toast}
             </div>
           )}
@@ -1765,13 +1564,16 @@ function ElectionsCompassApp() {
     );
   }
 
-  /* ---------------- LOADING (EASTER EGG) ---------------- */
+  /* ---------------- LOADING ---------------- */
   if (screen === 'loading') {
     return (
       <AppShell>
-        <div className={`max-w-md w-full ${CARD} p-12 text-center flex flex-col items-center justify-center min-h-[300px]`}>
-          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-6" />
-          <h2 key={jokeIndex} className="text-2xl text-slate-800 joke-anim" style={{ fontFamily: FONT_DISPLAY }}>
+        <div className={`max-w-md w-full ${CARD} p-12 text-center flex flex-col items-center justify-center min-h-[350px] anim-pop`}>
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-indigo-500 blur-xl opacity-20 rounded-full animate-pulse" />
+            <Loader2 className="w-14 h-14 text-indigo-500 animate-spin relative z-10" />
+          </div>
+          <h2 key={jokeIndex} className="text-2xl text-indigo-950 joke-anim" style={{ fontFamily: FONT_DISPLAY }}>
             {LOADING_JOKES[jokeIndex]}
           </h2>
         </div>
@@ -1786,8 +1588,8 @@ function ElectionsCompassApp() {
     return (
       <AppShell>
          <div className={`max-w-md w-full ${CARD} p-10 text-center anim-pop`}>
-           <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6"><Coffee className="w-10 h-10 text-slate-400" /></div>
-           <h2 className="text-3xl mb-4 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>קול שטבע</h2>
+           <div className="w-24 h-24 bg-slate-100/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"><Coffee className="w-12 h-12 text-slate-400" /></div>
+           <h2 className="text-3xl mb-4 text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>קול שטבע</h2>
            <p className="text-slate-600 mb-8 text-lg">אי אפשר להקים ממשלה מ"לא יודע". דילגת על כל השאלות, אז אין לנו מושג מה להגיד לך.</p>
            <button onClick={reset} className={BTN_PRIMARY}>טוב נו, ננסה שוב</button>
          </div>
@@ -1796,15 +1598,11 @@ function ElectionsCompassApp() {
   }
 
   const top = scored[0];
-  
   const isPerfectMatch = top.match === 100;
   const isLoneWolf = top.match < 45;
-
-/* תובנות: ההפתעה שלך + התאמה לפי גושים.
-     הפתעה אמיתית = מפלגה מהחצי התחתון שקרובה אליך בנושא מסוים
-     אפילו יותר מהמפלגה המובילה שלך — לא סתם קונצנזוס שכולם מסכימים עליו. */
   const half = Math.floor(scored.length / 2);
   let surprise = null;
+  
   scored.slice(half).forEach((p, j) => {
     p.perQuestion.forEach((rec) => {
       const topRec = top.perQuestion.find((r) => r.questionId === rec.questionId);
@@ -1821,74 +1619,94 @@ function ElectionsCompassApp() {
     return { ...b, avg };
   });
 
-
   return (
     <AppShell center={false}>
-      <div className="max-w-5xl w-full mx-auto space-y-6 pb-16">
+      <div className="max-w-5xl w-full mx-auto space-y-6 pb-20">
 
         {guestMode && (
-          <div className="anim-enter bg-amber-50 border border-amber-200 rounded-3xl p-4 md:p-5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-right">
-            <div className="p-2.5 bg-amber-100 rounded-2xl flex-shrink-0"><Info className="w-5 h-5 text-amber-600" /></div>
-            <p className="flex-1 text-sm font-bold text-amber-900">
+          <div className="anim-enter bg-amber-50/90 backdrop-blur-md border border-amber-200/80 rounded-3xl p-5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-right shadow-sm">
+            <div className="p-3 bg-amber-100 rounded-2xl flex-shrink-0 shadow-inner"><Info className="w-6 h-6 text-amber-600" /></div>
+            <p className="flex-1 text-[15px] font-bold text-amber-900">
               מצב אורח — התוצאות האלה לא נשמרות במכשיר, והן לא דורסות את התוצאות של בעל הטלפון.
             </p>
-            <button onClick={exitGuestSession} className={`flex-shrink-0 px-5 py-2.5 rounded-xl font-bold bg-white text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors ${FOCUS}`}>
+            <button onClick={exitGuestSession} className={`flex-shrink-0 px-6 py-3 rounded-xl font-bold bg-white text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors shadow-sm ${FOCUS}`}>
               חזרה לתוצאות שלי
             </button>
           </div>
         )}
 
         {sharedView && (
-          <div className="rounded-3xl border border-indigo-200 bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 p-5 md:p-6 text-white shadow-lg shadow-indigo-300/50 anim-pop flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="rounded-3xl border border-indigo-200 bg-gradient-to-br from-blue-500 via-indigo-600 to-violet-600 p-6 md:p-8 text-white shadow-xl shadow-indigo-500/20 anim-pop flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-right">
-              <p className="font-extrabold text-lg">מישהו שיתף איתך את התוצאה שלו 👀</p>
-              <p className="text-indigo-100 text-sm font-medium">כך נראית ההתאמה הפוליטית שלו. סקרנים מה יוצא לכם?</p>
+              <p className="font-extrabold text-xl mb-1">מישהו שיתף איתך את התוצאה שלו 👀</p>
+              <p className="text-indigo-100 text-[15px] font-medium">כך נראית ההתאמה הפוליטית שלו. סקרנים מה יוצא לכם?</p>
             </div>
-            <button onClick={exitSharedView} className={`flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-extrabold bg-white text-indigo-700 hover:bg-indigo-50 transition-colors shadow-md ${FOCUS}`}>
+            <button onClick={exitSharedView} className={`flex-shrink-0 inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-extrabold bg-white text-indigo-700 hover:bg-indigo-50 transition-colors shadow-lg ${FOCUS}`}>
               גלו את ההתאמה שלכם <ChevronLeft className="w-5 h-5" />
             </button>
           </div>
         )}
 
-        {/* 1. Winner Hero */}
-        <div className={`${CARD} p-8 md:p-14 text-center relative overflow-hidden anim-pop`}>
-          <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full blur-[100px] pointer-events-none opacity-20" style={{ backgroundColor: top.hex }} />
-          <div className="relative">
-            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-full mb-6 shadow-sm">
-              <Sparkles className="w-4 h-4 text-amber-500" /> המפלגה הקרובה אליך ביותר
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-8xl mb-6 tracking-tight break-words" style={{ fontFamily: FONT_DISPLAY, color: top.hex }}>{top.name}</h1>
+        {/* 1. Winner Hero with enhanced, compact layout */}
+        <div className={`${CARD} p-6 md:p-8 relative overflow-hidden anim-pop`}>
+          <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-[35rem] h-[35rem] rounded-full blur-[100px] pointer-events-none opacity-20" style={{ backgroundColor: top.hex }} />
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
             
-            <div className="inline-flex flex-col items-center mb-6">
-               <div className="inline-flex items-baseline gap-2 bg-white/60 px-6 py-2 rounded-3xl border border-slate-200/50 shadow-sm backdrop-blur-md mb-2">
-                 <AnimatedPercent value={top.match} className="text-6xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }} />
-                 <span className="text-slate-600 font-bold text-xl">התאמה</span>
-               </div>
-               {isPerfectMatch && <div className="text-sm font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full flex items-center gap-1"><PartyPopper className="w-4 h-4"/> מועמד ודאי לשיריון ברשימה!</div>}
-               {isLoneWolf && <div className="text-sm font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full">זאב בודד. אולי הגיע הזמן להקים מפלגה?</div>}
+            <div className="flex-1 text-center md:text-right order-2 md:order-1">
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
+                <div className="bg-amber-100 p-1.5 rounded-lg shadow-sm">
+                  <Sparkles className="w-5 h-5 text-amber-600" />
+                </div>
+                <h2 className="text-lg md:text-xl font-black text-indigo-950/80 tracking-wide">
+                  המפלגה הקרובה אליך ביותר
+                </h2>
+              </div>
+              
+              <h1 className="text-6xl md:text-8xl mb-5 tracking-tight break-words relative inline-block drop-shadow-sm" style={{ fontFamily: FONT_DISPLAY, color: top.hex }}>
+                {top.name}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shine_4s_ease-in-out_infinite]" />
+              </h1>
+              
+              <div className="bg-white/50 backdrop-blur-sm border border-white/60 p-4 rounded-2xl shadow-sm max-w-xl mx-auto md:mx-0">
+                <p className="text-base md:text-lg text-slate-800 leading-relaxed font-bold">{top.description}</p>
+              </div>
+              
+              {(isPerfectMatch || isLoneWolf) && (
+                 <div className="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
+                   {isPerfectMatch && <div className="text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm"><PartyPopper className="w-3.5 h-3.5"/> מועמד ודאי לשיריון!</div>}
+                   {isLoneWolf && <div className="text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-full shadow-sm">זאב בודד. אולי להקים מפלגה?</div>}
+                 </div>
+              )}
             </div>
-            
-            <p className="text-lg md:text-xl text-slate-700 max-w-2xl mx-auto leading-relaxed font-medium">{top.description}</p>
+
+            <div className="flex-shrink-0 order-1 md:order-2">
+              <div 
+                className="w-40 h-40 md:w-48 md:h-48 bg-white/95 rounded-[2rem] md:rounded-[2.5rem] border-2 border-white shadow-xl backdrop-blur-md flex flex-col items-center justify-center transform hover:scale-105 transition-transform duration-500"
+                style={{ boxShadow: `0 20px 40px -10px ${top.hex}40` }}
+              >
+                <AnimatedPercent value={top.match} className="text-6xl md:text-7xl text-indigo-950 drop-shadow-sm" style={{ fontFamily: FONT_DISPLAY }} />
+                <span className="text-indigo-950/50 font-black text-sm md:text-base uppercase tracking-widest mt-1">התאמה</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        {/* 2. המצפן הפוליטי — מיד אחרי התוצאה הראשית */}
-        <div className={`${CARD} p-4 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
-          <h3 className="text-2xl md:text-3xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
-          <p className="text-slate-500 text-center mb-2 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך.</p>
+        <div className={`${CARD} p-5 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
+          <h3 className="text-2xl md:text-4xl mb-2 text-center tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
+          <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך.</p>
           <CompassDial scored={scored} top={top} />
         </div>
 
-        {/* 3. הטוויסט — העובדה הכי מעניינת בעמוד, ולכן היא מקבלת במה
-            מיד אחרי המצפן ולא נקברת בהמשך הגלילה. */}
         {surprise && (
-          <div className="anim-enter rounded-3xl p-[2px] bg-gradient-to-l from-amber-300 via-orange-300 to-amber-300 shadow-lg shadow-amber-200/50" style={{ animationDelay: '.18s' }}>
-            <div className="rounded-[22px] bg-white/95 backdrop-blur-xl p-5 md:p-8">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 rounded-2xl bg-amber-100">
+          <div className="anim-enter rounded-3xl p-[2px] bg-gradient-to-br from-amber-200 via-orange-300 to-amber-200 shadow-xl shadow-amber-500/10" style={{ animationDelay: '.18s' }}>
+            <div className="rounded-[22px] bg-white/95 backdrop-blur-2xl p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-2xl bg-amber-100 shadow-inner">
                   <Lightbulb className="w-6 h-6 text-amber-600" />
                 </div>
-                <h3 className="text-xl md:text-2xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>רגע, זה מפתיע</h3>
+                <h3 className="text-2xl text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>רגע, זה מפתיע</h3>
               </div>
               <p className="text-slate-700 leading-relaxed text-[16px] md:text-lg">
                 למרות ש<b style={{ color: surprise.party.hex }}>{surprise.party.name}</b> נמצאת
@@ -1900,55 +1718,62 @@ function ElectionsCompassApp() {
           </div>
         )}
 
-        {/* 4. תעודת זהות פוליטית + טבלת המפלגות */}
         <div className="grid md:grid-cols-2 gap-6">
           <PoliticalID dna={dna} top={top} />
 
           <div className={`${CARD} p-6 md:p-10 anim-enter`}>
-            <h3 className="text-2xl mb-6 tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>שאר המפלגות</h3>
-            <div className="space-y-4 max-h-[350px] overflow-y-auto px-2 custom-scrollbar">
+            <h3 className="text-2xl mb-6 tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>שאר המפלגות</h3>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto px-2 custom-scrollbar">
               {scored.slice(1).map((p, i) => {
                 const isRunnerUp = i === 0 && p.match > 0;
                 return (
-                  <div key={p.id} className={`relative ${isRunnerUp ? 'bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6' : 'mb-4'}`}>
-                     {isRunnerUp && <div className="text-xs font-bold text-slate-400 mb-2">כמעט מתאים:</div>}
-                     <div className="flex justify-between items-end mb-2">
-                        <span className={`flex items-center gap-2 ${isRunnerUp ? 'font-black text-slate-900 text-lg' : 'font-bold text-slate-700'}`}>
-                          {!isRunnerUp && <span className="text-slate-400 text-sm">{i + 2}.</span>}
-                          {p.name}
-                        </span>
-                        <span className={`font-black tabular-nums ${isRunnerUp ? 'text-slate-800 text-xl' : 'text-slate-600'}`}>{p.match}%</span>
+                  <details key={p.id} className={`group relative ${isRunnerUp ? 'bg-white rounded-2xl border border-slate-200 shadow-sm mb-5' : 'bg-slate-50/70 rounded-xl border border-slate-100 hover:bg-slate-100 transition-colors mb-2'}`}>
+                     <summary className={`flex flex-col cursor-pointer list-none ${isRunnerUp ? 'p-5' : 'p-4'} rounded-inherit ${FOCUS}`}>
+                       {isRunnerUp && <div className="text-[11px] uppercase tracking-wide font-extrabold text-indigo-500 mb-2">כמעט מתאים:</div>}
+                       <div className="flex justify-between items-center mb-3">
+                          <span className={`flex items-center gap-2 ${isRunnerUp ? 'font-black text-indigo-950 text-lg' : 'font-bold text-slate-700'}`}>
+                            {!isRunnerUp && <span className="text-slate-400 text-sm font-extrabold mr-1">{i + 2}.</span>}
+                            {p.name}
+                            <ChevronLeft className="w-4 h-4 text-slate-400 transition-transform duration-300 group-open:-rotate-90 mr-1" />
+                          </span>
+                          <span className={`font-black tabular-nums ${isRunnerUp ? 'text-indigo-950 text-2xl' : 'text-slate-600 text-lg'}`}>{p.match}%</span>
+                       </div>
+                       <div className={`w-full bg-slate-200/80 rounded-full overflow-hidden shadow-inner ${isRunnerUp ? 'h-3' : 'h-2'}`}>
+                          <div className="h-full rounded-full anim-bar" style={{ width: `${p.match}%`, backgroundColor: p.hex, animationDelay: `${0.15 + i * 0.07}s` }} />
+                       </div>
+                     </summary>
+                     <div className="px-5 pb-5">
+                       <div className="border-t border-slate-100 pt-3 mt-1">
+                         <p className="text-[14px] leading-relaxed text-slate-600 font-medium">
+                           <strong style={{color: p.hex}}>{p.name}</strong> – {p.description}
+                         </p>
+                       </div>
                      </div>
-                     <div className={`w-full bg-slate-100 rounded-full overflow-hidden ${isRunnerUp ? 'h-3' : 'h-2'}`}>
-                        <div className="h-full rounded-full anim-bar" style={{ width: `${p.match}%`, backgroundColor: p.hex, animationDelay: `${0.15 + i * 0.07}s` }} />
-                     </div>
-                  </div>
+                  </details>
                 );
               })}
             </div>
           </div>
         </div>
 
-        {/* נקודות חיכוך */}
         <div className="anim-enter" style={{ animationDelay: '.25s' }}>
           <FrictionPoints top={top} answers={answers} />
         </div>
 
-        {/* ההתאמה לפי גושים */}
-        <div className={`${CARD} p-5 md:p-8 anim-enter`}>
-          <h3 className="text-xl mb-1 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ההתאמה שלך לפי גושים</h3>
-          <p className="text-slate-500 text-sm font-medium mb-5">ממוצע ההתאמה לכל המפלגות בכל גוש</p>
-          <div className="space-y-4">
+        <div className={`${CARD} p-6 md:p-10 anim-enter`}>
+          <h3 className="text-2xl mb-2 text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>ההתאמה שלך לפי גושים</h3>
+          <p className="text-slate-500 text-[15px] font-medium mb-6">ממוצע ההתאמה לכל המפלגות בכל גוש</p>
+          <div className="space-y-5">
             {blocScores.map((b) => (
               <div key={b.id}>
-                <div className="flex items-baseline justify-between mb-1.5">
-                  <span className="font-bold text-slate-700 text-[15px] flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: b.color }} />
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="font-bold text-slate-800 text-[16px] flex items-center gap-2.5">
+                    <span className="w-3.5 h-3.5 rounded-full inline-block shadow-sm" style={{ backgroundColor: b.color }} />
                     {b.label}
                   </span>
-                  <span className="font-extrabold text-slate-700 tabular-nums text-sm">{b.avg}%</span>
+                  <span className="font-black text-indigo-950 tabular-nums text-lg">{b.avg}%</span>
                 </div>
-                <div className="h-3 rounded-full bg-slate-200/70 overflow-hidden">
+                <div className="h-3.5 rounded-full bg-slate-200/80 overflow-hidden shadow-inner">
                   <div className="anim-bar h-full rounded-full" style={{ width: `${b.avg}%`, backgroundColor: b.color, animationDelay: `${0.2 + blocScores.indexOf(b) * 0.12}s` }} />
                 </div>
               </div>
@@ -1956,18 +1781,17 @@ function ElectionsCompassApp() {
           </div>
         </div>
 
-        {/* Detailed Breakdown */}
         <div className={`${CARD} p-6 md:p-10 anim-enter`}>
-          <h3 className="text-2xl md:text-3xl mb-8 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>
+          <h3 className="text-3xl mb-8 text-center tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>
             איפה הסכמתם עם מי?
           </h3>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-5">
             {QUESTIONS.map((q, i) => {
               const a = answers[i];
               const Icon = q.icon;
               if (a.choice === null) {
                 return (
-                  <div key={q.id} className="bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-100 flex items-center justify-between">
+                  <div key={q.id} className="bg-white/50 p-5 md:p-6 rounded-2xl border border-slate-200/60 flex items-center justify-between">
                     <div className="flex items-center gap-3 opacity-50 text-slate-600"><Icon className="w-5 h-5" /><span className="font-bold">{q.category}</span></div>
                     <span className="text-xs font-bold text-slate-400 bg-white px-3 py-1.5 rounded-lg border border-slate-200">דילגתם</span>
                   </div>
@@ -1981,28 +1805,28 @@ function ElectionsCompassApp() {
               return (
                 <div key={q.id} className="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 flex flex-col shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl" style={{ backgroundColor: `${q.accent}15` }}>
+                    <div className="p-2 rounded-xl shadow-sm" style={{ backgroundColor: `${q.accent}15` }}>
                       <Icon className="w-5 h-5" style={{ color: q.accent }} />
                     </div>
-                    <span className="text-lg text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>{q.category}</span>
+                    <span className="text-lg text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>{q.category}</span>
                     {a.weight === 2 && (
-                      <span className="mr-auto inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
+                      <span className="mr-auto inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg shadow-sm">
                         <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> קריטי
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-600 font-medium mb-5 text-sm md:text-base leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <p className="text-indigo-900 font-medium mb-5 text-sm md:text-base leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-inner">
                     {q.variants[difficulty].options[a.choice]}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-auto">
                     {agree.length > 0 ? (
                       agree.map((p) => (
-                        <span key={p.id} className="text-xs md:text-sm font-bold px-3 py-1.5 rounded-lg border" style={{ color: p.hex, backgroundColor: `${p.hex}0d`, borderColor: `${p.hex}35` }}>
+                        <span key={p.id} className="text-xs md:text-sm font-bold px-3 py-1.5 rounded-lg border shadow-sm" style={{ color: p.hex, backgroundColor: `${p.hex}0a`, borderColor: `${p.hex}30` }}>
                           {p.name}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs md:text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                      <span className="text-xs md:text-sm font-medium text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
                         אף מפלגה לא מציגה עמדה קרובה.
                       </span>
                     )}
@@ -2013,24 +1837,21 @@ function ElectionsCompassApp() {
           </div>
         </div>
 
-        {/* 5. Actions */}
         {sharedView ? (
-          /* צופה בתוצאה של מישהו אחר — כל המטרה כאן היא להתחיל שאלון משלו */
-          <div className={`${CARD} p-6 md:p-8 text-center anim-enter`}>
-            <h3 className="text-2xl md:text-3xl mb-2 text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ומה יוצא לכם?</h3>
-            <p className="text-slate-500 font-medium mb-5">אלה התוצאות של מי ששלח לכם את הקישור. השאלון שלכם עדיין ריק — 11 שאלות ומגלים.</p>
-            <button onClick={exitSharedView} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden text-lg px-10`}>
+          <div className={`${CARD} p-8 md:p-10 text-center anim-enter`}>
+            <h3 className="text-3xl mb-3 text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>ומה יוצא לכם?</h3>
+            <p className="text-slate-600 font-medium mb-6 text-lg">אלה התוצאות של מי ששלח לכם את הקישור. השאלון שלכם עדיין ריק — 11 שאלות ומגלים.</p>
+            <button onClick={exitSharedView} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden text-lg px-12`}>
               להתחיל את השאלון שלי <ChevronLeft className="w-5 h-5" />
             </button>
           </div>
         ) : (
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 pt-6">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 pt-4">
             <button onClick={shareLink} className={`${BTN_PRIMARY} text-lg`}>
-              {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף התוצאה שלי'}
+              {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />} {copied ? 'הועתק!' : 'שיתוף התוצאה'}
             </button>
-            {/* קישור נקי — החבר מקבל שאלון ריק משלו, לא את התוצאות שלי */}
             <button onClick={shareGame} className={`${BTN_SECONDARY} text-lg`}>
-              {invited ? <Check className="w-5 h-5" /> : <Users className="w-5 h-5" />} {invited ? 'הועתק!' : 'הזמנת חבר לשחק'}
+              {invited ? <Check className="w-5 h-5" /> : <Users className="w-5 h-5" />} {invited ? 'הועתק!' : 'הזמנת חבר'}
             </button>
             <button onClick={shareImage} className={`${BTN_SECONDARY} text-lg`}>
               <Download className="w-5 h-5" /> תמונה לשיתוף
@@ -2043,7 +1864,9 @@ function ElectionsCompassApp() {
                 <UserPlus className="w-5 h-5" /> מישהו אחר רוצה לנסות?
               </button>
             )}
-            <button onClick={reset} className={`${BTN_GHOST} justify-center`}>מחיקת נתונים והתחלה</button>
+            <div className="w-full text-center mt-4">
+               <button onClick={reset} className={`${BTN_GHOST}`}>מחיקת נתונים והתחלה מחדש</button>
+            </div>
           </div>
         )}
 
@@ -2052,39 +1875,22 @@ function ElectionsCompassApp() {
   );
 }
 
-/* ------------------------------------------------------------------
-   רשת ביטחון — קריסה אחת בלי זה שווה מסך לבן, עם נתונים תקועים
-   ב-localStorage שממשיכים להקריס גם אחרי רענון. הכפתור שובר את המעגל.
-------------------------------------------------------------------- */
 class AppErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  componentDidCatch(error, info) {
-    console.error('ElectionsCompass crashed:', error, info);
-  }
-  handleReset = () => {
-    safeStorage.remove(STORAGE_KEY);
-    window.location.href = window.location.pathname; // מנקה גם ?r= פגום
-  };
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error, info) { console.error('ElectionsCompass crashed:', error, info); }
+  handleReset = () => { safeStorage.remove(STORAGE_KEY); window.location.href = window.location.pathname; };
   render() {
     if (!this.state.hasError) return this.props.children;
     return (
       <div dir="rtl" className="app-bold min-h-screen flex items-center justify-center bg-slate-50 p-6" style={{ fontFamily: FONT_BODY }}>
-        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl shadow-xl p-8 text-center">
-          <div className="text-4xl mb-3">🧭</div>
-          <h1 className="text-2xl font-extrabold text-slate-900 mb-2">המצפן איבד את הצפון לרגע</h1>
-          <p className="text-slate-500 font-medium mb-6 leading-relaxed">
+        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl shadow-2xl p-8 text-center">
+          <div className="text-5xl mb-4">🧭</div>
+          <h1 className="text-2xl font-extrabold text-indigo-950 mb-2">המצפן איבד את הצפון לרגע</h1>
+          <p className="text-slate-600 font-medium mb-8 leading-relaxed">
             משהו השתבש. לחיצה על הכפתור תנקה את הנתונים השמורים ותתחיל מחדש — זה פותר את זה כמעט תמיד.
           </p>
-          <button
-            onClick={this.handleReset}
-            className="w-full px-6 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-l from-blue-600 to-violet-600 shadow-lg"
-          >
+          <button onClick={this.handleReset} className="w-full px-6 py-4 rounded-2xl font-bold text-white bg-gradient-to-l from-blue-600 to-violet-600 shadow-lg hover:shadow-xl transition-all">
             ניקוי והתחלה מחדש
           </button>
         </div>
