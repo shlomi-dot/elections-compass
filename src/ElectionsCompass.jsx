@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ChevronLeft, ChevronRight, RotateCcw, Vote, Shield, Scale, Coins,
   BookOpen, Users, Map, BrainCircuit, MessageCircleHeart, Heart,
-  Star, Info, Check, Share2, Sparkles, Coffee, Activity, Loader2, PartyPopper, GraduationCap, Landmark, Globe,
-  Download, Lightbulb, ArrowRightLeft
+  Star, Info, Check, Share2, Sparkles, Coffee, Loader2, PartyPopper, GraduationCap, Landmark, Globe,
+  Download, Lightbulb, Fingerprint, Swords
 } from 'lucide-react';
 
 /* ==================================================================
@@ -11,15 +11,18 @@ import {
 ================================================================== */
 const FONT_BODY = "'Assistant', system-ui, sans-serif";
 const FONT_DISPLAY = "'Secular One', 'Assistant', sans-serif";
+/* מסך הפתיחה משתמש בפונט הממשק במשקל הכבד ביותר, לא ב-Secular One.
+   Secular One קיים במשקל אחד בלבד, ולכן חייבים לציין fontWeight מפורשות כאן. */
+const FONT_HERO = "'Assistant', system-ui, sans-serif";
+const HERO_HEAVY = { fontFamily: FONT_HERO, fontWeight: 800 };
 
 const CARD = 'glass-card bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-3xl shadow-xl shadow-indigo-200/40';
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white';
-const BTN_PRIMARY = `inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white
+const BTN_PRIMARY = `btn-3d inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white
   bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-[length:200%_100%] bg-right
-  hover:bg-left transition-[background-position,transform,box-shadow] duration-500
-  shadow-lg shadow-indigo-300/60 hover:shadow-indigo-400/60 hover:-translate-y-0.5 active:translate-y-0 ${FOCUS}`;
-const BTN_SECONDARY = `inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-slate-700
-  bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-colors ${FOCUS}`;
+  hover:bg-left shadow-lg shadow-indigo-300/60 hover:shadow-indigo-400/60 ${FOCUS}`;
+const BTN_SECONDARY = `btn-3d inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-slate-700
+  bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm ${FOCUS}`;
 const BTN_GHOST = `inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-900 transition-colors ${FOCUS}`;
 
 /* ------------------------------------------------------------------
@@ -188,6 +191,23 @@ const decodeAnswers = (str) => {
    STORAGE — עטיפה בטוחה. localStorage יכול לזרוק שגיאה
    (מצב פרטי ב-iOS, סביבות sandbox) ואסור שזה יפיל את האפליקציה.
 ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------
+   HAPTICS — משוב מישושי עדין ונעים למובייל.
+   פעימות קצרות ורכות במקום זמזום גס. עטוף כולו ב-try כי לא כל דפדפן
+   תומך (iOS Safari לא תומך ב-navigator.vibrate — שם פשוט לא ירגישו כלום,
+   בלי שגיאות). כל אינטראקציה מקבלת "חתימה" משלה כדי שהמשוב ירגיש מכוון.
+------------------------------------------------------------------- */
+const haptic = (() => {
+  const can = typeof navigator !== 'undefined' && 'vibrate' in navigator;
+  const fire = (pattern) => { if (!can) return; try { navigator.vibrate(pattern); } catch { /* noop */ } };
+  return {
+    light:   () => fire(6),                    // ניווט, צ'יפים, החלפת משקל — נגיעה בלבד
+    select:  () => fire([9, 28, 12]),          // בחירת תשובה — פעימה כפולה רכה, מרגיש כמו "ננעל"
+    warning: () => fire([22, 45, 22]),         // טוסט אזהרה — שתי פעימות כבדות יותר
+    success: () => fire([10, 35, 10, 35, 24]), // הגעה לתוצאות / העתקה — "תרועה" קטנה ועולה
+  };
+})();
+
 const STORAGE_KEY = 'electionsCompassData_v8';
 
 const safeStorage = {
@@ -332,14 +352,19 @@ const GLOBAL_CSS = `
     66%      { transform: translate(-3vw, 4vh) scale(0.93); }
   }
   @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: perspective(900px) rotateX(7deg) translateY(20px); }
+    to   { opacity: 1; transform: perspective(900px) rotateX(0deg) translateY(0); }
   }
   @keyframes popIn {
-    0%   { opacity: 0; transform: scale(0.9); }
-    70%  { transform: scale(1.03); }
-    100% { opacity: 1; transform: scale(1); }
+    0%   { opacity: 0; transform: perspective(700px) scale(0.88) rotateX(8deg); }
+    70%  { transform: perspective(700px) scale(1.03) rotateX(-2deg); }
+    100% { opacity: 1; transform: perspective(700px) scale(1) rotateX(0deg); }
   }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0) rotateZ(0deg); }
+    50%      { transform: translateY(-7px) rotateZ(-2deg); }
+  }
+  .anim-float { animation: floatY 3.6s ease-in-out infinite; }
   @keyframes barGrow { from { width: 0; } }
   @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   
@@ -350,7 +375,9 @@ const GLOBAL_CSS = `
   .aurora-blob { animation: auroraFloat 24s ease-in-out infinite; will-change: transform; }
   .aurora-blob.delay { animation-delay: -12s; }
   @media (prefers-reduced-motion: reduce) {
-    .anim-enter, .anim-pop, .anim-bar, .aurora-blob, .joke-anim { animation: none !important; }
+    .anim-enter, .anim-pop, .anim-bar, .aurora-blob, .joke-anim, .dial-draw, .dial-pulse,
+    .anim-float, .dial-float, .opt-enter, .hero-needle, .cta-shine::after, .swatch { animation: none !important; }
+    .btn-3d, .btn-3d:hover, .btn-3d:active { transform: none !important; }
   }
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -373,6 +400,64 @@ const GLOBAL_CSS = `
 
   @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
   .toast-anim { animation: toastIn .3s cubic-bezier(.22,1,.36,1) both; }
+
+  /* --- מסך הפתיחה --- */
+  @keyframes needleSeek {
+    0%   { transform: rotate(-58deg); }
+    18%  { transform: rotate(46deg); }
+    26%  { transform: rotate(30deg); }
+    34%  { transform: rotate(38deg); }
+    40%  { transform: rotate(35deg); }
+    58%  { transform: rotate(-40deg); }
+    66%  { transform: rotate(-28deg); }
+    72%  { transform: rotate(-33deg); }
+    88%  { transform: rotate(-58deg); }
+    100% { transform: rotate(-58deg); }
+  }
+  .hero-needle { animation: needleSeek 8s cubic-bezier(.4,0,.2,1) infinite; }
+
+  @keyframes shine {
+    0%   { transform: translateX(-140%) skewX(-18deg); }
+    100% { transform: translateX(260%) skewX(-18deg); }
+  }
+  .cta-shine::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 45%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.42), transparent);
+    animation: shine 3.4s ease-in-out infinite; animation-delay: 1s;
+  }
+  @keyframes swatchPop {
+    0%   { opacity: 0; transform: translateY(8px) scale(.4); }
+    70%  { transform: translateY(0) scale(1.18); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .swatch { animation: swatchPop .5s cubic-bezier(.22,1,.36,1) both; }
+
+  /* --- המצפן --- */
+  .dial-float { animation: dialFloat 7s ease-in-out infinite; transform-style: preserve-3d; }
+  @keyframes dialFloat {
+    0%, 100% { transform: rotateX(4deg) rotateY(-1.5deg); }
+    50%      { transform: rotateX(8deg) rotateY(1.5deg); }
+  }
+  .dial-needle { filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.35)); }
+  .dial-label { transition: fill .25s, font-weight .25s, opacity .25s; cursor: pointer; }
+
+  /* --- כפתורים תלת-ממדיים --- */
+  .btn-3d { transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s; }
+  @media (hover: hover) {
+    .btn-3d:hover { transform: perspective(600px) translateY(-2px) rotateX(-5deg); }
+  }
+  .btn-3d:active { transform: perspective(600px) translateY(1px) rotateX(3deg) scale(.98); }
+
+  /* --- כניסה מדורגת לאפשרויות בשאלון --- */
+  .opt-enter { animation: fadeSlideIn .45s cubic-bezier(.22,1,.36,1) both; }
+
+  .dial-dot { transform-box: fill-box; transform-origin: center; }
+  .dial-hit { outline: none; }
+  .dial-hit:focus-visible { stroke: #6366f1; stroke-width: 2.5; stroke-dasharray: 4 3; }
+  @keyframes dialDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .dial-draw { stroke-dasharray: 1; animation: dialDraw .9s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes dialPulse { 0%, 100% { transform: scale(1); opacity: .22; } 50% { transform: scale(1.35); opacity: .1; } }
+  .dial-pulse { transform-box: fill-box; transform-origin: center; animation: dialPulse 2.4s ease-in-out infinite; }
 `;
 
 /* ------------------------------------------------------------------
@@ -419,6 +504,574 @@ function AppShell({ children, center = true, activeColor = null }) {
   );
 }
 
+
+/* ------------------------------------------------------------------
+   מסך הפתיחה — שושנת רוחות אמיתית. עיגול מלא, כוכב שמונה קרניים,
+   טבעת מדורגת עם צבעי כל המפלגות בחצי העליון, ומחט שמחפשת כיוון
+   ואז ננעלת. אותה שפה חזותית של המצפן בתוצאות, רק כאובייקט.
+------------------------------------------------------------------- */
+function CompassRose() {
+  const C = 150, R_OUT = 100, R_RING = 88, R_DOTS = 77, R_FACE = 68;
+  const pt = (deg, r) => {
+    const a = (deg * Math.PI) / 180;
+    return { x: C + r * Math.cos(a), y: C - r * Math.sin(a) };
+  };
+  const arc = (from, to, r) => {
+    const p1 = pt(from, r), p2 = pt(to, r);
+    return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${r} ${r} 0 0 ${to < from ? 1 : 0} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+  };
+
+  /* כוכב שמונה קרניים: ארבע ארוכות (ראשיות) וארבע קצרות (משניות) */
+  const star = (long, short) =>
+    [0, 45, 90, 135, 180, 225, 270, 315]
+      .map((deg, i) => {
+        const len = i % 2 === 0 ? long : short;
+        const tipP = pt(deg, len);
+        const lA = pt(deg + 45, len * 0.19);
+        const lB = pt(deg - 45, len * 0.19);
+        return `M ${C} ${C} L ${lA.x.toFixed(1)} ${lA.y.toFixed(1)} L ${tipP.x.toFixed(1)} ${tipP.y.toFixed(1)} L ${lB.x.toFixed(1)} ${lB.y.toFixed(1)} Z`;
+      })
+      .join(' ');
+
+  return (
+    <svg viewBox="0 0 300 300" className="w-full max-w-[220px] md:max-w-[240px] mx-auto h-auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="roseArc" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#ef4444" />
+          <stop offset="50%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#3b82f6" />
+        </linearGradient>
+        <linearGradient id="roseFace" x1="0" y1="0" x2="0.6" y2="1">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="55%" stopColor="#f8fafc" />
+          <stop offset="100%" stopColor="#e0e7ff" />
+        </linearGradient>
+        <linearGradient id="roseStar" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#c7d2fe" />
+          <stop offset="100%" stopColor="#818cf8" />
+        </linearGradient>
+        <linearGradient id="roseNeedle" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6366f1" />
+          <stop offset="49.9%" stopColor="#4f46e5" />
+          <stop offset="50%" stopColor="#1e293b" />
+          <stop offset="100%" stopColor="#0f172a" />
+        </linearGradient>
+        <filter id="roseShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#4338ca" floodOpacity="0.20" />
+        </filter>
+      </defs>
+
+      <g filter="url(#roseShadow)">
+        {/* גוף המצפן */}
+        <circle cx={C} cy={C} r={R_OUT} fill="#fff" stroke="#e2e8f0" strokeWidth="1.5" />
+        <circle cx={C} cy={C} r={R_FACE + 14} fill="url(#roseFace)" stroke="#e2e8f0" strokeWidth="1" />
+      </g>
+
+      {/* טבעת: חצי עליון בצבעי הגושים, חצי תחתון ניטרלי */}
+      <path d={arc(180, 0, R_RING)} fill="none" stroke="url(#roseArc)" strokeWidth="5" strokeLinecap="round" opacity="0.9" />
+      <path d={arc(0, -180, R_RING)} fill="none" stroke="#e2e8f0" strokeWidth="5" strokeLinecap="round" />
+
+      {/* שנתות סביב כל ההיקף */}
+      {Array.from({ length: 72 }, (_, i) => i * 5).map((deg) => {
+        const major = deg % 45 === 0;
+        const a = pt(deg, R_RING - 6), b = pt(deg, R_RING - (major ? 13 : 9));
+        return <line key={deg} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={major ? '#94a3b8' : '#cbd5e1'} strokeWidth={major ? 1.8 : 1} strokeLinecap="round" />;
+      })}
+
+      {/* כוכב שושנת הרוחות */}
+      <path d={star(R_FACE - 4, 26)} fill="url(#roseStar)" opacity="0.5" />
+      <path d={star(R_FACE - 4, 26)} fill="none" stroke="#a5b4fc" strokeWidth="0.8" opacity="0.9" />
+
+      {/* המפלגות על הקשת העליונה, לפי מיקומן האמיתי */}
+      {PARTY_IDS.map((id, i) => {
+        const deg = 180 - (PARTIES[id].position / 100) * 180;
+        const c = pt(deg, R_DOTS);
+        return (
+          <circle
+            key={id} cx={c.x} cy={c.y} r="4.2" fill={PARTIES[id].hex} stroke="#fff" strokeWidth="1.7"
+            className="swatch" style={{ animationDelay: `${400 + i * 55}ms`, transformBox: 'fill-box', transformOrigin: 'center' }}
+          />
+        );
+      })}
+
+      {/* מחט — סורקת, מהססת, וננעלת */}
+      <g className="hero-needle" style={{ transformOrigin: `${C}px ${C}px` }}>
+        <polygon points={`${C},${C - (R_FACE - 2)} ${C - 6},${C} ${C},${C + (R_FACE - 2)} ${C + 6},${C}`} fill="url(#roseNeedle)" style={{ filter: 'drop-shadow(0 2px 3px rgba(15,23,42,.28))' }} />
+      </g>
+      <circle cx={C} cy={C} r="9" fill="#1e293b" stroke="#fff" strokeWidth="3" />
+      <circle cx={C} cy={C} r="3" fill="#818cf8" />
+
+      {/* כיווני העולם הפוליטי — מחוץ לגוף המצפן, לא על השנתות */}
+      {[
+        { t: 'מרכז', deg: 90, w: 36, hex: '#a855f7' },
+        { t: 'שמאל', deg: 180, w: 36, hex: '#ef4444' },
+        { t: 'ימין', deg: 0, w: 30, hex: '#3b82f6' },
+      ].map(({ t, deg, w, hex }) => {
+        const p = pt(deg, R_OUT + 6 + w / 2); // הדחיפה תלוית-רוחב: הקצה הפנימי תמיד מחוץ לגוף
+        return (
+          <text key={t} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle" fontSize="12.5" fontWeight="800" fill={hex}>
+            {t}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------
+   מספר שסופר את עצמו — לאחוז ההתאמה בהירו ובמצפן
+------------------------------------------------------------------- */
+function AnimatedPercent({ value, duration = 1200, className = '', style }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { setVal(value); return undefined; }
+    let raf;
+    const t0 = performance.now();
+    const tick = (now) => {
+      const k = Math.min(1, (now - t0) / duration);
+      const eased = 1 - Math.pow(1 - k, 3);
+      setVal(Math.round(value * eased));
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+  return <span className={`tabular-nums ${className}`} style={style}>{val}%</span>;
+}
+
+/* ------------------------------------------------------------------
+   המצפן הפוליטי — חוגה חצי-מעגלית עם מחט קפיצית חיה.
+   המפלגות יושבות על הקשת לפי מיקומן במפה (שמאל→ימין), גודל וזוהר
+   לפי אחוז ההתאמה. המחט נכנסת בתנופה מצד שמאל, עוברת overshoot קטן
+   ונרגעת על ההתאמה הגבוהה ביותר (פיזיקת קפיץ אמיתית, לא easing).
+   הקשה על מפלגה מזיזה אליה את המחט. SVG טהור — אפס עלות ביצועים.
+------------------------------------------------------------------- */
+const DIAL = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300' };
+
+const dialAngle = (position) => 180 - (position / 100) * 180; // 0=ימין, 180=שמאל
+const dialPoint = (angleDeg, radius) => {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: DIAL.CX + radius * Math.cos(rad), y: DIAL.CY - radius * Math.sin(rad) };
+};
+const arcPath = (fromDeg, toDeg, radius) => {
+  const p1 = dialPoint(fromDeg, radius);
+  const p2 = dialPoint(toDeg, radius);
+  const sweep = toDeg < fromDeg ? 1 : 0;
+  return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${radius} ${radius} 0 0 ${sweep} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+};
+
+function CompassDial({ scored, top }) {
+  const [selectedId, setSelectedId] = useState(top.id);
+  const [live, setLive] = useState(false); // המחט יוצאת לדרך רק כשהמצפן נכנס למסך
+  useEffect(() => { setSelectedId(top.id); }, [top.id]);
+  const selected = scored.find((p) => p.id === selectedId) || top;
+
+  const wrapRef = useRef(null);
+  const needleRef = useRef(null);
+  const fillRef = useRef(null);   // קשת הצבע שממלאת את המסלול עד המחט
+  const trailRef = useRef(null);  // שובל motion-blur מאחורי המחט
+  const spring = useRef({ x: -95, v: 0, raf: 0 });
+  const targetDeg = 90 - dialAngle(selected.position); // 0 = מחט למעלה
+
+  /* טריגר כניסה: ברגע שהמצפן נראה — המחט מתעוררת */
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setLive(true); io.disconnect(); }
+    }, { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* פיזיקת קפיץ + עדכון מילוי ושובל בכל פריים */
+  useEffect(() => {
+    const a = spring.current;
+    const needle = needleRef.current;
+    if (!needle) return undefined;
+
+    const paint = (deg, vel) => {
+      needle.setAttribute('transform', `rotate(${deg.toFixed(2)} ${DIAL.CX} ${DIAL.CY})`);
+      const g = Math.max(0, Math.min(180, 90 - deg)); // זווית המחט בקואורדינטות החוגה
+      if (fillRef.current) fillRef.current.setAttribute('d', arcPath(180, g, DIAL.R));
+      if (trailRef.current) {
+        const len = Math.min(30, Math.abs(vel) * 0.11);
+        if (len < 1.5) {
+          trailRef.current.setAttribute('opacity', '0');
+        } else {
+          const back = Math.max(0, Math.min(180, g + (vel > 0 ? len : -len)));
+          const inner = dialPoint(g, 26);
+          const pA = dialPoint(g, DIAL.R - 8);
+          const pB = dialPoint(back, DIAL.R - 8);
+          const sweep = back < g ? 1 : 0;
+          trailRef.current.setAttribute('d',
+            `M ${inner.x.toFixed(1)} ${inner.y.toFixed(1)} L ${pA.x.toFixed(1)} ${pA.y.toFixed(1)} A ${DIAL.R - 8} ${DIAL.R - 8} 0 0 ${sweep} ${pB.x.toFixed(1)} ${pB.y.toFixed(1)} Z`);
+          trailRef.current.setAttribute('opacity', Math.min(0.3, Math.abs(vel) * 0.0035).toFixed(3));
+        }
+      }
+    };
+
+    if (!live) { paint(a.x, 0); return undefined; }
+
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { a.x = targetDeg; a.v = 0; paint(targetDeg, 0); return undefined; }
+
+    cancelAnimationFrame(a.raf);
+    let last = performance.now();
+    const K = 90, D = 10; // קשיחות וריסון — overshoot נעים
+    const step = (now) => {
+      const dt = Math.min(0.032, (now - last) / 1000);
+      last = now;
+      const acc = -K * (a.x - targetDeg) - D * a.v;
+      a.v += acc * dt;
+      a.x += a.v * dt;
+      paint(a.x, a.v);
+      if (Math.abs(a.v) > 0.06 || Math.abs(a.x - targetDeg) > 0.06) {
+        a.raf = requestAnimationFrame(step);
+      } else {
+        a.x = targetDeg; a.v = 0; paint(targetDeg, 0);
+        haptic.light(); // "טיק" קטן כשהמחט ננעלת
+      }
+    };
+    a.raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(a.raf);
+  }, [targetDeg, live]);
+
+  const pick = (p) => { if (p.id !== selectedId) { haptic.select(); setSelectedId(p.id); } };
+
+  const tip = dialPoint(90, DIAL.R - 34);
+
+  /* ------------------------------------------------------------------
+     פריסת שמות המפלגות — פותר התנגשויות במקום לקוות שלא יהיו.
+     כל תווית ממורכזת (textAnchor="middle") ולא start/end: ה-SVG יורש
+     dir="rtl", ולכן start/end מתהפכים והטקסט זולג פנימה אל תוך החוגה.
+     מיקום ממורכז חסין לכיווניות. כל תווית נדחפת החוצה ברדיוס עד
+     שהיא מפנה מקום גם לקשת (CLEARANCE) וגם לשכנות שלה.
+  ------------------------------------------------------------------- */
+  const LABEL_H = 13;
+  const CLEARANCE = 12;
+  const labelFont = (name) => (name.length > 12 ? 9.5 : 11);
+  const labelWidth = (name) => name.length * labelFont(name) * 0.55;
+
+  const labels = useMemo(() => {
+    const distToBox = (px, py, b) => {
+      const dx = Math.max(b.x0 - px, 0, px - b.x1);
+      const dy = Math.max(b.y0 - py, 0, py - b.y1);
+      return Math.hypot(dx, dy);
+    };
+    const overlaps = (a, b, pad = 4) =>
+      a.x0 < b.x1 + pad && b.x0 < a.x1 + pad && a.y0 < b.y1 + pad && b.y0 < a.y1 + pad;
+
+    const placed = [];
+    scored.forEach((p) => {
+      const a = dialAngle(p.position);
+      const rad = (a * Math.PI) / 180;
+      const w = labelWidth(p.name);
+      let r = DIAL.R + 24;
+      let box = null;
+      for (let tries = 0; tries < 40; tries++) {
+        // דחיפה אופקית נוספת לזוויות שטוחות, כדי שרוחב הטקסט לא יחזור אל הקשת
+        const cx = DIAL.CX + Math.cos(rad) * (r + (w / 2) * Math.abs(Math.cos(rad)));
+        const cy = DIAL.CY - Math.sin(rad) * r;
+        box = { id: p.id, cx, cy, r, x0: cx - w / 2, x1: cx + w / 2, y0: cy - LABEL_H / 2, y1: cy + LABEL_H / 2 };
+        const clearsArc = distToBox(DIAL.CX, DIAL.CY, box) > DIAL.R + CLEARANCE;
+        const clearsOthers = !placed.some((q) => overlaps(box, q));
+        if (clearsArc && clearsOthers) break;
+        r += 5;
+      }
+      placed.push(box);
+    });
+    return Object.fromEntries(placed.map((b) => [b.id, b]));
+  }, [scored]);
+
+  return (
+    <div ref={wrapRef} className="w-full max-w-2xl md:max-w-none mx-auto" style={{ perspective: '1200px' }}>
+      <div className="dial-float">
+        <svg viewBox={DIAL.VIEW} className="w-full h-auto select-none" role="img" aria-label={`מצפן פוליטי — המחט מצביעה על ${selected.name}, ${selected.match}% התאמה`}>
+          <defs>
+            <linearGradient id="dialArc" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#ef4444" />
+              <stop offset="50%" stopColor="#a855f7" />
+              <stop offset="100%" stopColor="#3b82f6" />
+            </linearGradient>
+            <radialGradient id="dialBg" cx="50%" cy="100%" r="90%">
+              <stop offset="0%" stopColor="#eef2ff" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#eef2ff" stopOpacity="0" />
+            </radialGradient>
+            <filter id="dialGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="5" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+
+          {/* רקע רך בפנים החוגה */}
+          <path d={`${arcPath(180, 0, DIAL.R)} L ${DIAL.CX} ${DIAL.CY} Z`} fill="url(#dialBg)" />
+
+          {/* שנתות מינימליסטיות */}
+          {Array.from({ length: 13 }, (_, i) => i * 15).map((a) => {
+            const p1 = dialPoint(a, DIAL.R - 14);
+            const p2 = dialPoint(a, DIAL.R - (a % 45 === 0 ? 25 : 20));
+            return <line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#cbd5e1" strokeWidth={a % 45 === 0 ? 2.2 : 1.3} strokeLinecap="round" />;
+          })}
+
+          {/* מסלול אפור + מילוי צבעוני שרודף אחרי המחט */}
+          <path d={arcPath(180, 0, DIAL.R)} fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" pathLength="1" className="dial-draw" />
+          <path ref={fillRef} d="" fill="none" stroke="url(#dialArc)" strokeWidth="8" strokeLinecap="round" opacity="0.95" />
+
+          {/* שובל motion-blur — נראה רק כשהמחט בתנועה, עוצמתו לפי המהירות */}
+          <path ref={trailRef} d="" fill={selected.hex} opacity="0" style={{ pointerEvents: 'none' }} />
+
+          {/* "מרכז" בתוך החוגה, מתחת לקודקוד */}
+          <text x={DIAL.CX} y={DIAL.CY - DIAL.R + 46} textAnchor="middle" fontSize="13" fontWeight="800" fill="#a855f7" opacity="0.85">מרכז</text>
+
+          {/* מפלגות: נקודה + קו מוביל + שם אופקי */}
+          {scored.map((p, i) => {
+            const isWinner = p.id === top.id;
+            const isSelected = p.id === selectedId;
+            const a = dialAngle(p.position);
+            const pos = dialPoint(a, DIAL.R);
+            const r = 5.5 + p.match * 0.07;
+            const lbl = labels[p.id];
+            const leadStart = dialPoint(a, DIAL.R + r + 3);
+            const leadEnd = dialPoint(a, lbl.r - 9);
+            return (
+              <g key={p.id} className="dial-dot anim-pop" style={{ animationDelay: `${140 + i * 55}ms` }}>
+                <line x1={leadStart.x} y1={leadStart.y} x2={leadEnd.x} y2={leadEnd.y} stroke={isSelected ? p.hex : '#cbd5e1'} strokeWidth="1.2" opacity="0.8" />
+                {isWinner && <circle cx={pos.x} cy={pos.y} r={r + 7} fill={p.hex} opacity="0.22" className="dial-pulse" />}
+                <circle
+                  cx={pos.x} cy={pos.y} r={isSelected ? r + 1.5 : r}
+                  fill={p.hex} stroke="#fff" strokeWidth="2.5"
+                  opacity={p.match > 0 ? 1 : 0.35}
+                  filter={isSelected ? 'url(#dialGlow)' : undefined}
+                />
+                <text
+                  x={lbl.cx} y={lbl.cy}
+                  textAnchor="middle" dominantBaseline="middle"
+                  fontSize={labelFont(p.name)}
+                  fontWeight={isSelected ? 800 : 600}
+                  fill={isSelected ? p.hex : '#64748b'}
+                  opacity={p.match > 0 || isSelected ? 1 : 0.55}
+                  className="dial-label"
+                  onClick={() => pick(p)}
+                >
+                  {p.name}
+                </text>
+                {/* אזור הקשה מוגדל — נוח לאצבע */}
+                <circle
+                  cx={pos.x} cy={pos.y} r="18" fill="transparent" className="dial-hit cursor-pointer"
+                  role="button" tabIndex={0} aria-label={`${p.name} — ${p.match}% התאמה`}
+                  onClick={() => pick(p)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(p); } }}
+                />
+              </g>
+            );
+          })}
+
+          {/* המחט — להב דק עם קצה זוהר בצבע המפלגה */}
+          <g ref={needleRef} transform={`rotate(-95 ${DIAL.CX} ${DIAL.CY})`} style={{ pointerEvents: 'none' }} className="dial-needle">
+            <polygon points={`${tip.x},${tip.y} ${DIAL.CX - 6},${DIAL.CY + 9} ${DIAL.CX + 6},${DIAL.CY + 9}`} fill="#1e293b" />
+          </g>
+          <circle cx={DIAL.CX} cy={DIAL.CY} r="12" fill="#1e293b" stroke="#fff" strokeWidth="3.5" />
+          <circle cx={DIAL.CX} cy={DIAL.CY} r="4" fill={selected.hex} />
+
+          {/* תוויות גושים בקצוות */}
+          <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
+          <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
+        </svg>
+      </div>
+
+      {/* קריאת המצפן */}
+      <div className="text-center mt-1" aria-live="polite">
+        <div className="text-2xl md:text-3xl" style={{ fontFamily: FONT_DISPLAY, color: selected.hex }}>{selected.name}</div>
+        <div className="text-slate-600 font-bold text-sm mt-0.5">
+          <AnimatedPercent value={selected.match} duration={700} className="text-lg text-slate-900 font-black" /> התאמה
+          {selected.id === top.id && <span className="mr-2 text-xs font-extrabold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">ההתאמה הגבוהה שלך</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   תעודת זהות פוליטית — ארכיטיפ אישי משלושת צירי ה-DNA
+------------------------------------------------------------------- */
+const AXIS_META = [
+  { key: 'security', label: 'מדיני-ביטחוני', low: 'ניצי',        high: 'יוני' },
+  { key: 'economy',  label: 'כלכלה',          low: 'שוק חופשי',   high: 'סוציאל-דמוקרטי' },
+  { key: 'civil',    label: 'דת ואזרח',        low: 'שמרני',       high: 'ליברלי' },
+];
+
+const ARCHETYPES = {
+  RRR: { title: 'הימין השלם',       desc: 'קו מדיני נוקשה, אמון בשוק החופשי ושמירה על צביון מסורתי — פרופיל ימין עקבי מקיר לקיר.' },
+  RRL: { title: 'הימין החילוני',    desc: 'יד קשה בביטחון וכלכלה חופשית, לצד ליברליות מלאה בענייני דת ומדינה.' },
+  RLR: { title: 'הימין המסורתי',    desc: 'ביטחון תקיף כלפי חוץ, מדינת רווחה תומכת כלפי פנים, וחיבור עמוק למסורת.' },
+  RLL: { title: 'ביטחוניסט חברתי',  desc: 'ניצי כלפי חוץ, סולידרי וליברלי כלפי פנים. שילוב לא שגרתי — ומעניין במיוחד.' },
+  LRR: { title: 'שמרן פרגמטי',      desc: 'פתיחות מדינית לצד כלכלה חופשית וערכים מסורתיים. פרופיל נדיר במפה הישראלית.' },
+  LRL: { title: 'הליברל הקלאסי',    desc: 'הסדרים מדיניים, שוק חופשי וחירויות פרט — ליברליזם במובנו המלא.' },
+  LLR: { title: 'סוציאל-מסורתי',    desc: 'חתירה להסדר מדיני ומדינת רווחה, מתוך חיבור לקהילה ולמסורת.' },
+  LLL: { title: 'השמאל הליברלי',    desc: 'הסדר מדיני, סוציאל-דמוקרטיה והפרדת דת ומדינה — שמאל עקבי לכל אורך הדרך.' },
+};
+
+const axisLean = (score, meta) => {
+  const dist = Math.abs(score - 50);
+  if (dist < 10) return { text: 'מאוזן', strong: false };
+  const side = score < 50 ? meta.low : meta.high;
+  return { text: dist < 25 ? `נוטה ל${side}` : `${side} מובהק`, strong: dist >= 25 };
+};
+
+function PoliticalID({ dna, top }) {
+  const scores = AXIS_META.map((m) => ({ meta: m, user: dna[m.key].user, party: dna[m.key].party }));
+  const complete = scores.every((s) => s.user !== null);
+  const archetype = complete
+    ? ARCHETYPES[scores.map((s) => (s.user < 50 ? 'R' : 'L')).join('')]
+    : null;
+
+  return (
+    <div className={`${CARD} p-6 md:p-10 anim-enter`}>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl"><Fingerprint className="w-6 h-6" /></div>
+        <h3 className="text-2xl tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>תעודת הזהות הפוליטית שלך</h3>
+      </div>
+
+      {archetype ? (
+        <div className="mb-7">
+          <div className="text-2xl md:text-3xl mb-1.5 bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent w-fit" style={{ fontFamily: FONT_DISPLAY }}>
+            {archetype.title}
+          </div>
+          <p className="text-slate-600 leading-relaxed text-[15px] md:text-base">{archetype.desc}</p>
+        </div>
+      ) : (
+        <p className="text-slate-500 text-sm mb-7 font-medium">דילגת על נושאים שלמים, אז אין לנו פרופיל מלא — אבל הנה מה שכן ידוע.</p>
+      )}
+
+      {/* מקרא: את/ה מול המפלגה המובילה */}
+      <div className="flex items-center gap-4 text-xs font-bold text-slate-500 mb-5 pb-4 border-b border-slate-100">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3.5 h-3.5 rounded-full bg-slate-800 border-2 border-white shadow-sm" /> את/ה
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: top.hex }} /> {top.name}
+        </span>
+      </div>
+
+      <div className="space-y-6">
+        {scores.map(({ meta, user, party }) => {
+          if (user === null) {
+            return (
+              <div key={meta.key} className="flex items-center justify-between text-sm">
+                <span className="font-bold text-slate-400">{meta.label}</span>
+                <span className="text-xs font-bold text-slate-400 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg">דילגת על הנושא</span>
+              </div>
+            );
+          }
+          const lean = axisLean(user, meta);
+          const clamp = (v) => Math.max(5, Math.min(95, v));
+          const gap = party === null ? null : Math.round(Math.abs(user - party));
+          return (
+            <div key={meta.key}>
+              <div className="flex items-baseline justify-between mb-3">
+                <span className="font-bold text-slate-700 text-sm">{meta.label}</span>
+                <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border ${lean.strong ? 'text-indigo-700 bg-indigo-50 border-indigo-100' : 'text-slate-600 bg-slate-50 border-slate-200'}`}>
+                  {lean.text}
+                </span>
+              </div>
+              <div className="relative h-3 rounded-full bg-slate-200 my-4">
+                <div className="absolute inset-0 rounded-full opacity-30" style={{ background: 'linear-gradient(to left, #3b82f6, #ef4444)' }} />
+                {party !== null && (
+                  <div className="absolute top-1/2 w-4 h-4 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white shadow-sm z-10" style={{ left: `${clamp(party)}%`, backgroundColor: top.hex }} />
+                )}
+                <div className="absolute top-1/2 w-8 h-8 -translate-y-1/2 -translate-x-1/2 rounded-full border-[3px] border-white shadow-md flex items-center justify-center bg-slate-800 text-white text-[10px] font-black z-20" style={{ left: `${clamp(user)}%` }}>
+                  את/ה
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-[11px] font-bold text-slate-400">
+                <span>{meta.high}</span>
+                {gap !== null && (
+                  <span className={gap <= 10 ? 'text-green-600' : gap >= 35 ? 'text-rose-500' : 'text-slate-400'}>
+                    {gap <= 10 ? 'כמעט זהים כאן' : gap >= 35 ? 'פער ניכר בציר הזה' : `פער של ${gap} נק׳`}
+                  </span>
+                )}
+                <span>{meta.low}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   נקודות חיכוך — איפה גם המפלגה הכי קרובה אליך לא איתך, ומי כן
+------------------------------------------------------------------- */
+function FrictionPoints({ top, answers }) {
+  const frictions = top.perQuestion
+    .filter((r) => r.sim < AGREE_THRESHOLD)
+    .sort((a, b) => a.sim - b.sim)
+    .slice(0, 3)
+    .map((r) => {
+      const qIdx = QUESTIONS.findIndex((q) => q.id === r.questionId);
+      const q = QUESTIONS[qIdx];
+      const a = answers[qIdx];
+      const best = PARTY_IDS
+        .map((pid) => ({ party: PARTIES[pid], sim: similarity(a.choice, q.stances[pid]) }))
+        .sort((x, y) => y.sim - x.sim)[0];
+      return { q, sim: r.sim, best };
+    });
+
+  return (
+    <div className={`${CARD} p-5 md:p-8 anim-enter`}>
+      <div className="flex items-center gap-3 mb-1">
+        <div className="p-2.5 rounded-2xl bg-rose-100">
+          <Swords className="w-5 h-5 text-rose-600" />
+        </div>
+        <h3 className="text-xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>נקודות החיכוך שלך</h3>
+      </div>
+      <p className="text-slate-500 text-sm font-medium mb-5 mr-[52px]">
+        איפה אפילו <b style={{ color: top.hex }}>{top.name}</b> לא לגמרי איתך — ומי כן.
+      </p>
+
+      {frictions.length === 0 ? (
+        <div className="bg-green-50 border border-green-100 rounded-2xl p-5 text-center">
+          <p className="font-bold text-green-700 mb-1">כמעט תאומים פוליטיים 🤝</p>
+          <p className="text-sm text-green-600">אין אף נושא שבו אתם באמת רחוקים זה מזה. זה נדיר.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {frictions.map(({ q, sim, best }) => {
+            const Icon = q.icon;
+            const showAlly = best.party.id !== top.id && best.sim >= AGREE_THRESHOLD;
+            return (
+              <div key={q.id} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <div className="p-1.5 rounded-lg" style={{ backgroundColor: `${q.accent}15` }}>
+                    <Icon className="w-4 h-4" style={{ color: q.accent }} />
+                  </div>
+                  <span className="font-bold text-slate-800 text-[15px]">{q.category}</span>
+                  <span className="mr-auto text-xs font-extrabold text-slate-500 tabular-nums">{Math.round(sim * 100)}% בלבד</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-200/80 overflow-hidden mb-3">
+                  <div className="h-full rounded-full anim-bar" style={{ width: `${Math.round(sim * 100)}%`, backgroundColor: top.hex }} />
+                </div>
+                {showAlly ? (
+                  <div className="text-sm text-slate-600 font-medium">
+                    מי דווקא כן איתך כאן:{' '}
+                    <span className="font-extrabold px-2 py-0.5 rounded-lg" style={{ color: best.party.hex, backgroundColor: `${best.party.hex}0d` }}>
+                      {best.party.name}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-sm text-slate-500 font-medium">כאן אתה לבד בעמדה — אף מפלגה לא ממש קרובה.</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------
    MAIN COMPONENT
 ------------------------------------------------------------------- */
@@ -427,8 +1080,6 @@ export default function ElectionsCompass() {
 
   const [jokeIndex, setJokeIndex] = useState(0);
   const [sharedView, setSharedView] = useState(false);
-  const [cmpA, setCmpA] = useState(null);
-  const [cmpB, setCmpB] = useState(null);
   const [copied, setCopied] = useState(false);
   const [locked, setLocked] = useState(false);
   const [toast, setToast] = useState(null);
@@ -437,6 +1088,13 @@ export default function ElectionsCompass() {
     setToast(msg);
     setTimeout(() => setToast(null), 3200);
   };
+
+  /* מסך הטעינה: הבדיחות מתחלפות כל 850ms במקום בדיחה אחת קפואה */
+  useEffect(() => {
+    if (state.screen !== 'loading') return undefined;
+    const t = setInterval(() => setJokeIndex((i) => (i + 1) % LOADING_JOKES.length), 850);
+    return () => clearInterval(t);
+  }, [state.screen]);
 
   /* שמירה — אבל לא כשצופים בתוצאה של מישהו אחר (אחרת נדרוס את ההתקדמות של המבקר) */
   useEffect(() => {
@@ -469,8 +1127,6 @@ export default function ElectionsCompass() {
 
   const reset = () => {
     setSharedView(false);
-    setCmpA(null);
-    setCmpB(null);
     if (window.location.search) {
       window.history.replaceState({}, '', window.location.pathname);
     }
@@ -481,8 +1137,6 @@ export default function ElectionsCompass() {
   /* יציאה מצפייה בתוצאה משותפת — משחזרים את ההתקדמות של המבקר עצמו, אם קיימת */
   const exitSharedView = () => {
     setSharedView(false);
-    setCmpA(null);
-    setCmpB(null);
     if (window.location.search) {
       window.history.replaceState({}, '', window.location.pathname);
     }
@@ -507,6 +1161,7 @@ export default function ElectionsCompass() {
     setJokeIndex(Math.floor(Math.random() * LOADING_JOKES.length));
     setState(prev => ({ ...prev, screen: 'loading' }));
     setTimeout(() => {
+      haptic.success();
       setState(s => (s.screen === 'loading' ? { ...s, screen: 'results' } : s));
     }, 1800);
   };
@@ -519,22 +1174,24 @@ export default function ElectionsCompass() {
   const answerAndAdvance = (choice) => {
     if (locked) return;
     setLocked(true);
-    if (navigator.vibrate) { try { navigator.vibrate(8); } catch { /* noop */ } }
+    haptic.select();
     setState(prev => { const newAnswers = [...prev.answers]; newAnswers[prev.idx] = { ...newAnswers[prev.idx], choice }; return { ...prev, answers: newAnswers }; });
     setTimeout(() => { setLocked(false); goNext(); }, 350);
   };
 
   const handleSkip = () => {
+    haptic.light();
     // סופרים דילוגים בלי לספור פעמיים את השאלה הנוכחית
     const skipCount = answers.filter((a, i) => i !== idx && a.choice === null).length + 1;
     setAnswer({ choice: null });
     if (skipCount === 4 && idx < QUESTIONS.length - 1) {
+      haptic.warning();
       showToast('מדלג הרבה, הא? ככה לא בונים חומה (או קואליציה...)');
     }
     goNext();
   };
 
-  const jumpToQuestion = (i) => setState(prev => ({ ...prev, idx: i }));
+  const jumpToQuestion = (i) => { haptic.light(); setState(prev => ({ ...prev, idx: i })); };
 
   const shareUrl = () =>
     `${window.location.origin}${window.location.pathname}?r=${encodeAnswers(answers, difficulty)}`;
@@ -555,6 +1212,7 @@ export default function ElectionsCompass() {
     }
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
+      haptic.success();
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -655,31 +1313,94 @@ export default function ElectionsCompass() {
 
   /* ---------------- WELCOME ---------------- */
   if (screen === 'welcome') {
+    const answered = answers.filter((a) => a.choice !== null).length;
+    const hasProgress = answered > 0;
     return (
       <AppShell>
-        <div className={`max-w-2xl w-full ${CARD} overflow-hidden anim-pop`}>
-          <div className="relative p-8 md:p-14 text-center">
-            <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg mb-6">
-              <Vote className="w-10 h-10 text-white" />
+        <div className="max-w-3xl w-full">
+          <div className={`${CARD} overflow-hidden anim-pop`}>
+            {/* שושנת הרוחות — האובייקט שנותן לאפליקציה את שמה */}
+            <div className="relative px-6 pt-6 md:pt-8 bg-gradient-to-b from-indigo-50/80 to-transparent">
+              <CompassRose />
             </div>
-            <h1 className="relative text-4xl md:text-6xl mb-4 tracking-tight bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent" style={{ fontFamily: FONT_DISPLAY }}>מצפן הבחירות 2026</h1>
-            <p className="relative text-slate-600 text-lg md:text-xl font-semibold mb-6">איפה העמדות שלך פוגשות את המציאות?</p>
-            <p className="relative text-[17px] md:text-base text-slate-500 leading-relaxed max-w-lg mx-auto mb-8">
-              אחת־עשרה שאלות על נושאי הליבה. לכל מפלגה יש עמדה מוצהרת, ואנחנו מודדים עד כמה התשובות שלך קרובות אליה — תוך התחשבות בנושאים שבאמת חשובים לך.
-            </p>
-            <div className="relative bg-indigo-50/70 border border-indigo-100 p-5 rounded-2xl text-[15px] md:text-sm text-slate-600 mb-8 flex items-start gap-3 text-right">
-              <Info className="w-5 h-5 flex-shrink-0 text-indigo-500 mt-0.5" />
-              <p className="leading-relaxed">השאלון אובייקטיבי ומחלק בדיוק את אותו משקל לכל המפלגות. האחוז מודד עד כמה עמדתך <b>קרובה</b> לעמדת המפלגה בכל שאלה — הסכמה מלאה שווה 100%, וכל התרחקות מורידה את הציון בחדות. אלה אחוזי התאמה אמיתיים, לא סקר פופולריות.</p>
-            </div>
-            {answers.some(a => a.choice !== null) ? (
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                 <button onClick={() => setState(prev => ({...prev, screen: 'quiz'}))} className={`${BTN_PRIMARY} w-full sm:w-auto text-lg`}>להמשיך מאיפה שעצרתי <ChevronLeft className="w-5 h-5" /></button>
-                 <button onClick={reset} className={`${BTN_SECONDARY} w-full sm:w-auto text-lg`}>להתחיל מחדש</button>
+
+            <div className="relative px-6 pb-8 md:px-14 md:pb-12 text-center mt-2">
+              <h1 className="text-4xl md:text-6xl mb-3 tracking-tight bg-gradient-to-l from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent" style={HERO_HEAVY}>
+                מצפן הבחירות 2026
+              </h1>
+
+              {/* מה בעצם מקבלים כאן */}
+              <p className="text-slate-700 text-lg md:text-2xl font-bold mb-3">
+                לאיזו מפלגה אתם באמת הכי קרובים?
+              </p>
+              <p className="text-slate-500 text-[15px] md:text-lg font-medium mb-7 max-w-lg mx-auto leading-relaxed">
+                ענו על {QUESTIONS.length} שאלות קצרות וקבלו דירוג התאמה למפלגות, מיקום על המפה הפוליטית ופירוט של הנושאים שבהם אתם מסכימים – וגם אלה שבהם פחות.
+              </p>
+
+              {/* שלוש עובדות במקום שלוש פסקאות */}
+              <div className="grid grid-cols-3 gap-2 md:gap-3 mb-7 max-w-md mx-auto">
+                {[
+                  { n: QUESTIONS.length, label: 'שאלות', icon: MessageCircleHeart },
+                  { n: PARTY_IDS.length, label: 'מפלגות', icon: Landmark },
+                  { n: '2', label: 'דקות', icon: Coffee },
+                ].map(({ n, label, icon: Icon }, i) => (
+                  <div key={label} className="anim-pop bg-white/70 border border-slate-200 rounded-2xl py-3 px-2" style={{ animationDelay: `${300 + i * 90}ms` }}>
+                    <Icon className="w-4 h-4 mx-auto mb-1 text-indigo-500" />
+                    <div className="text-2xl leading-none text-slate-900" style={HERO_HEAVY}>{n}</div>
+                    <div className="text-[11px] font-bold text-slate-500 mt-1">{label}</div>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <button onClick={() => setState(prev => ({...prev, screen: 'difficulty'}))} className={`${BTN_PRIMARY} w-full sm:w-auto text-lg`}>בואו נתחיל <ChevronLeft className="w-5 h-5" /></button>
-            )}
+
+              {/* פס המפלגות — כל השחקנים על השולחן, מיד */}
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                {[...PARTY_IDS].sort((a, b) => PARTIES[a].position - PARTIES[b].position).map((id, i) => (
+                  <span
+                    key={id}
+                    title={PARTIES[id].name}
+                    className="swatch w-2.5 h-2.5 md:w-3 md:h-3 rounded-full ring-2 ring-white shadow-sm"
+                    style={{ backgroundColor: PARTIES[id].hex, animationDelay: `${420 + i * 45}ms` }}
+                  />
+                ))}
+              </div>
+              <p className="text-xs font-bold text-slate-400 mb-8">כל המפלגות, מהשמאל לימין — בלי העדפה לאף אחת</p>
+
+              {/* CTA */}
+              {hasProgress ? (
+                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                  <button onClick={() => setState(prev => ({ ...prev, screen: 'quiz' }))} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden w-full sm:w-auto text-lg`}>
+                    להמשיך מאיפה שעצרתי <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button onClick={reset} className={`${BTN_SECONDARY} w-full sm:w-auto text-lg`}>להתחיל מחדש</button>
+                </div>
+              ) : (
+                <button onClick={() => setState(prev => ({ ...prev, screen: 'difficulty' }))} className={`${BTN_PRIMARY} cta-shine relative overflow-hidden w-full sm:w-auto text-lg px-10`}>
+                  בואו נתחיל <ChevronLeft className="w-5 h-5" />
+                </button>
+              )}
+
+              {hasProgress && (
+                <div className="mt-4 max-w-xs mx-auto">
+                  <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                    <div className="anim-bar h-full rounded-full bg-indigo-500" style={{ width: `${(answered / QUESTIONS.length) * 100}%` }} />
+                  </div>
+                  <p className="text-xs font-bold text-slate-500 mt-1.5">ענית על {answered} מתוך {QUESTIONS.length} שאלות</p>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* המתודולוגיה — נגישה, אבל לא חוסמת את הדרך לכפתור */}
+          <details className={`${CARD} mt-4 group anim-enter`} style={{ animationDelay: '.2s' }}>
+            <summary className={`flex items-center gap-3 p-5 cursor-pointer list-none font-bold text-slate-700 ${FOCUS} rounded-3xl`}>
+              <Info className="w-5 h-5 text-indigo-500 flex-shrink-0" />
+              איך מחושבת ההתאמה? (ולמה זה לא סקר פופולריות)
+              <ChevronLeft className="w-4 h-4 mr-auto text-slate-400 transition-transform group-open:-rotate-90" />
+            </summary>
+            <p className="px-5 pb-5 text-[15px] text-slate-600 leading-relaxed text-right">
+              השאלון אובייקטיבי ומחלק בדיוק את אותו משקל לכל המפלגות. לכל מפלגה יש עמדה מוצהרת בכל שאלה, והאחוז מודד עד כמה עמדתך <b>קרובה</b> לשלה — הסכמה מלאה שווה 100%, וכל התרחקות מורידה את הציון בחדות. אפשר גם לסמן נושאים כ״קריטיים״, והם יקבלו משקל כפול בחישוב. אלה אחוזי התאמה אמיתיים, לא סקר פופולריות.
+            </p>
+          </details>
         </div>
       </AppShell>
     );
@@ -776,7 +1497,7 @@ export default function ElectionsCompass() {
                   <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1" role="group" aria-label="חשיבות הנושא">
                   {[{ w: 0.5, label: 'שולי' }, { w: 1, label: 'רגיל' }, { w: 2, label: 'קריטי' }].map(({ w, label }) => (
                     <button
-                      key={w} onClick={() => setAnswer({ weight: w })}
+                      key={w} onClick={() => { haptic.light(); setAnswer({ weight: w }); }}
                       aria-pressed={current.weight === w}
                       className={`flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-lg text-sm md:text-xs font-bold transition-colors ${FOCUS} ${current.weight === w ? 'bg-white text-slate-800 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
                     >
@@ -797,10 +1518,10 @@ export default function ElectionsCompass() {
                     <button
                       key={optIdx} onClick={() => answerAndAdvance(optIdx)} disabled={locked && !selected}
                       role="radio" aria-checked={selected}
-                      className={`relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-[border-color,background-color,box-shadow,transform] duration-200 flex items-start gap-3 md:gap-4 active:scale-[0.99] ${FOCUS} ${
+                      className={`opt-enter relative group w-full text-right p-4 md:p-5 rounded-2xl border-2 transition-[border-color,background-color,box-shadow,transform] duration-200 flex items-start gap-3 md:gap-4 active:scale-[0.99] ${FOCUS} ${
                         selected ? 'bg-slate-50 shadow-md' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                       }`}
-                      style={selected ? { borderColor: q.accent } : {}}
+                      style={{ animationDelay: `${0.08 + displayOrder[idx].indexOf(optIdx) * 0.06}s`, ...(selected ? { borderColor: q.accent } : {}) }}
                     >
                       {selected && <div className="absolute inset-0 rounded-2xl opacity-10 pointer-events-none" style={{ backgroundColor: q.accent }} />}
                       <div className={`mt-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors z-10 ${selected ? 'border-transparent' : 'border-slate-300'}`} style={selected ? { backgroundColor: q.accent } : {}}>
@@ -813,7 +1534,7 @@ export default function ElectionsCompass() {
               </div>
 
               <div className="mt-8 flex items-center justify-between gap-2 border-t border-slate-100 pt-5">
-                <button onClick={() => (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1})))} className={`${BTN_GHOST} min-h-[44px]`}>
+                <button onClick={() => { haptic.light(); (idx === 0 ? setState(prev => ({...prev, screen: 'difficulty'})) : setState(prev => ({...prev, idx: prev.idx - 1}))); }} className={`${BTN_GHOST} min-h-[44px]`}>
                   <ChevronRight className="w-5 h-5" /> קודמת
                 </button>
                 {review && results.answeredCount > 0 && (
@@ -872,39 +1593,11 @@ export default function ElectionsCompass() {
   }
 
   const top = scored[0];
-  const timelineParties = [...scored].sort((a, b) => a.position - b.position);
   
   const isPerfectMatch = top.match === 100;
   const isLoneWolf = top.match < 45;
 
-  const DNASlider = ({ label, leftLabel, rightLabel, userScore, partyScore }) => {
-    if (userScore === null || partyScore === null) return null;
-    const clamp = (v) => Math.max(5, Math.min(95, v)); // שהסמנים לא ייחתכו בקצוות הפס
-    userScore = clamp(userScore);
-    partyScore = clamp(partyScore);
-    return (
-      <div className="mb-6">
-        <div className="flex justify-between items-end mb-2">
-           <span className="font-extrabold text-slate-700 text-sm bg-slate-100 px-2.5 py-1 rounded-md">{label}</span>
-        </div>
-        <div className="relative w-full h-3 bg-slate-200 rounded-full my-4">
-           <div className="absolute inset-0 rounded-full opacity-30" style={{ background: `linear-gradient(to left, #3b82f6, #ef4444)` }} />
-           <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center" style={{ left: `${partyScore}%` }}>
-              <div className="w-4 h-4 rounded-full border-2 border-white shadow-sm z-10" style={{ backgroundColor: top.hex }} />
-           </div>
-           <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center z-20" style={{ left: `${userScore}%` }}>
-              <div className="w-8 h-8 rounded-full border-[3px] border-white shadow-md flex items-center justify-center bg-slate-800 text-white text-xs font-black">את/ה</div>
-           </div>
-        </div>
-        <div className="flex justify-between text-xs font-bold text-slate-400">
-          <span>{rightLabel}</span>
-          <span>{leftLabel}</span>
-        </div>
-      </div>
-    );
-  };
-
-  /* תובנות: ההפתעה שלך + התאמה לפי גושים.
+/* תובנות: ההפתעה שלך + התאמה לפי גושים.
      הפתעה אמיתית = מפלגה מהחצי התחתון שקרובה אליך בנושא מסוים
      אפילו יותר מהמפלגה המובילה שלך — לא סתם קונצנזוס שכולם מסכימים עליו. */
   const half = Math.floor(scored.length / 2);
@@ -925,13 +1618,6 @@ export default function ElectionsCompass() {
     return { ...b, avg };
   });
 
-  /* השוואת שתי מפלגות */
-  const cmpAId = cmpA ?? scored[0].id;
-  const cmpBId = cmpB ?? scored[1].id;
-  const cmpPartyA = scored.find((p) => p.id === cmpAId);
-  const cmpPartyB = scored.find((p) => p.id === cmpBId);
-  const answeredQuestions = QUESTIONS.map((q, i) => ({ q, a: answers[i] }))
-    .filter(({ a }) => a.choice !== null);
 
   return (
     <AppShell center={false}>
@@ -960,7 +1646,7 @@ export default function ElectionsCompass() {
             
             <div className="inline-flex flex-col items-center mb-6">
                <div className="inline-flex items-baseline gap-2 bg-white/60 px-6 py-2 rounded-3xl border border-slate-200/50 shadow-sm backdrop-blur-md mb-2">
-                 <span className="text-6xl text-slate-900 tabular-nums" style={{ fontFamily: FONT_DISPLAY }}>{top.match}%</span>
+                 <AnimatedPercent value={top.match} className="text-6xl text-slate-900" style={{ fontFamily: FONT_DISPLAY }} />
                  <span className="text-slate-600 font-bold text-xl">התאמה</span>
                </div>
                {isPerfectMatch && <div className="text-sm font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full flex items-center gap-1"><PartyPopper className="w-4 h-4"/> מועמד ודאי לשיריון ברשימה!</div>}
@@ -971,18 +1657,16 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
-        {/* 2. DNA + Leaderboard Side-by-Side */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className={`${CARD} p-6 md:p-10 anim-enter`}>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl"><Activity className="w-6 h-6" /></div>
-              <h3 className="text-2xl tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ה-DNA הפוליטי שלך</h3>
-            </div>
-            <p className="text-slate-500 text-sm mb-8 font-medium">השוואת עמדות לפי צירי מדיניות בין <span className="font-bold text-slate-800">העמדות שלך</span> לבין <span className="font-bold" style={{color: top.hex}}>{top.name}</span>.</p>
-            <DNASlider label="מדיני-ביטחוני" rightLabel="ימין/ניצי" leftLabel="שמאל/יוני" userScore={dna.security.user} partyScore={dna.security.party} />
-            <DNASlider label="כלכלה" rightLabel="שוק חופשי" leftLabel="סוציאל-דמוקרטיה" userScore={dna.economy.user} partyScore={dna.economy.party} />
-            <DNASlider label="אזרחי ודת" rightLabel="מסורתי/שמרני" leftLabel="הפרדת דת/ליברלי" userScore={dna.civil.user} partyScore={dna.civil.party} />
-          </div>
+        {/* 2. המצפן הפוליטי — מיד אחרי התוצאה הראשית */}
+        <div className={`${CARD} p-5 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
+          <h3 className="text-2xl md:text-3xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
+          <p className="text-slate-500 text-center mb-2 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך. הקישו על מפלגה כדי להזיז אותה.</p>
+          <CompassDial scored={scored} top={top} />
+        </div>
+
+        {/* 3. תעודת זהות פוליטית + טבלת המפלגות */}
+        <div className="grid md:grid-cols-2 gap-6" style={{ perspective: '1200px' }}>
+          <PoliticalID dna={dna} top={top} />
 
           <div className={`${CARD} p-6 md:p-10 anim-enter`}>
             <h3 className="text-2xl mb-6 tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>שאר המפלגות</h3>
@@ -1000,7 +1684,7 @@ export default function ElectionsCompass() {
                         <span className={`font-black tabular-nums ${isRunnerUp ? 'text-slate-800 text-xl' : 'text-slate-600'}`}>{p.match}%</span>
                      </div>
                      <div className={`w-full bg-slate-100 rounded-full overflow-hidden ${isRunnerUp ? 'h-3' : 'h-2'}`}>
-                        <div className="h-full rounded-full transition-all duration-1000 ease-out anim-bar" style={{ width: `${p.match}%`, backgroundColor: p.hex }} />
+                        <div className="h-full rounded-full anim-bar" style={{ width: `${p.match}%`, backgroundColor: p.hex, animationDelay: `${0.15 + i * 0.07}s` }} />
                      </div>
                   </div>
                 );
@@ -1042,7 +1726,7 @@ export default function ElectionsCompass() {
                     <span className="font-extrabold text-slate-700 tabular-nums text-sm">{b.avg}%</span>
                   </div>
                   <div className="h-3 rounded-full bg-slate-200/70 overflow-hidden">
-                    <div className="anim-bar h-full rounded-full" style={{ width: `${b.avg}%`, backgroundColor: b.color }} />
+                    <div className="anim-bar h-full rounded-full" style={{ width: `${b.avg}%`, backgroundColor: b.color, animationDelay: `${0.2 + blocScores.indexOf(b) * 0.12}s` }} />
                   </div>
                 </div>
               ))}
@@ -1050,114 +1734,9 @@ export default function ElectionsCompass() {
           </div>
         </div>
 
-        {/* המפה הפוליטית - מובייל */}
-        <div className={`${CARD} p-5 lg:hidden anim-enter`}>
-          <h3 className="text-2xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המפה הפוליטית</h3>
-          <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">מיקום המפלגות על הציר, והיכן ההתאמה שלך</p>
-          <div className="flex items-center justify-center gap-2 mb-4 text-sm font-extrabold text-red-600">
-            <div className="w-3 h-3 rounded-full bg-red-500" /> גוש השמאל
-          </div>
-          <div className="relative" style={{ height: `${timelineParties.length * 58 + 40}px` }}>
-            <div className="absolute right-[18px] top-0 bottom-0 w-2.5 rounded-full" style={{ background: 'linear-gradient(to bottom, #ef4444, #a855f7, #3b82f6)' }} />
-            <div className="absolute inset-x-0 top-5 bottom-5">
-              {timelineParties.map((p, index) => {
-              const isWinner = p.id === top.id;
-              const topPct = (index / (timelineParties.length - 1)) * 100;
-              return (
-                <div key={p.id} className="absolute right-0 left-0 flex items-center gap-3" style={{ top: `${topPct}%`, transform: 'translateY(-50%)' }}>
-                  <div className={`relative z-10 rounded-full border-[3px] border-white flex-shrink-0 transition-transform ${isWinner ? 'scale-125' : ''}`} style={{ width: '22px', height: '22px', marginRight: '8px', backgroundColor: p.hex, opacity: p.match > 0 ? 1 : 0.4, boxShadow: isWinner ? `0 0 0 4px ${p.hex}25, 0 2px 8px ${p.hex}60` : '0 1px 3px rgba(0,0,0,.15)' }} />
-                  <div className={`flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl border ${isWinner ? 'bg-white shadow-md' : 'bg-slate-50/70 border-slate-100'}`} style={isWinner ? { borderColor: `${p.hex}50` } : undefined}>
-                    <span className={`text-[15px] truncate ${isWinner ? 'font-extrabold text-slate-900' : 'font-bold text-slate-600'}`}>{p.name}</span>
-                    <span className={`text-sm font-extrabold tabular-nums flex-shrink-0 ${isWinner ? '' : 'text-slate-500'}`} style={isWinner ? { color: p.hex } : undefined}>{p.match}%</span>
-                  </div>
-                </div>
-              );
-            })}
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-2 mt-4 text-sm font-extrabold text-blue-600">
-            <div className="w-3 h-3 rounded-full bg-blue-500" /> גוש הימין
-          </div>
-        </div>
-
-        {/* המפה הפוליטית - דסקטופ */}
-        <div className={`${CARD} p-6 md:p-10 hidden lg:block overflow-hidden anim-enter`}>
-          <h3 className="text-2xl mb-2 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המפה הפוליטית בישראל</h3>
-          <p className="text-slate-500 text-center mb-8 font-medium">גלול ימינה ושמאלה כדי לראות את מיקום כל המפלגות על הציר, ואת המיקום שלך.</p>
-          <div className="overflow-x-auto custom-scrollbar pb-10">
-            <div className="min-w-[900px] relative mt-16 mb-8 px-8">
-              <div className="relative w-full h-[180px] flex items-center">
-                <div dir="ltr" className="absolute left-0 right-0 h-3 rounded-full z-10 shadow-inner" style={{ background: 'linear-gradient(to right, #ef4444, #a855f7, #3b82f6)' }} />
-                {timelineParties.map((p, index) => {
-                  const isWinner = p.id === top.id;
-                  const isTopRow = index % 2 === 0;
-                  return (
-                    <div key={p.id} className="absolute z-20 flex flex-col items-center" style={{ left: `${p.position}%`, top: '50%', transform: 'translate(-50%, -50%)' }}>
-                      <div className={`rounded-full relative z-10 border-[3px] border-white transition-all ${isWinner ? 'scale-[1.8] shadow-lg z-30' : 'shadow-sm hover:scale-125'}`} style={{ backgroundColor: p.hex, width: '20px', height: '20px', opacity: p.match > 0 ? 1 : 0.3 }} />
-                      {isTopRow ? (
-                        <div className="absolute bottom-full mb-3 flex flex-col items-center pointer-events-none">
-                          <span className={`text-sm whitespace-nowrap mb-1 ${isWinner ? 'font-black text-slate-900 scale-110' : 'font-bold text-slate-500'}`}>{p.name}</span>
-                          <span className={`text-xs font-bold mb-3 tabular-nums ${isWinner ? 'text-slate-900' : 'text-slate-400'}`}>{p.match}%</span>
-                          <div className={`w-px h-10 ${isWinner ? 'bg-slate-400' : 'bg-slate-200'}`} />
-                        </div>
-                      ) : (
-                        <div className="absolute top-full mt-3 flex flex-col items-center pointer-events-none">
-                          <div className={`w-px h-10 ${isWinner ? 'bg-slate-400' : 'bg-slate-200'}`} />
-                          <span className={`text-xs font-bold mt-3 tabular-nums ${isWinner ? 'text-slate-900' : 'text-slate-400'}`}>{p.match}%</span>
-                          <span className={`text-sm whitespace-nowrap mt-1 ${isWinner ? 'font-black text-slate-900 scale-110' : 'font-bold text-slate-500'}`}>{p.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div dir="ltr" className="flex justify-between items-center text-sm font-bold bg-slate-50 border border-slate-200 px-6 py-4 rounded-2xl max-w-2xl mx-auto mt-2">
-            <div className="flex items-center gap-2 text-red-600"><div className="w-3.5 h-3.5 rounded-full bg-red-500" /> גוש השמאל</div>
-            <div className="flex items-center gap-2 text-purple-600"><div className="w-3.5 h-3.5 rounded-full bg-purple-500" /> גוש המרכז</div>
-            <div className="flex items-center gap-2 text-blue-600"><div className="w-3.5 h-3.5 rounded-full bg-blue-500" /> גוש הימין</div>
-          </div>
-        </div>
-
-        {/* ראש בראש - Head to Head */}
-        <div className={`${CARD} p-5 md:p-10 anim-enter`}>
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <ArrowRightLeft className="w-6 h-6 text-indigo-500" />
-            <h3 className="text-2xl text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>ראש בראש</h3>
-          </div>
-          <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">בחרו שתי מפלגות וראו עד כמה כל אחת קרובה לעמדתך, נושא מול נושא</p>
-          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xl mx-auto mb-8">
-            {[ { val: cmpAId, set: setCmpA, party: cmpPartyA }, { val: cmpBId, set: setCmpB, party: cmpPartyB } ].map(({ val, set, party }, side) => (
-              <div key={side}>
-                <select value={val} onChange={(e) => set(e.target.value)} className={`w-full p-3 rounded-xl border-2 bg-white font-bold text-slate-800 text-sm md:text-base cursor-pointer ${FOCUS}`} style={{ borderColor: `${party.hex}60` }}>
-                  {scored.map((p) => (<option key={p.id} value={p.id}>{p.name} — {p.match}%</option>))}
-                </select>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-4 max-w-2xl mx-auto">
-            {answeredQuestions.map(({ q, a }) => {
-              const simA = similarity(a.choice, q.stances[cmpAId]);
-              const simB = similarity(a.choice, q.stances[cmpBId]);
-              return (
-                <div key={q.id} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
-                  <p className="font-bold text-slate-700 text-[15px] mb-3">{q.category}</p>
-                  {[ { sim: simA, party: cmpPartyA }, { sim: simB, party: cmpPartyB } ].map(({ sim: sv, party }, k) => (
-                    <div key={k} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-2.5 sm:mb-1.5 last:mb-0">
-                      <span className="sm:w-32 text-xs md:text-sm font-bold sm:truncate flex-shrink-0" style={{ color: party.hex }}>{party.name}</span>
-                      <div className="flex items-center gap-3 flex-1 w-full">
-                      <div className="flex-1 h-2.5 rounded-full bg-slate-200/80 overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${Math.round(sv * 100)}%`, backgroundColor: party.hex }} />
-                      </div>
-                      <span className="w-9 text-left text-xs font-extrabold text-slate-500 tabular-nums flex-shrink-0">{Math.round(sv * 100)}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
+        {/* נקודות חיכוך */}
+        <div className="anim-enter" style={{ animationDelay: '.25s' }}>
+          <FrictionPoints top={top} answers={answers} />
         </div>
 
         {/* Detailed Breakdown */}
