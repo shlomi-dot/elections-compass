@@ -657,21 +657,44 @@ function AnimatedPercent({ value, duration = 1200, className = '', style }) {
    ונרגעת על ההתאמה הגבוהה ביותר (פיזיקת קפיץ אמיתית, לא easing).
    הקשה על מפלגה מזיזה אליה את המחט. SVG טהור — אפס עלות ביצועים.
 ------------------------------------------------------------------- */
-const DIAL = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300' };
+/* שתי גיאומטריות לחוגה.
+   דסקטופ: קנבס רחב ושטוח — יש מקום לשמות המפלגות סביב הקשת.
+   מובייל: קנבס כמעט ריבועי שמנצל את הגובה של הטלפון, בלי טבעת שמות
+   (בטלפון הן היו נדחסות ל-6px). הרדיוס גדול ביחס לרוחב, כך שהמצפן
+   עצמו נראה גדול — והשמות עוברים לרשימה נגיעה מתחתיו. */
+const DIAL_DESKTOP = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300', labels: true, dotScale: 1 };
+const DIAL_MOBILE  = { CX: 175, CY: 208, R: 150, VIEW: '0 0 350 246', labels: false, dotScale: 1.5 };
 
 const dialAngle = (position) => 180 - (position / 100) * 180; // 0=ימין, 180=שמאל
-const dialPoint = (angleDeg, radius) => {
+const dialPointOn = (D, angleDeg, radius) => {
   const rad = (angleDeg * Math.PI) / 180;
-  return { x: DIAL.CX + radius * Math.cos(rad), y: DIAL.CY - radius * Math.sin(rad) };
+  return { x: D.CX + radius * Math.cos(rad), y: D.CY - radius * Math.sin(rad) };
 };
-const arcPath = (fromDeg, toDeg, radius) => {
-  const p1 = dialPoint(fromDeg, radius);
-  const p2 = dialPoint(toDeg, radius);
+const arcPathOn = (D, fromDeg, toDeg, radius) => {
+  const p1 = dialPointOn(D, fromDeg, radius);
+  const p2 = dialPointOn(D, toDeg, radius);
   const sweep = toDeg < fromDeg ? 1 : 0;
   return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${radius} ${radius} 0 0 ${sweep} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
 };
 
+/* מזהה מובייל וחי לשינויי גודל/סיבוב מסך */
+const useIsMobile = () => {
+  const [m, setM] = useState(() => (typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false));
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const on = (e) => setM(e.matches);
+    mq.addEventListener ? mq.addEventListener('change', on) : mq.addListener(on);
+    return () => { mq.removeEventListener ? mq.removeEventListener('change', on) : mq.removeListener(on); };
+  }, []);
+  return m;
+};
+
 function CompassDial({ scored, top }) {
+  const isMobile = useIsMobile();
+  const DIAL = isMobile ? DIAL_MOBILE : DIAL_DESKTOP;
+  const dialPoint = (a, r) => dialPointOn(DIAL, a, r);
+  const arcPath = (f, t, r) => arcPathOn(DIAL, f, t, r);
+
   const [selectedId, setSelectedId] = useState(top.id);
   const [live, setLive] = useState(false); // המחט יוצאת לדרך רק כשהמצפן נכנס למסך
   useEffect(() => { setSelectedId(top.id); }, [top.id]);
@@ -746,18 +769,14 @@ function CompassDial({ scored, top }) {
     };
     a.raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(a.raf);
-  }, [targetDeg, live]);
+  }, [targetDeg, live, isMobile]);
 
   const pick = (p) => { if (p.id !== selectedId) { haptic.select(); setSelectedId(p.id); } };
 
   const tip = dialPoint(90, DIAL.R - 34);
 
   /* ------------------------------------------------------------------
-     פריסת שמות המפלגות — פותר התנגשויות במקום לקוות שלא יהיו.
-     כל תווית ממורכזת (textAnchor="middle") ולא start/end: ה-SVG יורש
-     dir="rtl", ולכן start/end מתהפכים והטקסט זולג פנימה אל תוך החוגה.
-     מיקום ממורכז חסין לכיווניות. כל תווית נדחפת החוצה ברדיוס עד
-     שהיא מפנה מקום גם לקשת (CLEARANCE) וגם לשכנות שלה.
+     פריסת שמות המפלגות (דסקטופ בלבד) — פותר התנגשויות במקום לקוות שלא יהיו.
   ------------------------------------------------------------------- */
   const LABEL_H = 13;
   const CLEARANCE = 12;
@@ -765,6 +784,7 @@ function CompassDial({ scored, top }) {
   const labelWidth = (name) => name.length * labelFont(name) * 0.55;
 
   const labels = useMemo(() => {
+    if (!DIAL.labels) return {};
     const distToBox = (px, py, b) => {
       const dx = Math.max(b.x0 - px, 0, px - b.x1);
       const dy = Math.max(b.y0 - py, 0, py - b.y1);
@@ -781,7 +801,6 @@ function CompassDial({ scored, top }) {
       let r = DIAL.R + 24;
       let box = null;
       for (let tries = 0; tries < 40; tries++) {
-        // דחיפה אופקית נוספת לזוויות שטוחות, כדי שרוחב הטקסט לא יחזור אל הקשת
         const cx = DIAL.CX + Math.cos(rad) * (r + (w / 2) * Math.abs(Math.cos(rad)));
         const cy = DIAL.CY - Math.sin(rad) * r;
         box = { id: p.id, cx, cy, r, x0: cx - w / 2, x1: cx + w / 2, y0: cy - LABEL_H / 2, y1: cy + LABEL_H / 2 };
@@ -793,7 +812,9 @@ function CompassDial({ scored, top }) {
       placed.push(box);
     });
     return Object.fromEntries(placed.map((b) => [b.id, b]));
-  }, [scored]);
+  }, [scored, DIAL]);
+
+  const byPosition = useMemo(() => [...scored].sort((a, b) => a.position - b.position), [scored]);
 
   return (
     <div ref={wrapRef} className="w-full max-w-2xl md:max-w-none mx-auto">
@@ -835,41 +856,46 @@ function CompassDial({ scored, top }) {
           {/* "מרכז" בתוך החוגה, מתחת לקודקוד */}
           <text x={DIAL.CX} y={DIAL.CY - DIAL.R + 46} textAnchor="middle" fontSize="13" fontWeight="800" fill="#a855f7" opacity="0.85">מרכז</text>
 
-          {/* מפלגות: נקודה + קו מוביל + שם אופקי */}
+          {/* מפלגות */}
           {scored.map((p, i) => {
             const isWinner = p.id === top.id;
             const isSelected = p.id === selectedId;
             const a = dialAngle(p.position);
             const pos = dialPoint(a, DIAL.R);
-            const r = 5.5 + p.match * 0.07;
+            const r = (5.5 + p.match * 0.07) * DIAL.dotScale;
             const lbl = labels[p.id];
-            const leadStart = dialPoint(a, DIAL.R + r + 3);
-            const leadEnd = dialPoint(a, lbl.r - 9);
             return (
               <g key={p.id} className="dial-dot anim-pop" style={{ animationDelay: `${140 + i * 55}ms` }}>
-                <line x1={leadStart.x} y1={leadStart.y} x2={leadEnd.x} y2={leadEnd.y} stroke={isSelected ? p.hex : '#cbd5e1'} strokeWidth="1.2" opacity="0.8" />
+                {lbl && (
+                  <line
+                    x1={dialPoint(a, DIAL.R + r + 3).x} y1={dialPoint(a, DIAL.R + r + 3).y}
+                    x2={dialPoint(a, lbl.r - 9).x} y2={dialPoint(a, lbl.r - 9).y}
+                    stroke={isSelected ? p.hex : '#cbd5e1'} strokeWidth="1.2" opacity="0.8"
+                  />
+                )}
                 {isWinner && <circle cx={pos.x} cy={pos.y} r={r + 7} fill={p.hex} opacity="0.22" className="dial-pulse" />}
                 <circle
                   cx={pos.x} cy={pos.y} r={isSelected ? r + 1.5 : r}
-                  fill={p.hex} stroke="#fff" strokeWidth="2.5"
+                  fill={p.hex} stroke="#fff" strokeWidth={isMobile ? 3 : 2.5}
                   opacity={p.match > 0 ? 1 : 0.35}
                   filter={isSelected ? 'url(#dialGlow)' : undefined}
                 />
-                <text
-                  x={lbl.cx} y={lbl.cy}
-                  textAnchor="middle" dominantBaseline="middle"
-                  fontSize={labelFont(p.name)}
-                  fontWeight={isSelected ? 800 : 600}
-                  fill={isSelected ? p.hex : '#64748b'}
-                  opacity={p.match > 0 || isSelected ? 1 : 0.55}
-                  className="dial-label"
-                  onClick={() => pick(p)}
-                >
-                  {p.name}
-                </text>
-                {/* אזור הקשה מוגדל — נוח לאצבע */}
+                {lbl && (
+                  <text
+                    x={lbl.cx} y={lbl.cy}
+                    textAnchor="middle" dominantBaseline="middle"
+                    fontSize={labelFont(p.name)}
+                    fontWeight={isSelected ? 800 : 600}
+                    fill={isSelected ? p.hex : '#64748b'}
+                    opacity={p.match > 0 || isSelected ? 1 : 0.55}
+                    className="dial-label"
+                    onClick={() => pick(p)}
+                  >
+                    {p.name}
+                  </text>
+                )}
                 <circle
-                  cx={pos.x} cy={pos.y} r="18" fill="transparent" className="dial-hit cursor-pointer"
+                  cx={pos.x} cy={pos.y} r={isMobile ? 22 : 18} fill="transparent" className="dial-hit cursor-pointer"
                   role="button" tabIndex={0} aria-label={`${p.name} — ${p.match}% התאמה`}
                   onClick={() => pick(p)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(p); } }}
@@ -882,13 +908,12 @@ function CompassDial({ scored, top }) {
           <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
           <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
 
-          {/* המחט — להב דק עם קצה זוהר בצבע המפלגה */}
+          {/* המחט — להב דק */}
           <g ref={needleRef} transform={`rotate(-95 ${DIAL.CX} ${DIAL.CY})`} style={{ pointerEvents: 'none' }} className="dial-needle">
             <polygon points={`${tip.x},${tip.y} ${DIAL.CX - 6},${DIAL.CY + 9} ${DIAL.CX + 6},${DIAL.CY + 9}`} fill="#1e293b" />
           </g>
           <circle cx={DIAL.CX} cy={DIAL.CY} r="12" fill="#1e293b" stroke="#fff" strokeWidth="3.5" />
           <circle cx={DIAL.CX} cy={DIAL.CY} r="4" fill={selected.hex} />
-
         </svg>
       </div>
 
@@ -900,6 +925,39 @@ function CompassDial({ scored, top }) {
           {selected.id === top.id && <span className="mr-2 text-xs font-extrabold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">ההתאמה הגבוהה שלך</span>}
         </div>
       </div>
+
+      {/* מובייל: השמות לא נכנסים סביב הקשת, אז הם עוברים לרשימה נגיעה.
+          מסודרת משמאל לימין בדיוק כמו הנקודות על החוגה. */}
+      {isMobile && (
+        <div className="mt-5 pt-4 border-t border-slate-100">
+          <p className="text-[11px] font-bold text-slate-400 text-center mb-2.5">הקישו על מפלגה כדי להזיז אליה את המחט</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {byPosition.map((p) => {
+              const isSelected = p.id === selectedId;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => pick(p)}
+                  aria-pressed={isSelected}
+                  className={`flex items-center gap-2 min-h-[44px] px-2.5 py-2 rounded-xl border text-right transition-colors ${FOCUS} ${
+                    isSelected ? 'bg-white shadow-sm' : 'bg-slate-50/60 border-slate-100'
+                  }`}
+                  style={isSelected ? { borderColor: p.hex } : undefined}
+                >
+                  <span
+                    className="w-3 h-3 rounded-full flex-shrink-0 ring-2 ring-white"
+                    style={{ backgroundColor: p.hex, opacity: p.match > 0 ? 1 : 0.4 }}
+                  />
+                  <span className={`text-[12px] leading-tight flex-1 truncate ${isSelected ? 'font-extrabold' : 'font-bold text-slate-600'}`} style={isSelected ? { color: p.hex } : undefined}>
+                    {p.name}
+                  </span>
+                  <span className="text-[11px] font-black tabular-nums text-slate-500 flex-shrink-0">{p.match}%</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1728,7 +1786,7 @@ export default function ElectionsCompass() {
         {/* 2. המצפן הפוליטי — מיד אחרי התוצאה הראשית */}
         <div className={`${CARD} p-5 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
           <h3 className="text-2xl md:text-3xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
-          <p className="text-slate-500 text-center mb-2 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך. הקישו על מפלגה כדי להזיז אותה.</p>
+          <p className="text-slate-500 text-center mb-2 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך.</p>
           <CompassDial scored={scored} top={top} />
         </div>
 
