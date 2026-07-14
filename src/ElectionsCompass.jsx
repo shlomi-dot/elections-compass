@@ -351,14 +351,19 @@ const GLOBAL_CSS = `
     33%      { transform: translate(4vw, -3vh) scale(1.12); }
     66%      { transform: translate(-3vw, 4vh) scale(0.93); }
   }
+  /* חשוב: הכניסות חייבות להסתיים ב-transform: none ולא ב-rotateX(0).
+     עם fill-mode: both הטרנספורם האחרון נשאר דבוק לאלמנט לנצח, הדפדפן
+     משאיר אותו בשכבת 3D מרוסטרת — והטקסט (במיוחד SVG) נשאר מטושטש. */
   @keyframes fadeSlideIn {
     from { opacity: 0; transform: perspective(900px) rotateX(7deg) translateY(20px); }
-    to   { opacity: 1; transform: perspective(900px) rotateX(0deg) translateY(0); }
+    99%  { opacity: 1; transform: perspective(900px) rotateX(0deg) translateY(0); }
+    to   { opacity: 1; transform: none; }
   }
   @keyframes popIn {
     0%   { opacity: 0; transform: perspective(700px) scale(0.88) rotateX(8deg); }
     70%  { transform: perspective(700px) scale(1.03) rotateX(-2deg); }
-    100% { opacity: 1; transform: perspective(700px) scale(1) rotateX(0deg); }
+    99%  { opacity: 1; transform: perspective(700px) scale(1) rotateX(0deg); }
+    100% { opacity: 1; transform: none; }
   }
   @keyframes floatY {
     0%, 100% { transform: translateY(0) rotateZ(0deg); }
@@ -374,9 +379,17 @@ const GLOBAL_CSS = `
   .joke-anim   { animation: slideUpFade 0.5s ease-out both; }
   .aurora-blob { animation: auroraFloat 24s ease-in-out infinite; will-change: transform; }
   .aurora-blob.delay { animation-delay: -12s; }
+  @keyframes fadeOnly { from { opacity: 0; } to { opacity: 1; } }
+
+  /* "הפחתת תנועה" (iOS/אנדרואיד) מדליקה את הכלל הזה. פעם הוא כיבה הכול
+     והאפליקציה נראתה קפואה. עכשיו: תנועה מתמשכת ומטרידה — כבויה;
+     כניסות רכות של תוכן — נשארות, כהעלמה בלבד בלי תזוזה. */
   @media (prefers-reduced-motion: reduce) {
-    .anim-enter, .anim-pop, .anim-bar, .aurora-blob, .joke-anim, .dial-draw, .dial-pulse,
-    .anim-float, .dial-float, .opt-enter, .hero-needle, .cta-shine::after, .swatch { animation: none !important; }
+    .aurora-blob, .anim-float, .dial-pulse, .hero-needle, .cta-shine::after,
+    .dial-draw, .anim-bar { animation: none !important; }
+    .anim-enter, .anim-pop, .opt-enter, .joke-anim, .swatch {
+      animation: fadeOnly .35s ease-out both !important;
+    }
     .btn-3d, .btn-3d:hover, .btn-3d:active { transform: none !important; }
   }
   .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -432,12 +445,10 @@ const GLOBAL_CSS = `
   }
   .swatch { animation: swatchPop .5s cubic-bezier(.22,1,.36,1) both; }
 
-  /* --- המצפן --- */
-  .dial-float { animation: dialFloat 7s ease-in-out infinite; transform-style: preserve-3d; }
-  @keyframes dialFloat {
-    0%, 100% { transform: rotateX(4deg) rotateY(-1.5deg); }
-    50%      { transform: rotateX(8deg) rotateY(1.5deg); }
-  }
+  /* --- המצפן ---
+     אין כאן טרנספורם תלת-ממדי על ה-SVG: דפדפנים מרסטרים טקסט פעם אחת בתוך
+     שכבת 3D ואז מותחים אותה כל פריים — מה שגורם לשמות המפלגות להיטשטש
+     ולרעוד. החוגה נשארת שטוחה וחדה; התנועה מגיעה מהמחט עצמה. */
   .dial-needle { filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.35)); }
   .dial-label { transition: fill .25s, font-weight .25s, opacity .25s; cursor: pointer; }
 
@@ -785,8 +796,8 @@ function CompassDial({ scored, top }) {
   }, [scored]);
 
   return (
-    <div ref={wrapRef} className="w-full max-w-2xl md:max-w-none mx-auto" style={{ perspective: '1200px' }}>
-      <div className="dial-float">
+    <div ref={wrapRef} className="w-full max-w-2xl md:max-w-none mx-auto">
+      <div>
         <svg viewBox={DIAL.VIEW} className="w-full h-auto select-none" role="img" aria-label={`מצפן פוליטי — המחט מצביעה על ${selected.name}, ${selected.match}% התאמה`}>
           <defs>
             <linearGradient id="dialArc" x1="0" y1="0" x2="1" y2="0">
@@ -867,6 +878,10 @@ function CompassDial({ scored, top }) {
             );
           })}
 
+          {/* תוויות גושים בקצוות */}
+          <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
+          <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
+
           {/* המחט — להב דק עם קצה זוהר בצבע המפלגה */}
           <g ref={needleRef} transform={`rotate(-95 ${DIAL.CX} ${DIAL.CY})`} style={{ pointerEvents: 'none' }} className="dial-needle">
             <polygon points={`${tip.x},${tip.y} ${DIAL.CX - 6},${DIAL.CY + 9} ${DIAL.CX + 6},${DIAL.CY + 9}`} fill="#1e293b" />
@@ -874,9 +889,6 @@ function CompassDial({ scored, top }) {
           <circle cx={DIAL.CX} cy={DIAL.CY} r="12" fill="#1e293b" stroke="#fff" strokeWidth="3.5" />
           <circle cx={DIAL.CX} cy={DIAL.CY} r="4" fill={selected.hex} />
 
-          {/* תוויות גושים בקצוות */}
-          <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
-          <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
         </svg>
       </div>
 
@@ -1721,7 +1733,7 @@ export default function ElectionsCompass() {
         </div>
 
         {/* 3. תעודת זהות פוליטית + טבלת המפלגות */}
-        <div className="grid md:grid-cols-2 gap-6" style={{ perspective: '1200px' }}>
+        <div className="grid md:grid-cols-2 gap-6">
           <PoliticalID dna={dna} top={top} />
 
           <div className={`${CARD} p-6 md:p-10 anim-enter`}>
