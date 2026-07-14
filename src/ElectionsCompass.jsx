@@ -200,11 +200,13 @@ const decodeAnswers = (str) => {
 const haptic = (() => {
   const can = typeof navigator !== 'undefined' && 'vibrate' in navigator;
   const fire = (pattern) => { if (!can) return; try { navigator.vibrate(pattern); } catch { /* noop */ } };
+  /* פעימות בודדות וקצרות. ריבוי פעימות מרגיש כמו זמזום, לא כמו הקשה —
+     נגיעה אחת חדה היא מה שנתפס כ"נעים". שום דבר מעל 12ms באינטראקציה רגילה. */
   return {
-    light:   () => fire(6),                    // ניווט, צ'יפים, החלפת משקל — נגיעה בלבד
-    select:  () => fire([9, 28, 12]),          // בחירת תשובה — פעימה כפולה רכה, מרגיש כמו "ננעל"
-    warning: () => fire([22, 45, 22]),         // טוסט אזהרה — שתי פעימות כבדות יותר
-    success: () => fire([10, 35, 10, 35, 24]), // הגעה לתוצאות / העתקה — "תרועה" קטנה ועולה
+    light:   () => fire(4),            // ניווט, צ'יפים, החלפת משקל — נגיעה קלילה
+    select:  () => fire(8),            // בחירת תשובה / מפלגה — טיק אחד חד ומספק
+    warning: () => fire([10, 60, 10]), // אזהרה — נדיר, ולכן מותר לו להיות מורגש
+    success: () => fire([8, 45, 14]),  // סיום/העתקה — שתי פעימות קלות, לא תרועה
   };
 })();
 
@@ -662,8 +664,8 @@ function AnimatedPercent({ value, duration = 1200, className = '', style }) {
    מובייל: קנבס כמעט ריבועי שמנצל את הגובה של הטלפון, בלי טבעת שמות
    (בטלפון הן היו נדחסות ל-6px). הרדיוס גדול ביחס לרוחב, כך שהמצפן
    עצמו נראה גדול — והשמות עוברים לרשימה נגיעה מתחתיו. */
-const DIAL_DESKTOP = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300', labels: true, dotScale: 1 };
-const DIAL_MOBILE  = { CX: 175, CY: 208, R: 150, VIEW: '0 0 350 246', labels: false, dotScale: 1.5 };
+const DIAL_DESKTOP = { CX: 300, CY: 250, R: 200, VIEW: '0 0 660 300', labels: true, dotScale: 1, endLabelsInside: false };
+const DIAL_MOBILE  = { CX: 170, CY: 180, R: 162, VIEW: '0 0 340 202', labels: false, dotScale: 1.7, endLabelsInside: true };
 
 const dialAngle = (position) => 180 - (position / 100) * 180; // 0=ימין, 180=שמאל
 const dialPointOn = (D, angleDeg, radius) => {
@@ -818,7 +820,7 @@ function CompassDial({ scored, top }) {
 
   return (
     <div ref={wrapRef} className="w-full max-w-2xl md:max-w-none mx-auto">
-      <div>
+      <div className="-mx-3 md:mx-0">
         <svg viewBox={DIAL.VIEW} className="w-full h-auto select-none" role="img" aria-label={`מצפן פוליטי — המחט מצביעה על ${selected.name}, ${selected.match}% התאמה`}>
           <defs>
             <linearGradient id="dialArc" x1="0" y1="0" x2="1" y2="0">
@@ -904,9 +906,21 @@ function CompassDial({ scored, top }) {
             );
           })}
 
-          {/* תוויות גושים בקצוות */}
-          <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
-          <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
+          {/* תוויות גושים בקצוות.
+              במובייל הן נכנסות פנימה: כשהן מתחת לקצוות הן גוזלות שוליים
+              משני הצדדים, והחוגה נאלצת להתכווץ. בפנים — הקשת מנצלת כמעט
+              את כל רוחב המסך. */}
+          {DIAL.endLabelsInside ? (
+            <>
+              <text x={dialPoint(170, DIAL.R - 30).x} y={dialPoint(170, DIAL.R - 30).y} textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
+              <text x={dialPoint(10, DIAL.R - 30).x} y={dialPoint(10, DIAL.R - 30).y} textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
+            </>
+          ) : (
+            <>
+              <text x={dialPoint(180, DIAL.R).x} y={dialPoint(180, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#ef4444">שמאל</text>
+              <text x={dialPoint(0, DIAL.R).x} y={dialPoint(0, DIAL.R).y + 26} textAnchor="middle" fontSize="13" fontWeight="800" fill="#3b82f6">ימין</text>
+            </>
+          )}
 
           {/* המחט — להב דק */}
           <g ref={needleRef} transform={`rotate(-95 ${DIAL.CX} ${DIAL.CY})`} style={{ pointerEvents: 'none' }} className="dial-needle">
@@ -1784,7 +1798,7 @@ export default function ElectionsCompass() {
         </div>
 
         {/* 2. המצפן הפוליטי — מיד אחרי התוצאה הראשית */}
-        <div className={`${CARD} p-5 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
+        <div className={`${CARD} p-4 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
           <h3 className="text-2xl md:text-3xl mb-1 text-center tracking-tight text-slate-900" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
           <p className="text-slate-500 text-center mb-2 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך.</p>
           <CompassDial scored={scored} top={top} />
