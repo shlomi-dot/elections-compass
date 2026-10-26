@@ -3,7 +3,7 @@ import {
   ChevronLeft, ChevronRight, RotateCcw, Vote, Shield, Scale, Coins,
   BookOpen, Users, Map, BrainCircuit, MessageCircleHeart, Heart,
   Star, Info, Check, Share2, Sparkles, Coffee, Loader2, PartyPopper, GraduationCap, Landmark, Globe, Home,
-  Download, Lightbulb, Fingerprint, Swords, UserPlus, Handshake
+  Download, Lightbulb, Fingerprint, Swords, UserPlus, Handshake, Search, AlertTriangle
 } from 'lucide-react';
 
 /* ==================================================================
@@ -29,21 +29,28 @@ const BTN_GHOST = `inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bo
 /* ------------------------------------------------------------------
    PARTIES
 ------------------------------------------------------------------- */
+// pollSeats: average of the final Kan / Channel 12 / Channel 13 polls (23.10.2026).
+// Under THRESHOLD_SEATS the list is flagged as at risk of missing the 3.25% threshold.
 const PARTIES = {
-  hadashTaal:      { id: 'hadashTaal',      name: 'חד"ש-תע"ל',            hex: '#dc2626', position: 5,  description: 'רשימה משותפת (עודה וטיבי). שוויון זכויות מלא, סיום השליטה בשטחים, ומדינה פלסטינית לצד ישראל.' },
-  raam:            { id: 'raam',            name: 'רע"ם',                  hex: '#059669', position: 14, description: 'מפלגה ערבית-אסלאמית פרגמטית בראשות מנסור עבאס. שיפור מעמד החברה הערבית, שמרנות חברתית ושילוב פוליטי.' },
-  democrats:       { id: 'democrats',       name: 'הדמוקרטים',             hex: '#db2777', position: 23, description: 'שמאל ציוני בראשות יאיר גולן. סוציאל-דמוקרטיה, הסדר מדיני, שוויון זכויות והפרדת דת ומדינה.' },
-  yashar:          { id: 'yashar',          name: 'ישר!',                  hex: '#0d9488', position: 33, description: 'מרכז בראשות גדי איזנקוט. ממלכתיות, יושרה ציבורית, שירות לכל וחתירה להסדרים אזוריים.' },
-  kacholLavan:     { id: 'kacholLavan',     name: 'כחול לבן',              hex: '#1d4ed8', position: 43, description: 'מרכז ביטחוניסטי בראשות בני גנץ. קונצנזוס, שמירה על מוסדות המדינה ורפורמות בהסכמה רחבה.' },
-  bYachad:         { id: 'bYachad',         name: 'ביחד (בנט־לפיד)',       hex: '#0891b2', position: 54, description: 'מרכז-ימין. ליברליזם כלכלי וחילוני לצד ימין ביטחוני-ממלכתי. ממשלה רחבה ללא קיצוניים.' },
-  yisraelBeiteinu: { id: 'yisraelBeiteinu', name: 'ישראל ביתנו',           hex: '#4338ca', position: 65, description: 'ימין חילוני בראשות ליברמן. שוק חופשי, שוויון בנטל, הפרדת דת ומדינה וגישה צבאית נוקשה.' },
-  likud:           { id: 'likud',           name: 'הליכוד',                hex: '#2563eb', position: 75, description: 'ימין בראשות נתניהו. כלכלה חופשית, תפיסה לאומית-שמרנית וביקורתיות כלפי מערכת המשפט.' },
-  shas:            { id: 'shas',            name: 'ש"ס',                   hex: '#0f172a', position: 84, description: 'חרדית-ספרדית בראשות דרעי. שמרנות דתית, סטטוס קוו דתי ורשתות רווחה חברתית.' },
-  utj:             { id: 'utj',             name: 'יהדות התורה',           hex: '#475569', position: 92, description: 'חרדית-אשכנזית. שימור עולם התורה, אוטונומיה בחינוך והתנגדות לגיוס כפוי.' },
-  farRight:        { id: 'farRight',        name: 'הציונות הדתית-עוצמה',   hex: '#ea580c', position: 98, description: 'ימין אידיאולוגי (סמוטריץ׳ ובן גביר). סיפוח, פעולה צבאית נחרצת, שמרנות דתית ורפורמה משפטית מלאה.' },
+  jointList:       { id: 'jointList',       name: 'הרשימה המשותפת',       hex: '#dc2626', position: 5,  pollSeats: 9,    description: 'איחוד מחודש של חד"ש, תע"ל ובל"ד. שוויון זכויות מלא, סיום השליטה בשטחים, ומדינה פלסטינית לצד ישראל.' },
+  raam:            { id: 'raam',            name: 'רע"ם',                  hex: '#059669', position: 14, pollSeats: 5.7,  description: 'מפלגה ערבית-אסלאמית פרגמטית בראשות מנסור עבאס. שיפור מעמד החברה הערבית, שמרנות חברתית ושילוב פוליטי.' },
+  democrats:       { id: 'democrats',       name: 'הדמוקרטים',             hex: '#db2777', position: 23, pollSeats: 9.3,  description: 'שמאל ציוני בראשות יאיר גולן. סוציאל-דמוקרטיה, הסדר מדיני, שוויון זכויות והפרדת דת ומדינה.' },
+  yashar:          { id: 'yashar',          name: 'ישר!',                  hex: '#0d9488', position: 35, pollSeats: 22.3, description: 'מרכז בראשות גדי איזנקוט. ממלכתיות, יושרה ציבורית, שירות לכל וחתירה להסדרים אזוריים.' },
+  bYachad:         { id: 'bYachad',         name: 'ביחד (בנט־לפיד)',       hex: '#0891b2', position: 52, pollSeats: 14.3, description: 'איחוד של בנט 2026 ויש עתיד. מרכז-ימין: ליברליזם כלכלי וחילוני לצד ימין ביטחוני-ממלכתי. ממשלה רחבה ללא קיצוניים.' },
+  reservists:      { id: 'reservists',      name: 'המילואימניקים',  hex: '#4d7c0f', position: 60, pollSeats: 1.3, description: 'רשימה משותפת של יועז הנדל וירון זליכה. שוויון בנטל ושירות לכולם, ימין ממלכתי ומאבק בריכוזיות ובמונופולים. לא התחייבה לאף גוש.' },
+  yisraelBeiteinu: { id: 'yisraelBeiteinu', name: 'ישראל ביתנו',           hex: '#4338ca', position: 66, pollSeats: 8,    description: 'ימין חילוני בראשות ליברמן. שוק חופשי, שוויון בנטל, הפרדת דת ומדינה וגישה צבאית נוקשה.' },
+  likud:           { id: 'likud',           name: 'הליכוד',                hex: '#2563eb', position: 75, pollSeats: 20,   description: 'ימין בראשות נתניהו. כלכלה חופשית, תפיסה לאומית-שמרנית וביקורתיות כלפי מערכת המשפט.' },
+  shas:            { id: 'shas',            name: 'ש"ס',                   hex: '#0f172a', position: 84, pollSeats: 7.3,  description: 'חרדית-ספרדית בראשות דרעי. שמרנות דתית, סטטוס קוו דתי ורשתות רווחה חברתית.' },
+  utj:             { id: 'utj',             name: 'יהדות התורה',           hex: '#475569', position: 90, pollSeats: 7.7,  description: 'חרדית-אשכנזית. שימור עולם התורה, אוטונומיה בחינוך והתנגדות לגיוס כפוי.' },
+  rzZehut:         { id: 'rzZehut',         name: 'הציונות הדתית-זהות',    hex: '#b45309', position: 95, pollSeats: 7,    description: 'ימין דתי-לאומי בראשות בצלאל סמוטריץ׳, בריצה משותפת עם זהות. ריבונות ביהודה ושומרון, התיישבות, רפורמה משפטית מלאה וכלכלת שוק.' },
+  otzma:           { id: 'otzma',           name: 'עוצמה יהודית',          hex: '#ea580c', position: 99, pollSeats: 8,    description: 'ימין לאומי בראשות איתמר בן גביר. יד קשה בביטחון ובאכיפה, התיישבות, החלת ריבונות ומדיניות נוקשה בעזה.' },
 };
 
 const PARTY_IDS = Object.keys(PARTIES);
+
+const THRESHOLD_SEATS = 4;
+const POLLS_NOTE = 'ממוצע הסקרים האחרונים של כאן, ערוץ 12 וערוץ 13 (23.10.2026)';
+const isAtRisk = (p) => p.pollSeats < THRESHOLD_SEATS;
 
 /* ------------------------------------------------------------------
    QUESTIONS - 13 Questions total (Integrated from Claude)
@@ -56,7 +63,7 @@ const QUESTIONS = [
       simple: { text: 'מה צריך לעשות עם בית המשפט העליון (בג"ץ) והרפורמה המשפטית?', options: [ 'רפורמה מלאה: לממשלה תהיה שליטה בוועדה לבחירת שופטים, ופסקת התגברות תמנע מבג"ץ לפסול חוקים.', 'רפורמה מאוזנת: לצמצם את עילת הסבירות, אבל לשמור על כך שלפוליטיקאים לא תהיה שליטה מוחלטת במינוי שופטים ללא הסכמה.', 'לשמור על הקיים: בג"ץ הוא המגן של האזרח מול השלטון. אסור לשנות את הרכב הוועדה לבחירת שופטים.', 'לחזק את בג"ץ: יש לחוקק חוקה שתעניק לבג"ץ סמכות מפורשת לפסול חוקים שפוגעים בזכויות אדם.' ] },
       advanced: { text: 'מהי עמדתך ביחס למבנה המשטרי, הרפורמה המשפטית ומעמד הרשות השופטת?', options: [ 'העברת מרכז הכובד לרשות המבצעת: פסקת התגברות ברוב של 61, ביטול עילת הסבירות ושינוי הרכב הוועדה לבחירת שופטים כך שלקואליציה יהיה רוב אוטומטי.', 'רפורמה אבולוציונית: ריכוך עילת הסבירות וחוק היועמ"שים, תוך שמירה על זכות הוטו ההדדית בוועדה לבחירת שופטים.', 'הקפאת המצב הקיים: דחיית שינויים בחוקי היסוד והגנה על עצמאות הרשות השופטת כבלם האפקטיבי היחיד.', 'כינון חוקה: עיגון חוק יסוד החקיקה, ביצור מגילת זכויות האדם (כולל חוק יסוד השוויון) ושריון מעמד בג"ץ.' ] },
     },
-    stances: { likud: 0, farRight: 0, shas: 0.2, utj: 0.2, kacholLavan: 1.2, bYachad: 1.4, yashar: 1.6, yisraelBeiteinu: 2, raam: 2.4, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.4, democrats: 3, yashar: 1.6, bYachad: 1.4, reservists: 1.2, yisraelBeiteinu: 2, likud: 0, shas: 0.2, utj: 0.2, rzZehut: 0, otzma: 0 },
   },
   {
     id: 'security', axis: 'security', category: 'הסכסוך והשטחים', icon: Shield, accent: '#ef4444',
@@ -65,7 +72,7 @@ const QUESTIONS = [
       simple: { text: 'מה הפתרון המעשי למצב ביהודה ושומרון (הגדה המערבית)?', options: [ 'לספח את יהודה ושומרון (או את שטחי C), לפרק את הרשות הפלסטינית ולהרחיב משמעותית את ההתנחלויות.', 'ניהול הסכסוך: לשמר את המצב הקיים. צה"ל פועל בכל מקום, שומרים על ההתנחלויות, בלי סיפוח ובלי מדינה פלסטינית.', 'היפרדות: לקבוע גבולות, לספח רק את גושי ההתנחלויות, ולהשאיר לפלסטינים אוטונומיה (לא מדינה).', 'הסכם שלום ושתי מדינות: לפנות התנחלויות מבודדות ולהקים מדינה פלסטינית מפורזת כחלק מהסדר אזורי.' ] },
       advanced: { text: 'איזו אסטרטגיה מדינית-ביטחונית יש ליישם בזירה הפלסטינית (איו"ש)?', options: [ 'החלת ריבונות דה-יורה על שטחי C, מניעת ישות מדינית פלסטינית בכל תרחיש, ופירוק מוסדות הרשות.', 'שמירה על הסטטוס קוו: אוטונומיה אזרחית מוגבלת, חופש פעולה מבצעי מלא לצה"ל, והימנעות מנסיגות.', 'צמצום הסכסוך: היפרדות אזרחית תוך סיפוח הגושים, חיזוק כלכלי של הרשות ושליטה ביטחונית ישראלית עליונה.', 'פתרון שתי מדינות: נסיגה לקווי ׳67 עם חילופי שטחים, מדינה פלסטינית ריבונית ופינוי עומק ההתיישבות.' ] },
     },
-    stances: { farRight: 0, likud: 0.9, yisraelBeiteinu: 1, shas: 1.2, utj: 1.2, kacholLavan: 2, yashar: 2, bYachad: 2, democrats: 3, hadashTaal: 3, raam: 3 },
+    stances: { jointList: 3, raam: 3, democrats: 3, yashar: 2, bYachad: 2, reservists: 1.2, yisraelBeiteinu: 1, likud: 0.9, shas: 1.2, utj: 1.2, rzZehut: 0, otzma: 0 },
   },
   {
     id: 'gaza', axis: 'security', category: 'עזה והיום שאחרי', icon: Map, accent: '#ea580c',
@@ -74,7 +81,7 @@ const QUESTIONS = [
       simple: { text: 'מה צריך לעשות ברצועת עזה כדי להבטיח ביטחון לטווח ארוך?', options: [ 'לכבוש את הרצועה, להקים ממשל צבאי קבוע, לעודד הגירה מרצון ולהקים מחדש את יישובי גוש קטיף.', 'צה"ל ישלוט ביטחונית לאורך זמן, והניהול האזרחי יימסר למקומיים שאינם קשורים לחמאס או לרשות.', 'צה"ל יאבטח מבחוץ, וקואליציה של מדינות ערב מתונות תנהל ותשקם את עזה מבפנים.', 'להעביר שליטה מלאה לרשות פלסטינית מחוזקת, בסיוע בינלאומי, כחלק מפתרון מדיני רחב.' ] },
       advanced: { text: 'מהו המתווה האסטרטגי המועדף לעיצוב המציאות ברצועת עזה?', options: [ 'שליטה צבאית דה-פקטו וממשל צבאי גלוי, לצד חידוש ההתיישבות היהודית בצפון ובמרכז הרצועה.', 'שליטה ביטחונית רציפה בפרוזדורים, דחיקת חמאס והעברת הניהול האזרחי לטכנוקרטים או ראשי חמולות נטולי זיקה לרש"פ.', 'ברית אזורית בחסות אמריקאית: כוח ערבי-סוני רב-לאומי לניהול השיקום, מול מעטפת ביטחונית ישראלית.', 'אינטגרציה של מנגנוני הרשות הפלסטינית "המחודשת" כגורם הריבוני ברצועה, כצעד מקדים להסדר קבע.' ] },
     },
-    stances: { farRight: 0, likud: 1, yisraelBeiteinu: 1.2, shas: 1.2, utj: 1.2, kacholLavan: 2, yashar: 2, bYachad: 2, raam: 2.5, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.5, democrats: 3, yashar: 2, bYachad: 2, reservists: 1.2, yisraelBeiteinu: 1.2, likud: 1, shas: 1.2, utj: 1.2, rzZehut: 0, otzma: 0 },
   },
   {
     id: 'economy', axis: 'economy', category: 'כלכלה ויוקר המחיה', icon: Coins, accent: '#16a34a',
@@ -83,7 +90,7 @@ const QUESTIONS = [
       simple: { text: 'איך הממשלה צריכה להוריד את יוקר המחיה?', options: [ 'שוק חופשי: לפרק מונופולים ואת ההסתדרות, להפריט, לפתוח לייבוא ולחתוך מיסים.', 'שוק חופשי אחראי: לעודד תעסוקה ולשחרר רגולציה, בלי לחלק מיליארדים לפרויקטים סקטוריאליים.', 'רווחה מסורתית: פיקוח על מחירי המזון, סיוע לעניים והגדלה משמעותית של קצבאות.', 'סוציאל-דמוקרטיה: להעלות מיסים על ההון, חינוך חינם מגיל אפס, רפואה ציבורית ופיקוח על שכר הדירה.' ] },
       advanced: { text: 'איזו אסכולה מקרו-כלכלית על ישראל לאמץ מול הגירעון, האינפלציה והריכוזיות?', options: [ 'נאו-ליברליזם: דה-רגולציה עמוקה, החלשת העבודה המאורגנת, ביטול מכסים, צמצום המגזר הציבורי והורדת מס חברות.', 'כלכלת שוק עם משמעת פיסקלית: הסרת חסמי יבוא, בלימת תקציבים לא-יצרניים וקיצוץ בכספים קואליציוניים.', 'רשת ביטחון והרחבת סובסידיות: פיקוח מחירים, קצבאות עמוקות למשפחות ברוכות ילדים והגנה על תוצרת מקומית.', 'מודל סוציאל-דמוקרטי: מס עושר, מיסוי רווחי יתר של הבנקים ומימון שירותים ציבוריים אוניברסליים על חשבון ההון.' ] },
     },
-    stances: { yisraelBeiteinu: 0, bYachad: 0.6, kacholLavan: 1, yashar: 1, farRight: 1.1, likud: 1.6, shas: 2, utj: 2, raam: 2.2, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.2, democrats: 3, yashar: 1, bYachad: 0.6, reservists: 0.9, yisraelBeiteinu: 0, likud: 1.6, shas: 2, utj: 2, rzZehut: 0.8, otzma: 1.5 },
   },
   {
     id: 'housing', axis: 'economy', category: 'משבר הדיור', icon: Home, accent: '#65a30d',
@@ -92,7 +99,7 @@ const QUESTIONS = [
       simple: { text: 'מה המדיניות הנכונה להורדת מחירי הדיור?', options: [ 'צד ההיצע בלבד: הפרטת קרקעות המדינה, הפחתת רגולציה ותכנון מהיר, ותחרות חופשית בין יזמים.', 'האצת בנייה עם סיוע ממוקד: שיווקי קרקע מוזלים ומענקים לזכאים, בלי פיקוח על מחירי השוק.', 'מעורבות ממשלתית פעילה: בנייה ציבורית, הרחבת תוכניות "דירה בהנחה" והגנות חוקיות על שוכרים.', 'שינוי כיוון מלא: דיור ציבורי בהיקף נרחב, פיקוח על שכר דירה בחקיקה ומיסוי כבד על ריבוי דירות.' ] },
       advanced: { text: 'איזו אסטרטגיה יש לאמץ מול משבר הדיור והשכירות?', options: [ 'רפורמת היצע ליברלית: הפרטת קרקעות רמ"י, ביזור מוסדות התכנון והסרת חסמי רגולציה, ללא התערבות בביקוש.', 'מדיניות היצע מנוהלת: הסכמי גג, שיווק מוזל לזכאים ותמריצי התחדשות עירונית, תוך הימנעות מפיקוח מחירים.', 'מעורבות אקטיבית: זרוע ביצוע ממשלתית לבנייה, חוק שכירות הוגנת מחייב והרחבת הדיור המוזל לזכאים.', 'דה-קומודיפיקציה חלקית: מלאי דיור ציבורי משמעותי, פיקוח סטטוטורי על שכר הדירה ומיסוי פרוגרסיבי על ריבוי נכסים.' ] },
     },
-    stances: { yisraelBeiteinu: 0.4, bYachad: 0.8, likud: 1.2, farRight: 1.2, yashar: 1.4, kacholLavan: 1.4, shas: 2.2, utj: 2.2, raam: 2.4, democrats: 2.8, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.4, democrats: 2.8, yashar: 1.4, bYachad: 0.8, reservists: 1, yisraelBeiteinu: 0.4, likud: 1.2, shas: 2.2, utj: 2.2, rzZehut: 1, otzma: 1.4 },
   },
   {
     id: 'public_sphere', axis: 'civil', category: 'המרחב הציבורי (שבת וחמץ)', icon: Map, accent: '#ca8a04',
@@ -101,7 +108,7 @@ const QUESTIONS = [
       simple: { text: 'כיצד על המדינה לנהוג כלפי דת במרחב הציבורי (שבת, חמץ, מרכולים)?', options: [ 'צביון יהודי בחקיקה: לאסור מרכולים ותחבורה ציבורית בשבת, ולאסור הכנסת חמץ למרחבים ציבוריים (בתי חולים, בסיסים) בפסח.', 'שמירה על הסטטוס קוו: לא לחוקק חוקים חדשים לכאן או לכאן. בלי תחבורה ציבורית בשבת ככלל, אבל להעלים עין איפה שכבר יש. למנוע קרע.', 'ביזור לשלטון המקומי: להעביר את הסמכויות לראשי הערים, כך שכל עיר תקבע בעצמה האם תהיה בה תחבורה ציבורית ומסחר בשבת.', 'הפרדה מלאה: יש לאפשר תחבורה ציבורית לאומית בשבת, לפתוח את המשק בשבתות ללא הגבלה ולבטל כל חקיקה דתית כמו איסור חמץ.' ] },
       advanced: { text: 'מהי עמדתך ביחס לעיצוב המרחב הציבורי בסוגיות דת (שבת, חוק החמץ, חוק המרכולים)?', options: [ 'הגברת הכפיפות להלכה במרחב הציבורי: אכיפה נוקשה של איסור עבודה בשבת במוסדות ציבור, אכיפת חוקי המרכולים וחוקי החמץ בכל המרחב האזרחי.', 'דבקות בסטטוס קוו ההיסטורי: הימנעות משינויים חקיקתיים רדיקליים או מחקיקה חילונית מובהקת, מתוך תפיסת ממלכתיות וחשש מ"מלחמת תרבות".', 'ביזור סמכויות מוניציפלי (אוטונומיה מקומית): הסרת הרגולציה הארצית והעברת סמכויות תחבורה ומסחר בשבת להכרעת הרשות המקומית בלבד.', 'הפרדת דת ממדינה מוחלטת: הפעלת תחבורה ציבורית לאומית ורכבות בשבת, ביטול חוקי המרכולים והחמץ, ומניעת כל התערבות ממשלתית ממניע הלכתי.' ] },
     },
-    stances: { shas: 0, utj: 0, farRight: 0, raam: 0.3, likud: 1, kacholLavan: 1.6, yashar: 2, bYachad: 2, yisraelBeiteinu: 3, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 0.3, democrats: 3, yashar: 2, bYachad: 2, reservists: 1.8, yisraelBeiteinu: 3, likud: 1, shas: 0, utj: 0, rzZehut: 0.3, otzma: 0.3 },
   },
   {
     id: 'marriage', axis: 'civil', category: 'דיני אישות (נישואין ורבנות)', icon: BookOpen, accent: '#ea580c',
@@ -110,7 +117,7 @@ const QUESTIONS = [
       simple: { text: 'מה צריכה להיות המדיניות לגבי נישואין וגירושין בישראל?', options: [ 'מונופול רבני: הרבנות הראשית תישאר הגורם הבלעדי המוסמך לחתן ולגרש יהודים בישראל, כדי למנוע התבוללות ופיצול בעם.', 'סטטוס קוו: הרבנות ממשיכה להחזיק במונופול, תוך הכרה דה-פקטו בנישואים הנערכים מחוץ לגבולות המדינה (כמו קפריסין).', 'מסלול חלופי מצומצם: יש לייצר פתרון של ברית זוגיות או נישואים אזרחיים אך ורק לאזרחים שאינם יכולים להתחתן כהלכה (מנועי חיתון).', 'נישואים אזרחיים מלאים לכולם: שבירת המונופול של הרבנות ומתן זכות בחירה לכל אזרח להינשא בנישואים אזרחיים או בכל טקס דתי שיבחר.' ] },
       advanced: { text: 'כיצד יש להכריע במאבק על דיני האישות (נישואין וגירושין) בישראל?', options: [ 'שמירת מונופול הרבנות בדיני אישות: התנגדות לכל הכרה סטטוטורית בנישואין אזרחיים, ושמירה על סמכות בתי הדין הרבניים בלבד.', 'היצמדות להסדרים ההיסטוריים: הימנעות ממשבר קואליציוני-דתי; הותרת דיני אישות בידי הרבנות תוך סגירת עיניים חוקית מנישואין בחו"ל.', 'ברית זוגיות אזרחית (מצומצמת): מציאת הסדר פשרה מוגבל שיאפשר מסד משפטי של "ברית זוגיות" אך ורק לאוכלוסיות שאין להן מענה הלכתי במרשם הנישואין.', 'רפורמה אזרחית מוחלטת בדיני אישות: החלת נישואין וגירושין אזרחיים אוניברסליים בישראל ללא תלות ברבנות, ושלילת סמכויות הבלעדיות מבתי הדין הרבניים.' ] },
     },
-    stances: { shas: 0, utj: 0, farRight: 0, raam: 0.3, likud: 1, kacholLavan: 1.6, yashar: 2, bYachad: 2, yisraelBeiteinu: 3, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 0.3, democrats: 3, yashar: 2, bYachad: 2, reservists: 2, yisraelBeiteinu: 3, likud: 1, shas: 0, utj: 0, rzZehut: 0.2, otzma: 0.2 },
   },
   {
     id: 'draft', axis: 'civil', category: 'גיוס ושוויון בנטל', icon: Users, accent: '#0891b2',
@@ -119,7 +126,7 @@ const QUESTIONS = [
       simple: { text: 'מה הדרך הנכונה לפתור את סוגיית גיוס החרדים?', options: [ 'פטור חוקי מלא מגיל מוקדם. לימוד התורה חשוב למדינה, ומי שפטור יוכל לצאת לעבוד בלי כפייה.', 'גיוס בהסכמה עם תמריצים: יעדי גיוס לישיבות וקיצוץ תקציבי אם לא יעמדו בהם, בלי לגייס בכוח.', 'חובה אזרחית לכולם: מי שלא מתגייס לצה"ל יחויב בשירות לאומי-אזרחי מלא. מי שיסרב, מוסדותיו לא יתוקצבו.', 'גיוס שווה כולל סנקציות: חוק גיוס אחד, וסנקציות אישיות על משתמטים (שלילת הנחות ורישיונות).' ] },
       advanced: { text: 'מהו המתווה האידיאלי לחוק הגיוס והסדרת פטור "תורתו אומנותו"?', options: [ 'עיגון לימוד התורה כערך עליון, הורדת גיל הפטור ל-21 לשילוב בתעסוקה, והתנגדות לכל סנקציה.', 'מתווה יעדים מתון והדרגתי: סנקציות כלכליות על תקציב הישיבות בלבד (לא על התלמיד), ללא הליכים פליליים.', 'שירות חובה אוניברסלי (צבאי או אזרחי): שלילת תמיכות ממוסדות מעודדי השתמטות ותגמול דיפרנציאלי למשרתים.', 'ביטול דחיית השירות: החלת חוק שירות ביטחון על כל האזרחים, כולל הליכים פליליים ושלילת הטבות ממשתמטים.' ] },
     },
-    stances: { shas: 0, utj: 0, hadashTaal: 0.3, raam: 0.3, likud: 1, farRight: 1.4, kacholLavan: 2, yashar: 2, bYachad: 2.3, democrats: 2.7, yisraelBeiteinu: 3 },
+    stances: { jointList: 0.3, raam: 0.3, democrats: 2.7, yashar: 2, bYachad: 2.3, reservists: 3, yisraelBeiteinu: 3, likud: 1, shas: 0, utj: 0, rzZehut: 1.6, otzma: 1.2 },
   },
   {
     id: 'lgbtq', axis: 'civil', category: 'זכויות פרט וקהילת הלהט"ב', icon: Heart, accent: '#a855f7',
@@ -128,7 +135,7 @@ const QUESTIONS = [
       simple: { text: 'מה צריכה להיות מדיניות המדינה כלפי הקהילה הגאה?', options: [ 'המדינה תכיר רק במשפחה של אבא ואמא. נגד תקצוב מצעדי גאווה ונגד אימוץ על ידי זוגות חד-מיניים.', 'לחיות ולתת לחיות, בלי שינוי חוקים: אין בעיה במישור הפרטי, אבל לא להפוך את זה למאבק חקיקה.', 'חינוך לסובלנות וחוקים נגד אפליה: איסור אפליה בתעסוקה והשוואת זכויות במסגרת פשרות אזרחיות.', 'שוויון מלא בחוק: נישואים גאים, פונדקאות לזוגות גברים ואימוץ שוויוני ללא הבדל נטייה.' ] },
       advanced: { text: 'מה עמדתך ביחס לחקיקה פרואקטיבית בנושאי קהילת הלהט"ב וזכויות פרט?', options: [ 'שמרנות אקטיבית: התנגדות להכרה במודלים אלטרנטיביים למשפחה ההטרונורמטיבית ומניעת מימון ציבורי לארגוני גאווה.', 'היצמדות לסטטוס קוו: הימנעות משינוי חוקי הפונדקאות והאימוץ, לצד חופש פרט מלא במישור האישי.', 'חקיקה מגינה: איסור אפליה בתעסוקה ובשירותים, השוואת תנאים בביטוח הלאומי וקידום סובלנות בחינוך הממלכתי.', 'רפורמה אזרחית: פונדקאות לזוגות חד-מיניים, הכרה סטטוטורית בנישואין גאים וחוק עבירות שנאה מחמיר.' ] },
     },
-    stances: { farRight: 0, shas: 0, utj: 0, raam: 0.2, likud: 1, kacholLavan: 2, yashar: 2, bYachad: 2.2, hadashTaal: 2.8, democrats: 3, yisraelBeiteinu: 3 },
+    stances: { jointList: 2.8, raam: 0.2, democrats: 3, yashar: 2, bYachad: 2.2, reservists: 2, yisraelBeiteinu: 3, likud: 1, shas: 0, utj: 0, rzZehut: 0, otzma: 0 },
   },
   {
     id: 'governance', axis: 'regime', category: 'משילות ושומרי סף', icon: BrainCircuit, accent: '#0d9488',
@@ -137,7 +144,16 @@ const QUESTIONS = [
       simple: { text: 'מה צריך להיות תפקידו של הייעוץ המשפטי לממשלה?', options: [ 'השרים נבחרו על ידי העם והייעוץ הוא רק "ייעוץ". שר שהייעוץ המשפטי חוסם לו את המדיניות צריך שיוכל להחליף אותו.', 'הממשלה צריכה למשול, אבל להקשיב ליועצים. במחלוקת קשה, השר רשאי להביא עורך דין פרטי שייצג אותו.', 'הייעוץ המשפטי שומר סף נגד שחיתות. חוות דעתו מחייבת את השר, ואסור לשרים להתעלם מהנחיותיו.', 'שומרי הסף הם חומת המגן של הדמוקרטיה. יש לאסור על פוליטיקאים להתערב במינויים שלהם.' ] },
       advanced: { text: 'כיצד יש להגדיר את יחסי הכוחות בין הדרג הנבחר לייעוץ המשפטי הממשלתי?', options: [ 'חוות הדעת היא עצה בלבד. חוק שיאפשר לשרים למנות יועמ"שים במשרות אמון ולפטרם על בסיס חוסר התאמה למדיניות.', 'משקל רב לייעוץ המשפטי, אך ללא זכות וטו: במחלוקת קשה תתאפשר לממשלה הסתייעות בייצוג משפטי פרטי.', 'חוות הדעת מחייבת את הרשות המבצעת כדי להבטיח מנהל תקין, אלא אם פסק בית המשפט אחרת.', 'הגנה חוקתית על עצמאות שומרי הסף: עיגון סמכותם בחוק יסוד וניתוק מינוים והדחתם מהדרג הפוליטי.' ] },
     },
-    stances: { farRight: 0, likud: 0, shas: 0.4, utj: 0.4, kacholLavan: 1.5, bYachad: 1.9, yashar: 2, yisraelBeiteinu: 2, raam: 2.6, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.6, democrats: 3, yashar: 2, bYachad: 1.9, reservists: 1.5, yisraelBeiteinu: 2, likud: 0, shas: 0.4, utj: 0.4, rzZehut: 0, otzma: 0 },
+  },
+  {
+    id: 'oct7', axis: 'regime', category: 'ועדת חקירה ל־7 באוקטובר', icon: Search, accent: '#64748b',
+    variants: {
+      everyday: { text: 'מי צריך לחקור מה השתבש ב־7 באוקטובר?', options: [ 'ועדה שהכנסת תבחר, עם נציגים מכל הצדדים, ושתבדוק גם את הצבא, השב"כ, מערכת המשפט ומה קרה לאורך שנים.', 'ועדה שהקואליציה והאופוזיציה יסכימו עליה יחד, כדי שאף צד לא ירגיש שתפרו לו את התוצאה.', 'ועדת חקירה ממלכתית רגילה, כמו שהחוק קובע: נשיא בית המשפט העליון בוחר שופטים, והם בודקים את כולם — גם את הדרג המדיני.', 'ועדה ממלכתית עכשיו, ועוד לפני המסקנות — מי שהיה אחראי, כולל ראש הממשלה, צריך לקחת אחריות וללכת הביתה.' ] },
+      simple: { text: 'איזו ועדה צריכה לחקור את מחדל 7 באוקטובר?', options: [ 'ועדה שחבריה ימונו על ידי הכנסת באופן מאוזן פוליטית, ותחקור גם את הצבא, שב"כ ומערכת המשפט, לאורך שנים אחורה.', 'ועדת פשרה: הרכב שיוסכם בין הקואליציה לאופוזיציה (למשל שופטים בדימוס בהסכמה), ולא דרך נשיא העליון.', 'ועדת חקירה ממלכתית לפי החוק: נשיא בית המשפט העליון ממנה את חבריה, והיא חוקרת את כל הדרגים — הצבאי והמדיני.', 'ועדה ממלכתית מיד, לצד לקיחת אחריות אישית כבר עכשיו: האחראים, ובראשם ראש הממשלה, צריכים לפנות את מקומם.' ] },
+      advanced: { text: 'מהו המנגנון הראוי לבירור כשלי 7 באוקטובר?', options: [ 'ועדת חקירה ממלכתית-לאומית בחקיקה ייעודית: מינוי חבריה בידי הכנסת בהרכב פריטטי, ומנדט רחב הכולל את מערכת הביטחון, גורמי אכיפת החוק והקונספציה ארוכת השנים.', 'מנגנון מוסכם: הרכב שייקבע בהסכמה בין הקואליציה לאופוזיציה, תוך עקיפת סמכות המינוי של נשיא העליון אך שמירה על אמון ציבורי רחב.', 'ועדת חקירה ממלכתית לפי חוק ועדות חקירה (1968): מינוי בידי נשיא בית המשפט העליון, סמכויות חקירה מלאות ומנדט על כל הדרגים, לרבות הדרג המדיני.', 'ועדה ממלכתית לאלתר לצד אחריותיות מיידית: חובת התפטרות של נושאי התפקידים הבכירים, ובכללם ראש הממשלה, מבלי להמתין למסקנות הוועדה.' ] },
+    },
+    stances: { jointList: 2, raam: 1.8, democrats: 3, yashar: 2.6, bYachad: 2.8, reservists: 2.6, yisraelBeiteinu: 2.8, likud: 0, shas: 0.6, utj: 0.8, rzZehut: 0.3, otzma: 0 },
   },
   {
     id: 'education', axis: 'civil', category: 'חינוך ולימודי ליבה', icon: GraduationCap, accent: '#f59e0b',
@@ -146,7 +162,7 @@ const QUESTIONS = [
       simple: { text: 'האם לחייב את כל בתי הספר ללמד לימודי ליבה (מתמטיקה ואנגלית)?', options: [ 'לא לכפות. לכל קהילה זכות לחנך את ילדיה על פי דרכה, והמדינה תמשיך לתקצב גם מוסדות שלא מלמדים ליבה.', 'לעודד בלי לכפות: תמריצים ותוכניות רשות למוסדות שיוסיפו ליבה, בלי לפגוע בתקציב של מי שלא.', 'תקצוב מלא רק למי שמלמד ליבה: מוסד בלי מתמטיקה ואנגלית יקבל מימון חלקי בלבד, בתהליך הדרגתי.', 'חובה על כולם: אין תעודה ואין שקל ציבורי בלי ליבה מלאה, בפיקוח צמוד של משרד החינוך.' ] },
       advanced: { text: 'כיצד יש להסדיר את לימודי הליבה בחינוך המוכר שאינו רשמי ובמוסדות הפטור?', options: [ 'עיגון האוטונומיה החינוכית בחקיקה: תקצוב שוויוני לכל הזרמים ללא התניה קוריקולרית, מתוך כיבוד חופש הדת.', 'מדיניות תמרוץ וולונטרית: תוספות תקציב למוסדות שיאמצו ליבה, ללא סנקציות על הנמנעים וללא שינוי הסטטוס קוו.', 'התניה תקציבית הדרגתית: הצמדת שיעור התקצוב להיקף הוראת הליבה, תחת פיקוח פדגוגי של משרד החינוך.', 'החלה אוניברסלית של תוכנית הליבה כתנאי סף לרישוי ולתקצוב, לרבות מוסדות הפטור, באכיפה מלאה.' ] },
     },
-    stances: { utj: 0, shas: 0.2, farRight: 1, likud: 1, raam: 1.5, kacholLavan: 2, yashar: 2.2, bYachad: 2.2, hadashTaal: 2.4, democrats: 2.6, yisraelBeiteinu: 3 },
+    stances: { jointList: 2.4, raam: 1.5, democrats: 2.6, yashar: 2.2, bYachad: 2.2, reservists: 2.6, yisraelBeiteinu: 3, likud: 1, shas: 0.2, utj: 0, rzZehut: 1, otzma: 1 },
   },
   {
     id: 'arabPartnership', axis: 'security', category: 'החברה הערבית ושותפות פוליטית', icon: Handshake, accent: '#3b82f6',
@@ -155,7 +171,7 @@ const QUESTIONS = [
       simple: { text: 'מה מקומן של המפלגות הערביות והחברה הערבית בפוליטיקה הישראלית?', options: [ 'פסילה עקרונית: מפלגה שאינה מכירה בישראל כמדינה יהודית פסולה לשלטון, גם כתומכת חיצונית.', 'תמיכה מבחוץ בלבד: אפשר להישען עליהן להקמת ממשלה או להעברת חוקים, אך לא לצרפן כחברות קואליציה.', 'שותפות מותנית: צירוף מפלגה ערבית מתונה לקואליציה מותר, בכפוף לקבלת עקרונות המדינה ובנושאים אזרחיים.', 'שותפות שוויונית: החברה הערבית היא שותפה מלאה ושווה, כולל השפעה על סוגיות ליבה של ביטחון ולאום.' ] },
       advanced: { text: 'כיצד יש לעצב את מעמדה הפוליטי של החברה הערבית ואת השתלבותה בשלטון?', options: [ 'פסילה מהותנית: שלילת לגיטימציה שלטונית - קואליציונית או כתמיכה חיצונית - ממפלגות הדוחות את הזהות היהודית של המדינה.', 'לגיטימציה תפקודית מוגבלת: הכשרת המפלגות הערביות כרשת ביטחון פרלמנטרית מבחוץ, תוך הותרתן מחוץ למעגל הקואליציוני.', 'אינטגרציה מותנית: הכרה במפלגות ערביות פרגמטיות כשותפות קואליציה, בכפוף לקבלת אמנת יסוד ובהתמקדות באג׳נדה אזרחית.', 'אינטגרציה שוויונית: הכרה בחברה הערבית כשותפה פוליטית מלאה וריבונית, ללא הגבלת תחומי השפעה, לרבות ביטחון ומדיניות חוץ.' ] },
     },
-    stances: { farRight: 0, likud: 0.4, shas: 0.6, utj: 0.6, yisraelBeiteinu: 1, bYachad: 1.8, raam: 2.2, kacholLavan: 2, yashar: 2.2, democrats: 3, hadashTaal: 3 },
+    stances: { jointList: 3, raam: 2.2, democrats: 3, yashar: 2.2, bYachad: 1.8, reservists: 1, yisraelBeiteinu: 1, likud: 0.4, shas: 0.6, utj: 0.6, rzZehut: 0, otzma: 0 },
   },
   {
     id: 'conversion', axis: 'civil', category: 'גיור וחוק השבות', icon: Globe, accent: '#0ea5e9',
@@ -164,7 +180,7 @@ const QUESTIONS = [
       simple: { text: 'מי צריך לקבוע מיהו יהודי — בגיור ובחוק השבות?', options: [ 'רק גיור אורתודוקסי דרך הרבנות הראשית, ולתקן את חוק השבות: לבטל את "סעיף הנכד" שמעלה לא-יהודים.', 'להשאיר את המצב הקיים: הרבנות ממשיכה להיות הגורם המוסמך, וחוק השבות נשאר כמו שהוא.', 'גיור ממלכתי נגיש ומקל: להסמיך רבני ערים לגייר ולפתוח את הדלת למאות אלפי עולים. חוק השבות לא ייפגע.', 'המדינה תכיר בכל גיור — אורתודוקסי, רפורמי וקונסרבטיבי — ויונהג רישום אזרחי שאינו תלוי ברבנות.' ] },
       advanced: { text: 'כיצד יש להסדיר את סמכויות הגיור ואת היקפו של חוק השבות?', options: [ 'ריכוז הגיור במערך הממלכתי-אורתודוקסי בלבד, וצמצום חוק השבות באמצעות ביטול סעיף הנכד.', 'שימור הסטטוס קוו: מונופול הרבנות הראשית על הגיור לצד הותרת חוק השבות על כנו, ללא חקיקה חדשה.', 'רפורמת הגיור הממלכתי: ביזור הסמכות לרבני ערים ומסלולים מקילים, תוך הגנה על סעיף הנכד בחוק השבות.', 'פלורליזם מלא: הכרה סטטוטורית בגיור רפורמי וקונסרבטיבי לעניין השבות והמרשם, וניתוק המרשם מהממסד הרבני.' ] },
     },
-    stances: { shas: 0, utj: 0, farRight: 0.2, raam: 0.8, likud: 1, kacholLavan: 1.8, yashar: 2, bYachad: 2, yisraelBeiteinu: 2, hadashTaal: 2.8, democrats: 3 },
+    stances: { jointList: 2.8, raam: 0.8, democrats: 3, yashar: 2, bYachad: 2, reservists: 2, yisraelBeiteinu: 2, likud: 1, shas: 0, utj: 0, rzZehut: 0.2, otzma: 0.3 },
   },
 ];
 
@@ -181,22 +197,36 @@ const similarity = (choice, stance) =>
 const AGREE_THRESHOLD = Math.pow(1 - 0.6 / MAX_IDX, SHARPNESS);
 const WEIGHT_STEPS = [0.5, 1, 2];
 
+// Question ids per share-link version. A new version is added whenever questions change,
+// so links (and saved progress) from older versions keep working.
+const QUESTION_IDS_BY_VERSION = {
+  4: ['judiciary', 'security', 'gaza', 'economy', 'housing', 'public_sphere', 'marriage', 'draft', 'lgbtq', 'governance', 'education', 'arabPartnership', 'conversion'],
+  5: QUESTIONS.map((q) => q.id),
+};
+const SHARE_VERSION = '5';
+
+// Re-map a per-question array saved under older question ids onto the current QUESTIONS.
+const migrateByIds = (items, oldIds, fill) =>
+  QUESTIONS.map((q) => { const i = oldIds.indexOf(q.id); return i === -1 ? fill() : items[i]; });
+
 const encodeAnswers = (answers, difficulty) =>
-  '4' + (difficulty === 'advanced' ? 'a' : (difficulty === 'simple' ? 's' : 'e')) +
+  SHARE_VERSION + (difficulty === 'advanced' ? 'a' : (difficulty === 'simple' ? 's' : 'e')) +
   answers.map((a) => `${a.choice === null ? 'x' : a.choice}${WEIGHT_STEPS.indexOf(a.weight)}`).join('');
 
 const decodeAnswers = (str) => {
-  if (!str || str[0] !== '4' || !'sae'.includes(str[1])) return null; // Updated to version '4'
+  const ids = str && QUESTION_IDS_BY_VERSION[str[0]];
+  if (!ids || !'sae'.includes(str[1])) return null;
   const body = str.slice(2);
-  if (body.length !== QUESTIONS.length * 2) return null;
-  const answers = [];
-  for (let i = 0; i < QUESTIONS.length; i++) {
+  if (body.length !== ids.length * 2) return null;
+  const decoded = [];
+  for (let i = 0; i < ids.length; i++) {
     const c = body[2 * i];
     const w = WEIGHT_STEPS[parseInt(body[2 * i + 1], 10)];
     const choice = c === 'x' ? null : parseInt(c, 10);
     if (w === undefined || (choice !== null && !(choice >= 0 && choice <= 3))) return null;
-    answers.push({ choice, weight: w });
+    decoded.push({ choice, weight: w });
   }
+  const answers = migrateByIds(decoded, ids, () => ({ choice: null, weight: 1 }));
   if (answers.every((a) => a.choice === null)) return null;
   let d = 'everyday';
   if (str[1] === 'a') d = 'advanced';
@@ -226,12 +256,13 @@ const safeStorage = {
   remove(key) { try { window.localStorage.removeItem(key); } catch { } },
 };
 
-const makeShuffledOrders = () =>
-  QUESTIONS.map(() => {
-    const o = [0, 1, 2, 3];
-    for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
-    return o;
-  });
+const shuffledOrder = () => {
+  const o = [0, 1, 2, 3];
+  for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
+  return o;
+};
+
+const makeShuffledOrders = () => QUESTIONS.map(shuffledOrder);
 
 const freshState = () => ({
   screen: 'welcome',
@@ -247,6 +278,15 @@ const loadInitialState = () => {
     const saved = safeStorage.get(STORAGE_KEY);
     if (!saved) return freshState();
     const p = JSON.parse(saved);
+
+    // Progress saved before the October 7 question was added: map it onto the new question list.
+    const v4 = QUESTION_IDS_BY_VERSION[4];
+    if (Array.isArray(p.answers) && p.answers.length === v4.length && v4.length !== QUESTIONS.length) {
+      const curId = Number.isInteger(p.idx) ? v4[p.idx] : null;
+      p.answers = migrateByIds(p.answers, v4, () => ({ choice: null, weight: 1 }));
+      if (Array.isArray(p.order)) p.order = migrateByIds(p.order, v4, shuffledOrder);
+      p.idx = curId ? QUESTIONS.findIndex((q) => q.id === curId) : 0;
+    }
 
     const validAnswers =
       Array.isArray(p.answers) &&
@@ -277,10 +317,11 @@ const loadInitialState = () => {
   }
 };
 
+// Blocs as the final polls count them. The Reservists haven't committed to either side, so they're left out.
 const BLOCS = [
-  { id: 'left',   label: 'גוש השמאל', color: '#ef4444', parties: ['hadashTaal', 'raam', 'democrats'] },
-  { id: 'center', label: 'גוש המרכז', color: '#a855f7', parties: ['yashar', 'kacholLavan', 'bYachad'] },
-  { id: 'right',  label: 'גוש הימין', color: '#3b82f6', parties: ['yisraelBeiteinu', 'likud', 'shas', 'utj', 'farRight'] },
+  { id: 'change',    label: 'גוש השינוי',        color: '#8b5cf6', parties: ['yashar', 'bYachad', 'democrats', 'yisraelBeiteinu'] },
+  { id: 'coalition', label: 'גוש הקואליציה',     color: '#2563eb', parties: ['likud', 'shas', 'utj', 'rzZehut', 'otzma'] },
+  { id: 'arab',      label: 'המפלגות הערביות',  color: '#059669', parties: ['jointList', 'raam'] },
 ];
 
 function computeResults(answers) {
@@ -1090,7 +1131,7 @@ function FrictionPoints({ top, answers }) {
                     </span>
                   </div>
                 ) : (
-                  <div className="text-sm text-slate-500 font-medium">כאן אתה לבד בעמדה — אף מפלגה לא ממש קרובה.</div>
+                  <div className="text-sm text-slate-500 font-medium">כאן העמדה שלך די ייחודית — אף מפלגה לא ממש קרובה.</div>
                 )}
               </div>
             );
@@ -1377,7 +1418,8 @@ function ElectionsCompassApp() {
                   />
                 ))}
               </div>
-              <p className="text-xs font-bold text-slate-400 mb-10">כל המפלגות, מהשמאל לימין — בלי העדפה לאף אחת</p>
+              <p className="text-xs font-bold text-slate-400 mb-1">כל המפלגות, מהשמאל לימין — בלי העדפה לאף אחת</p>
+              <p className="text-[11px] font-bold text-slate-400/80 mb-10">מעודכן לרשימות שרצות בפועל בבחירות 27.10.2026</p>
 
               {hasProgress ? (
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -1599,6 +1641,7 @@ function ElectionsCompassApp() {
   }
 
   const top = scored[0];
+  const closestViable = isAtRisk(top) ? scored.find((p) => !isAtRisk(p)) : null;
   const isPerfectMatch = top.match === 100;
   const isLoneWolf = top.match < 45;
   const half = Math.floor(scored.length / 2);
@@ -1694,6 +1737,21 @@ function ElectionsCompassApp() {
           </div>
         </div>
 
+        {closestViable && (
+          <div role="note" className="anim-enter bg-amber-50/90 backdrop-blur-md border border-amber-200/80 rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-start gap-4 shadow-sm" style={{ animationDelay: '.05s' }}>
+            <div className="p-3 bg-amber-100 rounded-2xl flex-shrink-0 shadow-inner"><AlertTriangle className="w-6 h-6 text-amber-600" /></div>
+            <div className="flex-1 text-[15px] leading-relaxed text-amber-950">
+              <p className="font-extrabold mb-1">שימו לב: {top.name} על סף אחוז החסימה</p>
+              <p className="font-medium">
+                ברוב הסקרים האחרונים הרשימה לא עוברת את אחוז החסימה (3.25%), וקולות לרשימה שלא עוברת לא נספרים לאף מפלגה.
+                {' '}הרשימה הקרובה אליך ביותר מבין אלה שעוברות בסקרים:{' '}
+                <b style={{ color: closestViable.hex }}>{closestViable.name}</b> ({closestViable.match}% התאמה).
+              </p>
+              <p className="text-xs font-bold text-amber-700/80 mt-2">{POLLS_NOTE}. סקרים אינם תוצאות, וההחלטה כמובן שלכם.</p>
+            </div>
+          </div>
+        )}
+
         <div className={`${CARD} p-5 md:p-10 anim-enter`} style={{ animationDelay: '.1s' }}>
           <h3 className="text-2xl md:text-4xl mb-2 text-center tracking-tight text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>המצפן הפוליטי</h3>
           <p className="text-slate-500 text-center mb-6 font-medium text-[15px]">המחט מצביעה על ההתאמה הגבוהה ביותר שלך.</p>
@@ -1735,6 +1793,7 @@ function ElectionsCompassApp() {
                           <span className={`flex items-center gap-2 ${isRunnerUp ? 'font-black text-indigo-950 text-lg' : 'font-bold text-slate-700'}`}>
                             {!isRunnerUp && <span className="text-slate-400 text-sm font-extrabold mr-1">{i + 2}.</span>}
                             {p.name}
+                            {isAtRisk(p) && <span className="text-[10px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">על סף החסימה</span>}
                             <ChevronLeft className="w-4 h-4 text-slate-400 transition-transform duration-300 group-open:-rotate-90 mr-1" />
                           </span>
                           <span className={`font-black tabular-nums ${isRunnerUp ? 'text-indigo-950 text-2xl' : 'text-slate-600 text-lg'}`}>{p.match}%</span>
@@ -1763,7 +1822,7 @@ function ElectionsCompassApp() {
 
         <div className={`${CARD} p-6 md:p-10 anim-enter`}>
           <h3 className="text-2xl mb-2 text-indigo-950" style={{ fontFamily: FONT_DISPLAY }}>ההתאמה שלך לפי גושים</h3>
-          <p className="text-slate-500 text-[15px] font-medium mb-6">ממוצע ההתאמה לכל המפלגות בכל גוש</p>
+          <p className="text-slate-500 text-[15px] font-medium mb-6">ממוצע ההתאמה לכל המפלגות בכל גוש, לפי החלוקה בסקרים האחרונים. המילואימניקים לא התחייבו לאף גוש ולכן אינם בחישוב.</p>
           <div className="space-y-5">
             {blocScores.map((b) => (
               <div key={b.id}>
